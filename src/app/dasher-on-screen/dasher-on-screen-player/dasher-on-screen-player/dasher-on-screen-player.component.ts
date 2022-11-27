@@ -90,7 +90,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
     if (this.pausedPlayer)
       return;
 
-    if (Math.abs(this.lastWordXPosition - event.clientX) < 50)
+    if (Math.abs(this.lastWordXPosition - event.clientX) < 25)
       return;
 
     if (this.animationParams.isInRightDirection == this.lastWordXPosition < event.clientX) {

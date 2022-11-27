@@ -1,5 +1,5 @@
 import { AnimationBuilder } from '@angular/animations';
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
   templateUrl: './dasher-on-screen.component.html',
   styleUrls: ['./dasher-on-screen.component.scss'],
 })
-export class DasherOnScreenComponent implements AfterViewInit {
+export class DasherOnScreenComponent {
 
   private pausedPlayer = true;
   private words = new Array<string>();
@@ -16,6 +16,7 @@ export class DasherOnScreenComponent implements AfterViewInit {
   public onStartStopDasherEvent: Subject<boolean> = new Subject();
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   public onResetDasherEvent: Subject<void> = new Subject();
+  public showDasherWords = true;
   public input = '';
   public wordsOnScreen: Array<string> = [
     "Olá",
@@ -30,9 +31,8 @@ export class DasherOnScreenComponent implements AfterViewInit {
     "Mostrar opções",
   ];
 
-  constructor(public animationBuilder: AnimationBuilder) { }
-
-  ngAfterViewInit() {
+  constructor(public animationBuilder: AnimationBuilder) {
+    speechSynthesis.addEventListener("voiceschanged", () => { });
   }
 
   onStartStopDasher() {
@@ -60,15 +60,27 @@ export class DasherOnScreenComponent implements AfterViewInit {
     this.words.pop();
     this.input = this.words.join(" ");
     this.redefinedWords(true);
-    this.onResetDasherEvent.next();
+
+    // TODO
+    this.showDasherWords = false;
+    setTimeout(() => {
+      this.showDasherWords = true;
+    });
   }
 
   mouseOverSpeak() {
     this.lastSpeaked = this.input;
+    this.synthesizeSpeechFromText(this.input);
   }
 
   mouseOverRepeat() {
+    this.synthesizeSpeechFromText(this.lastSpeaked);
+  }
 
+  private synthesizeSpeechFromText(text: string): void {
+    var utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = speechSynthesis.getVoices()[0];
+    speechSynthesis.speak(utterance);
   }
 
   private redefinedWords(initials: boolean) {
