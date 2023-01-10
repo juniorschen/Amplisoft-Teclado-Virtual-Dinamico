@@ -1,3 +1,11 @@
-<div fxLayout="column" fxFill>
-
+<div fxFill>
+    <div [formGroup]="form" fxLayoutAlign="center center" fxLayout="column">
+        <p>Dispositivos Suportados</p>
+        <div fxLayout="row">
+            <p fxLayoutAlign="center center" style="margin-right: 12px;">Nintendo Joycon Switch</p>
+            <mat-slide-toggle formControlName="NinetendoJoycon" color="accent" fxLayoutAlign="center center">
+                Habilitar Controle
+            </mat-slide-toggle>
+        </div>
+    </div>
 </div>

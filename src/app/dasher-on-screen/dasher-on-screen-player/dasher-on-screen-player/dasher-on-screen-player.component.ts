@@ -1,6 +1,6 @@
 import { AnimationPlayer, AnimationBuilder } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { debounce, debounceTime, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { animationIn, animationOut } from 'src/app/common/animation';
 import { AnimationParams } from 'src/app/common/animation-model';
 

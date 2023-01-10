@@ -12,7 +12,7 @@ export class DasherSideNavigationComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.navigate(['dasher-side-navigation/dasher-on-screen']);
+    this.router.navigate(['dasher-side-navigation/dasher-control-settings']);
   }
 
   onNavigate(route: string) {

@@ -1,58 +1,52 @@
-/// <reference types="w3c-web-usb" />
-/// <reference types="w3c-web-hid" />
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ControlProviderService } from '../core/services/control-provider.service';
 
 @Component({
   selector: 'app-dasher-control-settings',
   templateUrl: './dasher-control-settings.component.html',
   styleUrls: ['./dasher-control-settings.component.scss']
 })
-export class DasherControlSettingsComponent {
+export class DasherControlSettingsComponent implements OnInit {
 
-  private devicePared;
+  public form: FormGroup;
 
-  onStartMapping() {
-    if (this.devicePared)
-      return
-    this.devicePared = "a"
-    this.connectHid();
+  constructor(private fbBuilder: FormBuilder, private controlProviderService: ControlProviderService) {
   }
 
-  async connectHid() {
-    if (navigator.hid == null) {
-      console.error("This browser does not support USB HID communication!");
-      return;
-    }
+  ngOnInit() {
+    this.initForm();
+  }
 
-    var device;
-    try {
-      const devices = await navigator.hid.requestDevice({
-        filters: []
-      });
-      device = devices[0];
-      device.open().then(() => {
-        console.log('xxxxxxxxx')
-        device.oninputreport = e => {
-          this.handleInputReport(e);
+  private initForm() {
+    this.form = this.fbBuilder.group({
+      NinetendoJoycon: [this.controlProviderService.getActiveControl('NinetendoJoycon') ?? Boolean(this.controlProviderService.getActiveControl('NinetendoJoycon'))],
+    });
+    this.listenFormChanges();
+  }
+
+  private listenFormChanges() {
+    this.form.get('NinetendoJoycon').valueChanges.subscribe(async v => {
+      if (!v) {
+        this.controlProviderService.desactiveControl('NinetendoJoycon');
+      } else {
+        const connected = await this.controlProviderService.connectControlHid([
+          {
+            vendorId: 0x057e, // Nintendo Co., Ltd
+            productId: 0x2006 // Joy-Con Left
+          },
+          {
+            vendorId: 0x057e, // Nintendo Co., Ltd
+            productId: 0x2007 // Joy-Con Right
+          }
+        ]);
+        if (!connected) {
+          this.form.get('NinetendoJoycon').setValue(false, { emitEvent: false });
+        } else {
+          this.controlProviderService.setActiveControl('NinetendoJoycon');
         }
-        //Do something with device here!
-      });
-    } catch (error) {
-      console.warn("No device access granted", error);
-      return;
-    }
-  }
-
-  handleInputReport(e) {
-    console.log('handleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-    var uint8View = new Uint8Array(e.data.buffer);
-    console.log(uint8View)
-    const value = e.data.getUint8(0);
-    if (value === 0) return;
-
-    const someButtons = { 1: "A", 2: "X", 4: "B", 8: "Y" };
-    console.log(`User pressed button ${someButtons[value]}.`);
-    //Do something with the bytes
+      }
+    });
   }
 
 }
