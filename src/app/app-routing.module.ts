@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./dasher-on-screen/dasher-on-screen.module').then((m) => m.DasherOnScreenModule),
+    loadChildren: () => import('./dasher-side-navigation/dasher-side-navigation.module').then((m) => m.DasherSideNavigationModule),
   }
 ];
 

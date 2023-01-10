@@ -1,0 +1,20 @@
+<mat-drawer-container fxFill>
+    <mat-drawer #drawer mode="side">
+        <div fxFlex fxLayout="column" fxLayoutAlign="center center">
+            <p (click)="onNavigate('dasher-side-navigation/dasher-on-screen')">Dasher</p>
+            <p (click)="onNavigate('dasher-side-navigation/dasher-control-settings')">Controladores</p>
+        </div>
+    </mat-drawer>
+
+    <div fxFill style="padding: 8px;">
+        <div fxFlex="6">
+            <button type="button" mat-button (click)="drawer.toggle()">
+                Abrir Navegação
+            </button>
+        </div>
+
+        <div fxFlex>
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</mat-drawer-container>
