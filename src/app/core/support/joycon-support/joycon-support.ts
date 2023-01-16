@@ -1,18 +1,15 @@
 /// <reference types="w3c-web-usb" />
 /// <reference types="w3c-web-hid" />
 
-async function enableUSBHIDJoystickReport(device: HIDDevice) {
-    const usb =
-        device.collections[0].outputReports.find(
-            (r) => r.reportId == 0x80
-        ) != null;
-    if (usb) {
-        await device.sendReport(0x80, new Uint8Array([0x01]));
-        await device.sendReport(0x80, new Uint8Array([0x02]));
-        await device.sendReport(0x01, new Uint8Array([0x03]));
-        await device.sendReport(0x80, new Uint8Array([0x04]));
-    }
-}
+import { concatTypedArrays } from "src/app/common/array-consts";
+import * as PacketParser from './parse';
+
+const lastValues = {
+    timestamp: null,
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+};
 
 async function enableStandardFullMode(device: HIDDevice) {
     const outputReportID = 0x01;
@@ -51,15 +48,110 @@ async function enableIMUMode(device: HIDDevice) {
 }
 
 export const enableJoyconFunctions = async (device: HIDDevice) => {
-    await enableUSBHIDJoystickReport(device);
     await enableStandardFullMode(device);
     await enableIMUMode(device);
 };
 
-export function _onInputReport(event) {
+export function _onInputReportJoycon(event, deviceHID: HIDDevice) {
     let { data, reportId, device } = event;
 
     if (!data) {
         return;
     }
+
+    data = concatTypedArrays(
+        new Uint8Array([reportId]),
+        new Uint8Array(data.buffer)
+    );
+    const hexData = data.map((byte) => byte.toString(16));
+
+    let packet = {
+        inputReportID: PacketParser.parseInputReportID(data, hexData),
+    } as any;
+
+    switch (reportId) {
+        case 0x3f: {
+            packet = {
+                ...packet,
+                buttonStatus: PacketParser.parseButtonStatus(data, hexData),
+                analogStick: PacketParser.parseAnalogStick(data, hexData),
+                filter: PacketParser.parseFilter(data, hexData),
+            };
+            break;
+        }
+        case 0x21:
+        case 0x30: {
+            packet = {
+                ...packet,
+                timer: PacketParser.parseTimer(data, hexData),
+                batteryLevel: PacketParser.parseBatteryLevel(data, hexData),
+                connectionInfo: PacketParser.parseConnectionInfo(data, hexData),
+                buttonStatus: PacketParser.parseCompleteButtonStatus(data, hexData),
+                analogStickLeft: PacketParser.parseAnalogStickLeft(data, hexData),
+                analogStickRight: PacketParser.parseAnalogStickRight(data, hexData),
+                vibrator: PacketParser.parseVibrator(data, hexData),
+            };
+
+            if (reportId === 0x21) {
+                packet = {
+                    ...packet,
+                    ack: PacketParser.parseAck(data, hexData),
+                    subcommandID: PacketParser.parseSubcommandID(data, hexData),
+                    subcommandReplyData: PacketParser.parseSubcommandReplyData(
+                        data,
+                        hexData
+                    ),
+                    deviceInfo: PacketParser.parseDeviceInfo(data, hexData),
+                };
+            }
+
+            if (reportId === 0x30) {
+                const accelerometers = PacketParser.parseAccelerometers(
+                    data,
+                    hexData
+                );
+                const gyroscopes = PacketParser.parseGyroscopes(data, hexData);
+                const rps = PacketParser.calculateActualGyroscope(
+                    gyroscopes.map((g) => g.map((v) => v.rps))
+                );
+                const dps = PacketParser.calculateActualGyroscope(
+                    gyroscopes.map((g) => g.map((v) => v.dps))
+                );
+                const acc = PacketParser.calculateActualAccelerometer(
+                    accelerometers.map((a) => [a.x.acc, a.y.acc, a.z.acc])
+                );
+                const quaternion = PacketParser.toQuaternion(
+                    rps,
+                    acc,
+                    device.productId
+                );
+
+                packet = {
+                    ...packet,
+                    accelerometers,
+                    gyroscopes,
+                    actualAccelerometer: acc,
+                    actualGyroscope: {
+                        dps: dps,
+                        rps: rps,
+                    },
+                    actualOrientation: PacketParser.toEulerAngles(
+                        lastValues,
+                        rps,
+                        acc,
+                        device.productId
+                    ),
+                    actualOrientationQuaternion:
+                        PacketParser.toEulerAnglesQuaternion(quaternion),
+                    quaternion: quaternion,
+                    ringCon: PacketParser.parseRingCon(data, hexData),
+                };
+            }
+            break;
+        }
+    }
+
+    console.log('PACKETTT', packet)
+
+    deviceHID.dispatchEvent(new CustomEvent('hidinput', { detail: packet }));
 }

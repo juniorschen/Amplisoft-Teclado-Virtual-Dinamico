@@ -1,13 +1,14 @@
 import { AnimationBuilder } from '@angular/animations';
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Subject } from 'rxjs';
+import { ControlProviderService } from '../core/services/control-provider.service';
 
 @Component({
   selector: 'app-dasher-on-screen',
   templateUrl: './dasher-on-screen.component.html',
   styleUrls: ['./dasher-on-screen.component.scss'],
 })
-export class DasherOnScreenComponent {
+export class DasherOnScreenComponent implements AfterViewInit {
 
   private pausedPlayer = true;
   private words = new Array<string>();
@@ -31,8 +32,14 @@ export class DasherOnScreenComponent {
     "Mostrar opções",
   ];
 
-  constructor(public animationBuilder: AnimationBuilder) {
+  constructor(public animationBuilder: AnimationBuilder, private controlProviderService: ControlProviderService) {
     speechSynthesis.addEventListener("voiceschanged", () => { });
+  }
+
+  async ngAfterViewInit() {
+    if (this.controlProviderService.isAnyDeviceConfigured()) {
+      await this.controlProviderService.connectControlHid();
+    }
   }
 
   onStartStopDasher() {

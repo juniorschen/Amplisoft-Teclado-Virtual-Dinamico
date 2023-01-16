@@ -1,20 +1,20 @@
 /// <reference types="w3c-web-usb" />
 /// <reference types="w3c-web-hid" />
 import { Injectable } from '@angular/core';
-import { enableJoyconFunctions } from 'src/app/core/support/joycon-support/joycon-support';
+import { enableJoyconFunctions, _onInputReportJoycon } from 'src/app/core/support/joycon-support/joycon-support';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ControlProviderService {
 
-    private mapedControlersNumbers = new Map<string, number>([
-        ["Joy-Con (L)", 0x2007],
-        ["Joy-Con (R)", 0x2006]
+    private currentDevice: HIDDevice;
+    private mapedControlersNumbers = new Map<number, string>([
+        [8198, "Wireless Gamepad"],
+        [8199, "Wireless Gamepad"]
     ]);
 
-    constructor() {
-    }
+    constructor() { }
 
     public getActiveControl(controlName: string) {
         return localStorage.getItem(controlName);
@@ -28,40 +28,54 @@ export class ControlProviderService {
         localStorage.removeItem(controlName);
     }
 
+    public isAnyDeviceConfigured() {
+        return localStorage.getItem('currentDeviceId') != null;
+    }
+
+    public async forgetDevice() {
+        if (this.currentDevice) {
+            await this.currentDevice.close();
+            await this.currentDevice.forget();
+            localStorage.removeItem('currentDeviceId');
+        }
+    }
+
     async connectControlHid(filters = []): Promise<boolean> {
         if (navigator.hid == null) {
             console.error("This browser does not support USB HID communication!");
             return false;
         }
 
-        let device;
         try {
             const cachedDevices = await navigator.hid.getDevices();
-            console.log(cachedDevices)
-            const devices = await navigator.hid.requestDevice({
-                filters: filters
-            });
-            if (devices.length == 0) {
-                return false;
-            }
-            device = devices[0];
-            if (!device.opened) {
-                await device.open();
-            }
-            switch (device.productId) {
-                case this.mapedControlersNumbers.get(device.productId):
-                    await enableJoyconFunctions(device);
-                    device.oninputreport = e => {
-                        this.handleInputReport(e);
-                    }
-                    break;
-                default:
-                    device.oninputreport = e => {
-                        this.handleInputReport(e);
-                    }
-                    break;
+            this.currentDevice = cachedDevices.find(l => l.productId == Number(localStorage.getItem('currentDeviceId')));
+
+            if (!this.currentDevice) {
+                const devices = await navigator.hid.requestDevice({
+                    filters: filters
+                });
+                if (devices.length == 0) {
+                    return false;
+                }
+                this.currentDevice = devices[0];
+                localStorage.setItem('currentDeviceId', this.currentDevice.productId.toString());
             }
 
+            if (!this.currentDevice.opened) {
+                await this.currentDevice.open();
+            }
+
+            // TODO JUST JOYCONs
+            if (this.mapedControlersNumbers.has(this.currentDevice.productId)) {
+                await enableJoyconFunctions(this.currentDevice);
+                this.currentDevice.oninputreport = e => {
+                    _onInputReportJoycon(e, this.currentDevice);
+                }
+            } else {
+                this.currentDevice.oninputreport = e => {
+                    this.handleInputReport(e);
+                }
+            }
             return true;
         } catch (error) {
             return false;
@@ -70,10 +84,7 @@ export class ControlProviderService {
 
     handleInputReport(e) {
         var uint8View = new Uint8Array(e.data.buffer);
+        if (e.data.getUint8(0) === 0) return;
         console.log(uint8View)
-        const value = e.data.getUint8(0);
-        if (value === 0) return;
-        const someButtons = { 1: "A", 2: "X", 4: "B", 8: "Y" };
-        console.log(`User pressed button ${someButtons[value]}.`);
     }
 }
