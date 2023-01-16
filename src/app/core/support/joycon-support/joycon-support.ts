@@ -151,7 +151,14 @@ export function _onInputReportJoycon(event, deviceHID: HIDDevice) {
         }
     }
 
-    console.log('PACKETTT', packet)
-
+    delete packet.buttonStatus.up;
+    delete packet.buttonStatus.down;
+    delete packet.buttonStatus.left;
+    delete packet.buttonStatus.right;
+    delete packet.buttonStatus.minus;
+    delete packet.buttonStatus.l;
+    delete packet.buttonStatus.zl;
+    delete packet.buttonStatus.capture;
+    delete packet.buttonStatus.leftStick;
     deviceHID.dispatchEvent(new CustomEvent('hidinput', { detail: packet }));
 }

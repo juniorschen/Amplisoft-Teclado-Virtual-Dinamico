@@ -1,6 +1,7 @@
 /// <reference types="w3c-web-usb" />
 /// <reference types="w3c-web-hid" />
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { enableJoyconFunctions, _onInputReportJoycon } from 'src/app/core/support/joycon-support/joycon-support';
 
 @Injectable({
@@ -9,6 +10,7 @@ import { enableJoyconFunctions, _onInputReportJoycon } from 'src/app/core/suppor
 export class ControlProviderService {
 
     private currentDevice: HIDDevice;
+    private onPacketSended = new Subject<any>();
     private mapedControlersNumbers = new Map<number, string>([
         [8198, "Wireless Gamepad"],
         [8199, "Wireless Gamepad"]
@@ -38,6 +40,10 @@ export class ControlProviderService {
             await this.currentDevice.forget();
             localStorage.removeItem('currentDeviceId');
         }
+    }
+
+    public getHIDPacketOutput() {
+        return this.onPacketSended;
     }
 
     async connectControlHid(filters = []): Promise<boolean> {
@@ -71,6 +77,9 @@ export class ControlProviderService {
                 this.currentDevice.oninputreport = e => {
                     _onInputReportJoycon(e, this.currentDevice);
                 }
+                this.currentDevice.addEventListener('hidinput', (e) => {
+                    this.onPacketSended.next(e);
+                  });
             } else {
                 this.currentDevice.oninputreport = e => {
                     this.handleInputReport(e);

@@ -39,6 +39,9 @@ export class DasherOnScreenComponent implements AfterViewInit {
   async ngAfterViewInit() {
     if (this.controlProviderService.isAnyDeviceConfigured()) {
       await this.controlProviderService.connectControlHid();
+      this.controlProviderService.getHIDPacketOutput().subscribe((e) => {
+        console.log(e, 'b');
+      });
     }
   }
 
