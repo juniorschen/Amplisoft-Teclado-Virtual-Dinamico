@@ -1,6 +1,6 @@
 import { AnimationBuilder } from '@angular/animations';
 import { AfterViewInit, Component } from '@angular/core';
-import { Subject } from 'rxjs';
+import { debounceTime, Subject } from 'rxjs';
 import { ControlProviderService } from '../core/services/control-provider.service';
 
 @Component({
@@ -13,6 +13,7 @@ export class DasherOnScreenComponent implements AfterViewInit {
   private pausedPlayer = true;
   private words = new Array<string>();
   private lastSpeaked = "";
+  private suportDiv: HTMLDivElement;
 
   public onStartStopDasherEvent: Subject<boolean> = new Subject();
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
@@ -38,9 +39,10 @@ export class DasherOnScreenComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     if (this.controlProviderService.isAnyDeviceConfigured()) {
+      this.createAuxDisplay();
       await this.controlProviderService.connectControlHid();
-      this.controlProviderService.getHIDPacketOutput().subscribe((e) => {
-        console.log(e, 'b');
+      this.controlProviderService.getHIDPacketOutput().pipe(debounceTime(16)).subscribe((e) => {
+        this.reciveControlMovedEvent(e.detail);
       });
     }
   }
@@ -117,8 +119,56 @@ export class DasherOnScreenComponent implements AfterViewInit {
       this.wordsOnScreen[8] = "Física";
       this.wordsOnScreen[9] = "Mostrar opções";
     }
-
   }
 
+  //#region Suporte Controles HID
+  private createAuxDisplay() {
+    this.suportDiv = document.createElement("div");
+    this.suportDiv.style.position = "absolute";
+    this.suportDiv.style.left = "50%";
+    this.suportDiv.style.top = "50%";
+    this.suportDiv.style.width = "20px";
+    this.suportDiv.style.height = "20px";
+    this.suportDiv.style.background = "red";
+    this.suportDiv.style.color = "blue";
+
+    document.body.appendChild(this.suportDiv);
+  }
+
+  private reciveControlMovedEvent(packet) {
+    console.log(packet.actualOrientation)
+    if (!packet || !packet.actualOrientation) {
+      return;
+    }
+
+    const {
+      actualAccelerometer: accelerometer,
+      buttonStatus: buttons,
+      actualGyroscope: gyroscope,
+      actualOrientation: orientation,
+      actualOrientationQuaternion: orientationQuaternion,
+      ringCon: ringCon,
+    } = packet;
+
+    const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
+    const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
+
+    // ANALOGIC
+    /* //TODO
+    const joystick = packet.analogStickLeft ?? packet.analogStickLeft;
+    if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
+      this.suportDiv.style.left = (percentLeft + joystick.horizontal) > 100 ? '100%' : ((percentLeft + joystick.horizontal) < 0 ? '0%' : (percentLeft + joystick.horizontal) + "%");
+    }
+
+    if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
+      this.suportDiv.style.top = (percentTop + joystick.vertical) > 100 ? '100%' : ((percentTop + joystick.vertical) < 0 ? '0%' : (percentTop + joystick.vertical) + "%");
+    } */
+
+    console.log(gyroscope.dps)
+    this.suportDiv.style.left = (percentLeft + gyroscope.dps.x) > 100 ? '100%' : ((percentLeft + gyroscope.dps.x) < 0 ? '0%' : (percentLeft + gyroscope.dps.x) + "%");
+    this.suportDiv.style.top = (percentTop + gyroscope.dps.y) > 100 ? '100%' : ((percentTop + gyroscope.dps.y) < 0 ? '0%' : (percentTop + gyroscope.dps.y) + "%");
+
+  }
+  //#endregion
 }
 
