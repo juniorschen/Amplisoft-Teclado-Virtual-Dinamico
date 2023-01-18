@@ -157,8 +157,19 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
 
     if (this.controlProviderService.getActiveControlType() == 'gyroscope') {
-      this.suportDiv.style.left = (percentLeft + gyroscope.dps.x) > 100 ? '100%' : ((percentLeft + gyroscope.dps.x) < 0 ? '0%' : (percentLeft + gyroscope.dps.x) + "%");
-      this.suportDiv.style.top = (percentTop + (gyroscope.dps.y * 2.5)) > 100 ? '100%' : ((percentTop + (gyroscope.dps.y * 2.5)) < 0 ? '0%' : (percentTop + (gyroscope.dps.y * 2.5)) + "%");
+      if (Math.abs(accelerometer.y) > 0.009) {
+        if (accelerometer.y > 0) {
+          this.suportDiv.style.left = (percentLeft + 1) > 100 ? '100%' : ((percentLeft + 1) < 0 ? '0%' : (percentLeft + 1) + "%");
+        } else {
+          this.suportDiv.style.left = (percentLeft + -1) > 100 ? '100%' : ((percentLeft + -1) < 0 ? '0%' : (percentLeft + -1) + "%");
+        }
+      }
+
+      if (accelerometer.x > 0 && Math.abs(accelerometer.x) > 0.005) {
+        this.suportDiv.style.top = (percentTop + -1) > 100 ? '100%' : ((percentTop + -1) < 0 ? '0%' : (percentTop + -1) + "%");
+      } else if (Math.abs(accelerometer.x) > 0.0028) {
+        this.suportDiv.style.top = (percentTop + 1) > 100 ? '100%' : ((percentTop + 1) < 0 ? '0%' : (percentTop + 1) + "%");
+      }
     } else {
       const joystick = packet.analogStickLeft ?? packet.analogStickLeft;
       if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
