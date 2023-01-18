@@ -1,5 +1,5 @@
 import { AnimationBuilder } from '@angular/animations';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { ControlProviderService } from '../core/services/control-provider.service';
 
@@ -8,7 +8,7 @@ import { ControlProviderService } from '../core/services/control-provider.servic
   templateUrl: './dasher-on-screen.component.html',
   styleUrls: ['./dasher-on-screen.component.scss'],
 })
-export class DasherOnScreenComponent implements AfterViewInit {
+export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   private pausedPlayer = true;
   private words = new Array<string>();
@@ -45,6 +45,10 @@ export class DasherOnScreenComponent implements AfterViewInit {
         this.reciveControlMovedEvent(e.detail);
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    document.body.removeChild(this.suportDiv);
   }
 
   onStartStopDasher() {

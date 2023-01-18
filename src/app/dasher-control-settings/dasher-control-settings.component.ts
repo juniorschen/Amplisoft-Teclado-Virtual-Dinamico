@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ControlProviderService } from '../core/services/control-provider.service';
 
@@ -7,7 +7,7 @@ import { ControlProviderService } from '../core/services/control-provider.servic
   templateUrl: './dasher-control-settings.component.html',
   styleUrls: ['./dasher-control-settings.component.scss']
 })
-export class DasherControlSettingsComponent implements OnInit {
+export class DasherControlSettingsComponent implements OnInit, OnDestroy {
 
   public form: FormGroup;
 
@@ -16,6 +16,9 @@ export class DasherControlSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+  }
+
+  ngOnDestroy(): void {
   }
 
   private initForm() {
