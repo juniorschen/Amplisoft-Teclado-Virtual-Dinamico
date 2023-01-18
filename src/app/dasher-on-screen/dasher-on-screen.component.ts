@@ -41,7 +41,7 @@ export class DasherOnScreenComponent implements AfterViewInit {
     if (this.controlProviderService.isAnyDeviceConfigured()) {
       this.createAuxDisplay();
       await this.controlProviderService.connectControlHid();
-      this.controlProviderService.getHIDPacketOutput().pipe(debounceTime(16)).subscribe((e) => {
+      this.controlProviderService.getHIDPacketOutput().pipe(debounceTime(this.controlProviderService.getControlDebounceTime())).subscribe((e) => {
         this.reciveControlMovedEvent(e.detail);
       });
     }
@@ -136,7 +136,6 @@ export class DasherOnScreenComponent implements AfterViewInit {
   }
 
   private reciveControlMovedEvent(packet) {
-    console.log(packet.actualOrientation)
     if (!packet || !packet.actualOrientation) {
       return;
     }
@@ -153,21 +152,19 @@ export class DasherOnScreenComponent implements AfterViewInit {
     const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
     const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
 
-    // ANALOGIC
-    /* //TODO
-    const joystick = packet.analogStickLeft ?? packet.analogStickLeft;
-    if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
-      this.suportDiv.style.left = (percentLeft + joystick.horizontal) > 100 ? '100%' : ((percentLeft + joystick.horizontal) < 0 ? '0%' : (percentLeft + joystick.horizontal) + "%");
+    if (this.controlProviderService.getActiveControlType() == 'gyroscope') {
+      this.suportDiv.style.left = (percentLeft + gyroscope.dps.x) > 100 ? '100%' : ((percentLeft + gyroscope.dps.x) < 0 ? '0%' : (percentLeft + gyroscope.dps.x) + "%");
+      this.suportDiv.style.top = (percentTop + (gyroscope.dps.y * 2.5)) > 100 ? '100%' : ((percentTop + (gyroscope.dps.y * 2.5)) < 0 ? '0%' : (percentTop + (gyroscope.dps.y * 2.5)) + "%");
+    } else {
+      const joystick = packet.analogStickLeft ?? packet.analogStickLeft;
+      if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
+        this.suportDiv.style.left = (percentLeft + joystick.horizontal) > 100 ? '100%' : ((percentLeft + joystick.horizontal) < 0 ? '0%' : (percentLeft + joystick.horizontal) + "%");
+      }
+
+      if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
+        this.suportDiv.style.top = (percentTop + joystick.vertical) > 100 ? '100%' : ((percentTop + joystick.vertical) < 0 ? '0%' : (percentTop + joystick.vertical) + "%");
+      }
     }
-
-    if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
-      this.suportDiv.style.top = (percentTop + joystick.vertical) > 100 ? '100%' : ((percentTop + joystick.vertical) < 0 ? '0%' : (percentTop + joystick.vertical) + "%");
-    } */
-
-    console.log(gyroscope.dps)
-    this.suportDiv.style.left = (percentLeft + gyroscope.dps.x) > 100 ? '100%' : ((percentLeft + gyroscope.dps.x) < 0 ? '0%' : (percentLeft + gyroscope.dps.x) + "%");
-    this.suportDiv.style.top = (percentTop + gyroscope.dps.y) > 100 ? '100%' : ((percentTop + gyroscope.dps.y) < 0 ? '0%' : (percentTop + gyroscope.dps.y) + "%");
-
   }
   //#endregion
 }

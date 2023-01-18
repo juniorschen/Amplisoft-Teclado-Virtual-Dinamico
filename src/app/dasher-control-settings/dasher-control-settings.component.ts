@@ -20,7 +20,9 @@ export class DasherControlSettingsComponent implements OnInit {
 
   private initForm() {
     this.form = this.fbBuilder.group({
-      NinetendoJoycon: [this.controlProviderService.getActiveControl('NinetendoJoycon') ?? Boolean(this.controlProviderService.getActiveControl('NinetendoJoycon'))],
+      NinetendoJoycon: [this.controlProviderService.getActiveControl() == 'NinetendoJoycon'],
+      ControleAnalogico: [this.controlProviderService.getActiveControlType() == 'joystick'],
+      ControleSensorial: [this.controlProviderService.getActiveControlType() == 'gyroscope'],
     });
     this.listenFormChanges();
   }
@@ -28,7 +30,7 @@ export class DasherControlSettingsComponent implements OnInit {
   private listenFormChanges() {
     this.form.get('NinetendoJoycon').valueChanges.subscribe(async v => {
       if (!v) {
-        this.controlProviderService.desactiveControl('NinetendoJoycon');
+        this.controlProviderService.desactiveControl();
         this.controlProviderService.forgetDevice();
       } else {
         const connected = await this.controlProviderService.connectControlHid([
@@ -47,6 +49,16 @@ export class DasherControlSettingsComponent implements OnInit {
           this.controlProviderService.setActiveControl('NinetendoJoycon');
         }
       }
+    });
+
+    this.form.get('ControleAnalogico').valueChanges.subscribe(async v => {
+      this.controlProviderService.setActiveControlType(v ? 'joystick' : 'gyroscope');
+      this.form.get('ControleSensorial').setValue(!v, { emitEvent: false });
+    });
+
+    this.form.get('ControleSensorial').valueChanges.subscribe(async v => {
+      this.controlProviderService.setActiveControlType(v ? 'gyroscope' : 'joystick');
+      this.form.get('ControleAnalogico').setValue(!v, { emitEvent: false });
     });
   }
 

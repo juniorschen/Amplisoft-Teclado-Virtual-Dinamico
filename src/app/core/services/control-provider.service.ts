@@ -18,20 +18,34 @@ export class ControlProviderService {
 
     constructor() { }
 
-    public getActiveControl(controlName: string) {
-        return localStorage.getItem(controlName);
+    public getActiveControl() {
+        return localStorage.getItem('ActiveControl');
     }
 
-    public setActiveControl(controlName: string) {
-        localStorage.setItem(controlName, 'true');
+    public setActiveControl(control: string) {
+        localStorage.setItem('ActiveControl', control);
+        this.setActiveControlType('joystick');
     }
 
-    public desactiveControl(controlName: string) {
-        localStorage.removeItem(controlName);
+    public getActiveControlType() {
+        return localStorage.getItem('ActiveControlType');
+    }
+
+    public setActiveControlType(type: 'gyroscope' | 'joystick') {
+        localStorage.setItem('ActiveControlType', type);
+    }
+
+    public desactiveControl() {
+        localStorage.removeItem('ActiveControl');
+        localStorage.removeItem('ActiveControlType');
     }
 
     public isAnyDeviceConfigured() {
         return localStorage.getItem('currentDeviceId') != null;
+    }
+
+    public getControlDebounceTime() {
+        return this.getActiveControlType() == 'gyroscope' ? 15 : 0;
     }
 
     public async forgetDevice() {

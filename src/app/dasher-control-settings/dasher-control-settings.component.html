@@ -2,9 +2,18 @@
     <div [formGroup]="form" fxLayoutAlign="center center" fxLayout="column">
         <p>Dispositivos Suportados</p>
         <div fxLayout="row">
-            <p fxLayoutAlign="center center" style="margin-right: 12px;">Nintendo Joycon Switch</p>
             <mat-slide-toggle formControlName="NinetendoJoycon" color="accent" fxLayoutAlign="center center">
-                Habilitar Controle
+                Nintendo Joycon Switch
+            </mat-slide-toggle>
+        </div>
+
+        <p>Tipo Dispositivo</p>
+        <div fxLayout="row">
+            <mat-slide-toggle formControlName="ControleAnalogico" color="accent" fxLayoutAlign="center center" style="margin-right: 6px;">
+                Controle Analógico
+            </mat-slide-toggle>
+            <mat-slide-toggle formControlName="ControleSensorial" color="accent" fxLayoutAlign="center center">
+                Controle Sensorial
             </mat-slide-toggle>
         </div>
     </div>
