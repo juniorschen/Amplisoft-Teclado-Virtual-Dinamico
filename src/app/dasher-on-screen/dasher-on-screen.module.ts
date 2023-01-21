@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 
 import { DasherOnScreenComponent } from './dasher-on-screen.component';
 import { DasherOnScreenRoutingModule } from './dasher-on-screen-routing.module';
-import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player/dasher-on-screen-player.component';
+import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
 
 @NgModule({
   declarations: [

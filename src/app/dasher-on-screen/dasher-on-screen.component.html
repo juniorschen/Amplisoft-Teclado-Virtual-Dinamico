@@ -8,63 +8,74 @@
 
         <div (mousemove)="mouseMovedOutDasher()" fxLayout="column" fxLayoutAlign="end none" fxFlex>
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p (mouseover)="mouseOverReset()" fxLayoutAlign="center center">Voltar</p>
+                <p #voltarElementRef (mouseover)="mouseOverReset()" fxLayoutAlign="center center">Voltar</p>
             </div>
 
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p (mouseover)="mouseOverSpeak()" fxLayoutAlign="center center">Falar</p>
+                <p #falarElementRef (mouseover)="mouseOverSpeak()" fxLayoutAlign="center center">Falar</p>
             </div>
 
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p (mouseover)="mouseOverRepeat()" fxLayoutAlign="center center">Repetir Última Fala</p>
+                <p #repetirElementRef (mouseover)="mouseOverRepeat()" fxLayoutAlign="center center">Repetir Última Fala
+                </p>
             </div>
         </div>
 
         <div fxLayoutAlign="center center">
-            <p style="font-size: 90px;">*</p>
+            <p #startElementRef style="font-size: 90px;">*</p>
         </div>
 
         <div (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[0]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[0]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[1]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[1]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[2]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[2]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[3]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[3]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[4]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[4]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[5]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[5]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[6]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[6]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[7]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[7]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[8]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[8]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
-            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[9]" [onStartStopDasherEvent]="onStartStopDasherEvent"
-                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
-                (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill fxFlex></app-dasher-on-screen-player>
+            <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[9]"
+                [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
+                fxFlex></app-dasher-on-screen-player>
 
         </div>
 

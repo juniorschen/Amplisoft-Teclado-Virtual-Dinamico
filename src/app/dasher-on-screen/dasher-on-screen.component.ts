@@ -1,6 +1,7 @@
-import { AnimationBuilder } from '@angular/animations';
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
+import { elementOverAnother } from '../common/document-helper';
+
 import { ControlProviderService } from '../core/services/control-provider.service';
 
 @Component({
@@ -14,6 +15,24 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private words = new Array<string>();
   private lastSpeaked = "";
   private suportDiv: HTMLDivElement;
+  private isControlOver = {
+    repeat: false,
+    speak: false,
+    back: false,
+    start: false
+  };
+
+  @ViewChild('voltarElementRef')
+  public voltarElementRef: ElementRef<HTMLDivElement>;
+
+  @ViewChild('falarElementRef')
+  public falarElementRef: ElementRef<HTMLParagraphElement>;
+
+  @ViewChild('repetirElementRef')
+  public repetirElementRef: ElementRef<HTMLDivElement>;
+
+  @ViewChild('startElementRef')
+  public startElementRef: ElementRef<HTMLDivElement>;
 
   public onStartStopDasherEvent: Subject<boolean> = new Subject();
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
@@ -33,7 +52,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     "Mostrar opções",
   ];
 
-  constructor(public animationBuilder: AnimationBuilder, private controlProviderService: ControlProviderService) {
+  constructor(private controlProviderService: ControlProviderService) {
     speechSynthesis.addEventListener("voiceschanged", () => { });
   }
 
@@ -57,22 +76,25 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseMovedOutDasher() {
-    this.pausedPlayer = true;
-    this.onStartStopDasherEvent.next(this.pausedPlayer);
+    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+      this.pausedPlayer = true;
+      this.onStartStopDasherEvent.next(this.pausedPlayer);
+    }
   }
 
   mouseMovedDasher(event: MouseEvent) {
-    this.mouseMovedEvent.next(event);
-  }
-
-  onWordSelectedEvent(word: string) {
-    this.words.push(word);
-    this.input = this.words.join(" ");
-    this.redefinedWords(false);
-    this.onResetDasherEvent.next();
+    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+      this.mouseMovedEvent.next(event);
+    }
   }
 
   mouseOverReset() {
+    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+      this.reset();
+    }
+  }
+
+  private reset() {
     this.words.pop();
     this.input = this.words.join(" ");
     this.redefinedWords(true);
@@ -85,12 +107,31 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseOverSpeak() {
+    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+      this.speak();
+    }
+  }
+
+  private speak() {
     this.lastSpeaked = this.input;
     this.synthesizeSpeechFromText(this.input);
   }
 
   mouseOverRepeat() {
+    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+      this.repeat();
+    }
+  }
+
+  private repeat() {
     this.synthesizeSpeechFromText(this.lastSpeaked);
+  }
+
+  onWordSelectedEvent(word: string) {
+    this.words.push(word);
+    this.input = this.words.join(" ");
+    this.redefinedWords(false);
+    this.onResetDasherEvent.next();
   }
 
   private synthesizeSpeechFromText(text: string): void {
@@ -153,33 +194,100 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       ringCon: ringCon,
     } = packet;
 
+    if (buttons.up) {
+      this.onStartStopDasher();
+      return;
+    }
+
     const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
     const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
 
     if (this.controlProviderService.getActiveControlType() == 'gyroscope') {
       if (Math.abs(accelerometer.y) > 0.009) {
         if (accelerometer.y > 0) {
-          this.suportDiv.style.left = (percentLeft + 1) > 100 ? '100%' : ((percentLeft + 1) < 0 ? '0%' : (percentLeft + 1) + "%");
+          this.suportDiv.style.left = (percentLeft + 0.6) > 100 ? '100%' : ((percentLeft + 0.6) < 0 ? '0%' : (percentLeft + 0.6) + "%");
         } else {
-          this.suportDiv.style.left = (percentLeft + -1) > 100 ? '100%' : ((percentLeft + -1) < 0 ? '0%' : (percentLeft + -1) + "%");
+          this.suportDiv.style.left = (percentLeft + -0.6) > 100 ? '100%' : ((percentLeft + -0.6) < 0 ? '0%' : (percentLeft + -0.6) + "%");
         }
+        this.mouseMovedEvent.next({
+          clientX: this.suportDiv.getBoundingClientRect().x,
+          HTMLDivElement: this.suportDiv
+        } as any);
       }
 
       if (accelerometer.x > 0 && Math.abs(accelerometer.x) > 0.005) {
         this.suportDiv.style.top = (percentTop + -1) > 100 ? '100%' : ((percentTop + -1) < 0 ? '0%' : (percentTop + -1) + "%");
-      } else if (Math.abs(accelerometer.x) > 0.0028) {
+      } else if (Math.abs(accelerometer.x) > 0.003) {
         this.suportDiv.style.top = (percentTop + 1) > 100 ? '100%' : ((percentTop + 1) < 0 ? '0%' : (percentTop + 1) + "%");
       }
     } else {
       const joystick = packet.analogStickLeft ?? packet.analogStickLeft;
       if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
         this.suportDiv.style.left = (percentLeft + joystick.horizontal) > 100 ? '100%' : ((percentLeft + joystick.horizontal) < 0 ? '0%' : (percentLeft + joystick.horizontal) + "%");
+        this.mouseMovedEvent.next({
+          clientX: this.suportDiv.getBoundingClientRect().x,
+          HTMLDivElement: this.suportDiv
+        } as any);
       }
 
       if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
         this.suportDiv.style.top = (percentTop + joystick.vertical) > 100 ? '100%' : ((percentTop + joystick.vertical) < 0 ? '0%' : (percentTop + joystick.vertical) + "%");
       }
     }
+
+    if (elementOverAnother(this.suportDiv, this.voltarElementRef.nativeElement)) {
+      if (this.isControlOver.back)
+        return;
+      this.isControlOver = {
+        repeat: false,
+        speak: false,
+        back: true,
+        start: false
+      };
+      this.reset();
+      return;
+    } else if (elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement)) {
+      if (this.isControlOver.speak)
+        return;
+      this.isControlOver = {
+        repeat: false,
+        speak: true,
+        back: false,
+        start: false
+      };
+      this.speak();
+      return;
+    } else if (elementOverAnother(this.suportDiv, this.repetirElementRef.nativeElement)) {
+      if (this.isControlOver.repeat)
+        return;
+      this.isControlOver = {
+        repeat: true,
+        speak: false,
+        back: false,
+        start: false
+      };
+      this.repeat();
+      return;
+    } else if (elementOverAnother(this.suportDiv, this.startElementRef.nativeElement)) {
+      if (this.isControlOver.start)
+        return;
+      this.isControlOver = {
+        repeat: true,
+        speak: false,
+        back: false,
+        start: true
+      };
+      this.onStartStopDasher();
+      return;
+    }
+
+    this.isControlOver = {
+      repeat: false,
+      speak: false,
+      back: false,
+      start: false
+    };
+
   }
   //#endregion
 }
