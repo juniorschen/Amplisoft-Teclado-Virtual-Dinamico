@@ -67,7 +67,9 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    document.body.removeChild(this.suportDiv);
+    if (this.suportDiv) {
+      document.body.removeChild(this.suportDiv);
+    }
   }
 
   onStartStopDasher() {
@@ -183,7 +185,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private reciveControlMovedEvent(packet) {
     if (!packet || !packet.actualOrientation) {
       return;
-    }
+    }    
 
     const {
       actualAccelerometer: accelerometer,
@@ -288,6 +290,16 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       start: false
     };
 
+  }
+
+  dispatchMouseEvent(type: string, deltaX: number, deltaY: number) {
+    const event = new MouseEvent(type, {
+      bubbles: true,
+      cancelable: true,
+      movementX: deltaX,
+      movementY: deltaY
+    });
+    document.dispatchEvent(event);
   }
   //#endregion
 }

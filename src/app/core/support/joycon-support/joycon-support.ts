@@ -72,6 +72,7 @@ export function _onInputReportJoycon(event, deviceHID: HIDDevice) {
     switch (reportId) {
         case 0x3f: {
             packet = {
+                dataView: event.data,
                 ...packet,
                 buttonStatus: PacketParser.parseButtonStatus(data, hexData),
                 analogStick: PacketParser.parseAnalogStick(data, hexData),
@@ -82,6 +83,7 @@ export function _onInputReportJoycon(event, deviceHID: HIDDevice) {
         case 0x21:
         case 0x30: {
             packet = {
+                dataView: event.data,
                 ...packet,
                 timer: PacketParser.parseTimer(data, hexData),
                 batteryLevel: PacketParser.parseBatteryLevel(data, hexData),
@@ -94,6 +96,7 @@ export function _onInputReportJoycon(event, deviceHID: HIDDevice) {
 
             if (reportId === 0x21) {
                 packet = {
+                    dataView: event.data,
                     ...packet,
                     ack: PacketParser.parseAck(data, hexData),
                     subcommandID: PacketParser.parseSubcommandID(data, hexData),
@@ -127,6 +130,7 @@ export function _onInputReportJoycon(event, deviceHID: HIDDevice) {
                 );
 
                 packet = {
+                    dataView: event.data,
                     ...packet,
                     accelerometers,
                     gyroscopes,
