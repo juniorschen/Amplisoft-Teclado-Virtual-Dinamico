@@ -1,4 +1,4 @@
-<div fxFill style="background-color: lightgray;">
+<div class="default-background display-flex-100-column">
     <mat-toolbar color="primary">
         <button (click)="drawer.toggle()" mat-icon-button>
             <mat-icon class="icon-display">toc</mat-icon>
@@ -6,18 +6,18 @@
         <span class="title-center">Amplisoft Teclado Virtual Dash Web</span>
     </mat-toolbar>
 
-    <mat-drawer-container>
-        <mat-drawer #drawer mode="side">
-            <div fxFlex fxLayout="column" fxLayoutAlign="center center">
-                <p (click)="onNavigate('dasher-side-navigation/dasher-on-screen')">Dasher</p>
-                <p (click)="onNavigate('dasher-side-navigation/dasher-control-settings')">Controladores</p>
+    <mat-drawer-container class="display-flex-100">
+        <mat-drawer #drawer mode="side" class="default-padding">
+            <div class="display-flex-100-column">
+                <p class="label-default-font-size" (click)="onNavigate('dasher-side-navigation/dasher-on-screen')">
+                    Dasher</p>
+                <p class="label-default-font-size"
+                    (click)="onNavigate('dasher-side-navigation/dasher-control-settings')">Controladores</p>
+                <p class="label-default-font-size" (click)="onNavigate('dasher-side-navigation/dasher-feedback')">
+                    Feedback</p>
             </div>
         </mat-drawer>
 
-        <div style="padding: 8px; background-color: lightgray;">
-            <div>
-                <router-outlet></router-outlet>
-            </div>
-        </div>
+        <router-outlet></router-outlet>
     </mat-drawer-container>
 </div>
