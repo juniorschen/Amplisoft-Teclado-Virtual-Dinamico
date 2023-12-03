@@ -1,20 +1,39 @@
-<div fxFill>
-    <div [formGroup]="form" fxLayoutAlign="center center" fxLayout="column">
-        <p class="label-high-font-size">Dispositivos Suportados</p>
-        <div fxLayout="row">
-            <mat-slide-toggle formControlName="NinetendoJoycon" color="accent" fxLayoutAlign="center center" class="label-high-font-size">
-                Nintendo Joycon Switch
-            </mat-slide-toggle>
-        </div>
+<div [formGroup]="form" fxFill fxLayout="column">
+    <p fxLayoutAlign="center center" class="label-high-font-size">Dispositivos Suportados</p>
+    <div fxLayoutAlign="center center" fxLayout="column">
+        <mat-slide-toggle formControlName="NinetendoJoyconDireitoJoystick" color="accent" class="mat-slide-toggle"
+            (change)="toggleChanged($event, 'NinetendoJoyconDireitoJoystick')">
+            Joystick Nintendo Joycon Direito
+        </mat-slide-toggle>
 
-        <p class="label-high-font-size">Tipo Dispositivo</p>
-        <div fxLayout="row">
-            <mat-slide-toggle formControlName="ControleAnalogico" color="accent" fxLayoutAlign="center center" class="label-high-font-size" style="margin-right: 6px;">
-                Controle Analógico
-            </mat-slide-toggle>
-            <mat-slide-toggle formControlName="ControleSensorial" color="accent" fxLayoutAlign="center center" class="label-high-font-size">
-                Controle Sensorial
-            </mat-slide-toggle>
-        </div>
+        <mat-slide-toggle formControlName="NinetendoJoyconEsquerdoJoystick" color="accent" class="mat-slide-toggle"
+            (change)="toggleChanged($event, 'NinetendoJoyconEsquerdoJoystick')">
+            Joystick Nintendo Joycon Esquerdo
+        </mat-slide-toggle>
+
+        <mat-slide-toggle formControlName="JoystickDualShock" color="accent" class="mat-slide-toggle"
+            (change)="toggleChanged($event, 'JoystickDualShock')">
+            Joystick DualShock
+        </mat-slide-toggle>
+
+        <mat-slide-toggle formControlName="JoystickMicrosoft" color="accent" class="mat-slide-toggle"
+            (change)="toggleChanged($event, 'JoystickMicrosoft')">
+            Joystick Microsoft
+        </mat-slide-toggle>
+
+        <mat-slide-toggle formControlName="NinetendoJoyconDireitoSensorial" color="accent" class="mat-slide-toggle"
+            (change)="toggleChanged($event, 'NinetendoJoyconDireitoSensorial')">
+            Sensorial Nintendo Joycon Direito
+        </mat-slide-toggle>
+
+        <mat-slide-toggle formControlName="NinetendoJoyconEsquerdoSensorial" color="accent" class="mat-slide-toggle"
+            (change)="toggleChanged($event, 'NinetendoJoyconEsquerdoSensorial')">
+            Sensorial Nintendo Joycon Esquerdo
+        </mat-slide-toggle>
+
+        <mat-slide-toggle formControlName="ControleFocoOcularSensorial" color="accent" class="mat-slide-toggle"
+            (change)="toggleChanged($event, 'ControleFocoOcularSensorial')">
+            Controle Ocular
+        </mat-slide-toggle>
     </div>
 </div>

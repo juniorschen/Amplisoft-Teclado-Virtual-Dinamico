@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+
 import { ControlProviderService } from '../core/services/control-provider.service';
 
 @Component({
@@ -23,45 +24,56 @@ export class DasherControlSettingsComponent implements OnInit, OnDestroy {
 
   private initForm() {
     this.form = this.fbBuilder.group({
-      NinetendoJoycon: [this.controlProviderService.getActiveControl() == 'NinetendoJoycon'],
-      ControleAnalogico: [this.controlProviderService.getActiveControlType() == 'joystick'],
-      ControleSensorial: [this.controlProviderService.getActiveControlType() == 'gyroscope'],
+      NinetendoJoyconDireitoJoystick: [this.controlProviderService.getActiveControl() == 'NinetendoJoyconDireitoJoystick'],
+      NinetendoJoyconEsquerdoJoystick: [this.controlProviderService.getActiveControl() == 'NinetendoJoyconEsquerdoJoystick'],
+      NinetendoJoyconDireitoSensorial: [this.controlProviderService.getActiveControl() == 'NinetendoJoyconDireitoSensorial'],
+      NinetendoJoyconEsquerdoSensorial: [this.controlProviderService.getActiveControl() == 'NinetendoJoyconEsquerdoSensorial'],
+      JoystickDualShock: [this.controlProviderService.getActiveControl() == 'JoystickDualShock'],
+      JoystickMicrosoft: [this.controlProviderService.getActiveControl() == 'JoystickMicrosoft'],
+      ControleFocoOcularSensorial: [this.controlProviderService.getActiveControl() == 'ControleFocoOcularSensorial'],
     });
-    this.listenFormChanges();
   }
 
-  private listenFormChanges() {
-    this.form.get('NinetendoJoycon').valueChanges.subscribe(async v => {
-      if (!v) {
-        this.controlProviderService.desactiveControl();
-        this.controlProviderService.forgetDevice();
+  public toggleChanged(event, name: string) {
+    this.controlProviderService.desactiveControl();
+    this.controlProviderService.forgetDevices();
+
+    if (event.checked)
+      this.controlProviderService.setActiveControl(name);
+
+    Object.keys(this.form["controls"]).forEach(async formControlName => {
+      if (!event.checked) {
+        this.form.get(formControlName).setValue(false);
       } else {
-        const connected = await this.controlProviderService.connectControlHid([
-          {
-            vendorId: 0x057e, // Nintendo Co., Ltd
-            productId: 0x2006 // Joy-Con Left
-          },
-          {
-            vendorId: 0x057e, // Nintendo Co., Ltd
-            productId: 0x2007 // Joy-Con Right
-          }
-        ]);
-        if (!connected) {
-          this.form.get('NinetendoJoycon').setValue(false, { emitEvent: false });
+        if (name != formControlName) {
+          this.form.get(formControlName).setValue(false);
         } else {
-          this.controlProviderService.setActiveControl('NinetendoJoycon');
+          this.form.get(formControlName).setValue(true);
+          let hid = [];
+          if (name.includes("NinetendoJoycon")) {
+            if (name.includes("Esquerdo")) {
+              hid.push({
+                vendorId: 0x057e, // Nintendo Co., Ltd
+                productId: 0x2006 // Joy-Con Left
+              });
+            } else {
+              hid.push({
+                vendorId: 0x057e, // Nintendo Co., Ltd
+                productId: 0x2007 // Joy-Con Right
+              });
+            }
+          }
+
+          if (hid.length > 0) {
+            const connected = await this.controlProviderService.connectControlHid(hid);
+            if (!connected) {
+              this.form.get(formControlName).setValue(false);
+              this.controlProviderService.desactiveControl();
+              alert("Atenção é necessário aceitar as permissões do dispositivo HID para utilizar o mesmo.")
+            }
+          }
         }
       }
-    });
-
-    this.form.get('ControleAnalogico').valueChanges.subscribe(async v => {
-      this.controlProviderService.setActiveControlType(v ? 'joystick' : 'gyroscope');
-      this.form.get('ControleSensorial').setValue(!v, { emitEvent: false });
-    });
-
-    this.form.get('ControleSensorial').valueChanges.subscribe(async v => {
-      this.controlProviderService.setActiveControlType(v ? 'gyroscope' : 'joystick');
-      this.form.get('ControleAnalogico').setValue(!v, { emitEvent: false });
     });
   }
 

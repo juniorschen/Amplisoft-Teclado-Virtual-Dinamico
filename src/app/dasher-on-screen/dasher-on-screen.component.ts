@@ -11,7 +11,6 @@ import { ControlProviderService } from '../core/services/control-provider.servic
 })
 export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
-  private pausedPlayer = true;
   private words = new Array<string>();
   private lastSpeaked = "";
   private suportDiv: HTMLDivElement;
@@ -34,10 +33,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   @ViewChild('startElementRef')
   public startElementRef: ElementRef<HTMLDivElement>;
 
+  public pausedPlayer = true;
   public onStartStopDasherEvent: Subject<boolean> = new Subject();
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   public onResetDasherEvent: Subject<void> = new Subject();
   public showDasherWords = true;
+  public displayVideo = false;
   public input = '';
   public wordsOnScreen: Array<string> = [
     "Olá",
@@ -57,10 +58,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   async ngAfterViewInit() {
-    if (this.controlProviderService.isAnyDeviceConfigured()) {
+    if (this.controlProviderService.isAnyControlConfigured()) {
       this.createAuxDisplay();
-      await this.controlProviderService.connectControlHid();
-      this.controlProviderService.getHIDPacketOutput().pipe(debounceTime(this.controlProviderService.getControlDebounceTime())).subscribe((e) => {
+      setTimeout(() => {
+        this.controlProviderService.initializeControl();
+      });
+      this.controlProviderService.getPacketOutput().pipe(debounceTime(this.controlProviderService.getControlDebounceTime())).subscribe((e) => {
         this.reciveControlMovedEvent(e.detail);
       });
     }
@@ -78,20 +81,20 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseMovedOutDasher() {
-    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+    if (!this.controlProviderService.isAnyControlConfigured()) {
       this.pausedPlayer = true;
       this.onStartStopDasherEvent.next(this.pausedPlayer);
     }
   }
 
   mouseMovedDasher(event: MouseEvent) {
-    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+    if (!this.controlProviderService.isAnyControlConfigured()) {
       this.mouseMovedEvent.next(event);
     }
   }
 
   mouseOverReset() {
-    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+    if (!this.controlProviderService.isAnyControlConfigured()) {
       this.reset();
     }
   }
@@ -109,7 +112,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseOverSpeak() {
-    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+    if (!this.controlProviderService.isAnyControlConfigured()) {
       this.speak();
     }
   }
@@ -120,7 +123,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseOverRepeat() {
-    if (!this.controlProviderService.isAnyDeviceConfigured()) {
+    if (!this.controlProviderService.isAnyControlConfigured()) {
       this.repeat();
     }
   }
@@ -170,6 +173,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   //#region Suporte Controles HID
   private createAuxDisplay() {
+    this.displayVideo = this.controlProviderService.isOcularDeviceConfigured();
     this.suportDiv = document.createElement("div");
     this.suportDiv.style.position = "absolute";
     this.suportDiv.style.left = "50%";
@@ -185,7 +189,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private reciveControlMovedEvent(packet) {
     if (!packet || !packet.actualOrientation) {
       return;
-    }    
+    }
 
     const {
       actualAccelerometer: accelerometer,
@@ -196,46 +200,48 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       ringCon: ringCon,
     } = packet;
 
-    if (buttons.up) {
-      this.onStartStopDasher();
-      return;
-    }
-
     const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
     const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
 
-    if (this.controlProviderService.getActiveControlType() == 'gyroscope') {
-      if (Math.abs(accelerometer.y) > 0.009) {
-        if (accelerometer.y > 0) {
-          this.suportDiv.style.left = (percentLeft + 0.6) > 100 ? '100%' : ((percentLeft + 0.6) < 0 ? '0%' : (percentLeft + 0.6) + "%");
-        } else {
-          this.suportDiv.style.left = (percentLeft + -0.6) > 100 ? '100%' : ((percentLeft + -0.6) < 0 ? '0%' : (percentLeft + -0.6) + "%");
+    if (this.controlProviderService.getActiveControl().includes("Joycon")) {
+      if (this.controlProviderService.getActiveControl().includes("Sensorial")) {
+        if (Math.abs(accelerometer.y) > 0.009) {
+          if (accelerometer.y > 0) {
+            this.suportDiv.style.left = (percentLeft + 0.6) > 100 ? '100%' : ((percentLeft + 0.6) < 0 ? '0%' : (percentLeft + 0.6) + "%");
+          } else {
+            this.suportDiv.style.left = (percentLeft + -0.6) > 100 ? '100%' : ((percentLeft + -0.6) < 0 ? '0%' : (percentLeft + -0.6) + "%");
+          }
+          this.mouseMovedEvent.next({
+            clientX: this.suportDiv.getBoundingClientRect().x,
+            HTMLDivElement: this.suportDiv
+          } as any);
         }
-        this.mouseMovedEvent.next({
-          clientX: this.suportDiv.getBoundingClientRect().x,
-          HTMLDivElement: this.suportDiv
-        } as any);
-      }
 
-      if (accelerometer.x > 0 && Math.abs(accelerometer.x) > 0.005) {
-        this.suportDiv.style.top = (percentTop + -1) > 100 ? '100%' : ((percentTop + -1) < 0 ? '0%' : (percentTop + -1) + "%");
-      } else if (Math.abs(accelerometer.x) > 0.003) {
-        this.suportDiv.style.top = (percentTop + 1) > 100 ? '100%' : ((percentTop + 1) < 0 ? '0%' : (percentTop + 1) + "%");
+        if (accelerometer.x > 0 && Math.abs(accelerometer.x) > 0.005) {
+          this.suportDiv.style.top = (percentTop + -1) > 100 ? '100%' : ((percentTop + -1) < 0 ? '0%' : (percentTop + -1) + "%");
+        } else if (Math.abs(accelerometer.x) > 0.003) {
+          this.suportDiv.style.top = (percentTop + 1) > 100 ? '100%' : ((percentTop + 1) < 0 ? '0%' : (percentTop + 1) + "%");
+        }
+      } else {
+        const joystick = packet.analogStickLeft ?? packet.analogStickLeft;
+        if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
+          this.suportDiv.style.left = (percentLeft + joystick.horizontal) > 100 ? '100%' : ((percentLeft + joystick.horizontal) < 0 ? '0%' : (percentLeft + joystick.horizontal) + "%");
+          this.mouseMovedEvent.next({
+            clientX: this.suportDiv.getBoundingClientRect().x,
+            HTMLDivElement: this.suportDiv
+          } as any);
+        }
+
+        if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
+          this.suportDiv.style.top = (percentTop + joystick.vertical) > 100 ? '100%' : ((percentTop + joystick.vertical) < 0 ? '0%' : (percentTop + joystick.vertical) + "%");
+        }
       }
+    } else if (this.controlProviderService.getActiveControl().includes("Ocular")) {
+      // TODO OCULAR
     } else {
-      const joystick = packet.analogStickLeft ?? packet.analogStickLeft;
-      if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
-        this.suportDiv.style.left = (percentLeft + joystick.horizontal) > 100 ? '100%' : ((percentLeft + joystick.horizontal) < 0 ? '0%' : (percentLeft + joystick.horizontal) + "%");
-        this.mouseMovedEvent.next({
-          clientX: this.suportDiv.getBoundingClientRect().x,
-          HTMLDivElement: this.suportDiv
-        } as any);
-      }
-
-      if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
-        this.suportDiv.style.top = (percentTop + joystick.vertical) > 100 ? '100%' : ((percentTop + joystick.vertical) < 0 ? '0%' : (percentTop + joystick.vertical) + "%");
-      }
+      // TODO DUALSHOCK E MICROSOFT
     }
+
 
     if (elementOverAnother(this.suportDiv, this.voltarElementRef.nativeElement)) {
       if (this.isControlOver.back)

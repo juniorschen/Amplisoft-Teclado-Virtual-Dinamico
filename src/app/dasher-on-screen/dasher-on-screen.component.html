@@ -1,13 +1,16 @@
 <div (click)="onStartStopDasher()" fxLayout="column" fxFill>
 
     <div fxFlex="5">
-        <mat-form-field style="display: flex; padding: 18px;">
+        <mat-form-field style="display: flex;">
             <input matInput type="text" [(ngModel)]="input">
         </mat-form-field>
     </div>
 
     <div fxFlex>
         <div (mousemove)="mouseMovedOutDasher()" fxLayout="column" style="padding: 16px;">
+            <video *ngIf="displayVideo" fxLayoutAlign="center none" id="myVideo" width="400" height="200" preload
+                autoplay loop muted></video>
+
             <div fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #voltarElementRef (mouseover)="mouseOverReset()"
                     fxLayoutAlign="center center">Limpar Toda Digitação</p>
@@ -25,7 +28,9 @@
             </div>
         </div>
 
-        <div fxLayoutAlign="center center" style="width: 50px; background-color: lightgray;">
+        <div fxLayoutAlign="center start" [ngClass]="pausedPlayer ? 'start-div' : 'stop-div '">
+            <mat-icon *ngIf="pausedPlayer" class="icon-display">play_circle_outline</mat-icon>
+            <mat-icon *ngIf="!pausedPlayer" class="icon-display">stop</mat-icon>
         </div>
 
         <div fxLayoutAlign="center center" style="padding: 50px;" fxLayout="column">

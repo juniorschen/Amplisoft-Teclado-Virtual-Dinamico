@@ -109,7 +109,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
     this.redefineOrCreatePlayerAnimation(true);
     this.lastClientXPosition = event.clientX;
 
-    if (this.controlProviderService.isAnyDeviceConfigured())
+    if (this.controlProviderService.isAnyControlConfigured())
       this.checkElementOverAnotherWhenAnimationRunning(event.HTMLDivElement);
   }
 
@@ -125,7 +125,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   }
 
   mouseOverWordEvent() {
-    if (!this.player || this.controlProviderService.isAnyDeviceConfigured())
+    if (!this.player || this.controlProviderService.isAnyControlConfigured() || this.pausedPlayer)
       return;
 
     this.wordSelectedEvent.next(this.word);
@@ -145,6 +145,5 @@ export class DasherOnScreenPlayerComponent implements OnInit {
       this.animationRunning.next();
     }
   }
-
 
 }

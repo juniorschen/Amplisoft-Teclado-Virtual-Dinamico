@@ -1,30 +1,19 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
 import { doc, setDoc } from "firebase/firestore";
-import { Subject, fromEvent, take, takeUntil } from 'rxjs';
-import { getFirestore } from "firebase/firestore";
-// node_modules/tracking/build/data/face.js
-import "tracking";
-import "tracking/build/data/face";
-import "tracking/build/data/eye";
-declare var window: any;
-declare var tracking: any;
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-dasher-feedback',
   templateUrl: './dasher-feedback.component.html',
   styleUrls: ['./dasher-feedback.component.scss']
 })
-export class DasherFeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DasherFeedbackComponent implements OnInit, OnDestroy {
 
   public input = '';
   private firestore: Firestore = inject(Firestore);
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
-
-  @ViewChild("canvas") canvas: ElementRef;
-  @ViewChild('video') videoElement!: ElementRef;
-  private tracker: any;
 
   constructor(private _ngZone: NgZone) { }
 
@@ -32,21 +21,6 @@ export class DasherFeedbackComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
-  }
-
-  async ngAfterViewInit(): Promise<void> {
-    var video = document.getElementById('myVideo');
-    if (video) {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-      document.getElementById('myVideo')["srcObject"] = stream;
-      this.tracker = new tracking.ObjectTracker("face");
-
-      this.tracker.on('track', function (event) {
-        console.log(event)
-      });
-
-      tracking.track('#myVideo', this.tracker, { camera: true });
-    }
   }
 
   triggerResize() {

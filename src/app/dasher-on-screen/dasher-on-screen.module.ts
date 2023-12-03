@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { DasherOnScreenComponent } from './dasher-on-screen.component';
 import { DasherOnScreenRoutingModule } from './dasher-on-screen-routing.module';
 import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-
     FlexLayoutModule,
     MatInputModule,
     MatFormFieldModule,
-    FormsModule
+    FormsModule,
+    MatIconModule
   ]
 })
 export class DasherOnScreenModule { }
