@@ -182,7 +182,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.suportDiv.style.height = "20px";
     this.suportDiv.style.background = "red";
     this.suportDiv.style.color = "blue";
-
+    this.suportDiv.style.zIndex = "1";
     document.body.appendChild(this.suportDiv);
   }
 
