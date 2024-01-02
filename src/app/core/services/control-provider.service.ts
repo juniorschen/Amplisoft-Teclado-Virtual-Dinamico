@@ -18,6 +18,7 @@ export class ControlProviderService {
     private tracker: any;
     private trackerTask: any;
     private onPacketSended = new Subject<any>();
+    private activeControl: string;
 
     constructor() { }
 
@@ -34,8 +35,11 @@ export class ControlProviderService {
     }
 
     public getControlDebounceTime() {
+        if (!this.activeControl) {
+            this.activeControl = this.getActiveControl();
+        }
         // Sensorial emite valores o tempo todo e não a cada ação do usuário então é necessario ter um debounce time para cada evento
-        return this.getActiveControl().includes('Sensorial') ? 15 : 0;
+        return this.activeControl.includes('Sensorial') ? 15 : 0;
     }
 
     public isAnyControlConfigured() {
@@ -131,8 +135,15 @@ export class ControlProviderService {
             document.getElementById('myVideo')["srcObject"] = stream;
             this.tracker = new tracking.ObjectTracker("eye");
 
-            this.tracker.on('track', function (event) {
-                console.log(event)
+            this.tracker.on('track', (event) => {
+                if (event.data.length > 0) {
+                    this.onPacketSended.next({
+                        detail: {
+                            x: event.data[0].x,
+                            y: event.data[0].y,
+                        }
+                    });
+                }
             });
 
             this.trackerTask = tracking.track('#myVideo', this.tracker, { camera: true });

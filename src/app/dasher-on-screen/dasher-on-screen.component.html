@@ -7,17 +7,18 @@
     </div>
 
     <div fxFlex>
-        <div (mousemove)="mouseMovedOutDasher()" fxLayout="column" style="padding: 16px;">
+
+        <div #leftElementRef (mousemove)="mouseMovedOutDasher()" fxLayout="column" style="padding: 16px;">
             <video *ngIf="displayVideo" fxLayoutAlign="center none" id="myVideo" width="400" height="200" preload
                 autoplay loop muted></video>
 
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #voltarElementRef (mouseover)="mouseOverReset()"
+                <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
                     fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
 
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #repetirElementRef (mouseover)="mouseOverRepeat()"
+                <p class="label-default-font-size" #limparElementRef (mouseover)="mouseOverReset(false)"
                     fxLayoutAlign="center center">Limpar Último
                 </p>
             </div>
@@ -28,17 +29,20 @@
             </div>
         </div>
 
-        <div fxLayoutAlign="center start" [ngClass]="pausedPlayer ? 'start-div' : 'stop-div '">
-            <mat-icon *ngIf="pausedPlayer" class="icon-display">play_circle_outline</mat-icon>
-            <mat-icon *ngIf="!pausedPlayer" class="icon-display">stop</mat-icon>
+        <div id="playDiv" fxLayoutAlign="center start" [ngClass]="pausedPlayer ? 'start-div' : 'stop-div '">
+            <div #startElementRef>
+                <mat-icon *ngIf="pausedPlayer" class="icon-display">play_circle_outline</mat-icon>
+                <mat-icon *ngIf="!pausedPlayer" class="icon-display">stop</mat-icon>
+            </div>
         </div>
 
-        <div fxLayoutAlign="center center" style="padding: 50px;" fxLayout="column">
+        <div #centerElementRef fxLayoutAlign="center center" fxLayout="column">
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" fxLayoutAlign="center center">Inserir Espaço</p>
+                <p class="label-default-font-size" fxLayoutAlign="center center" (mouseover)="mouseOverBlankSpace()">
+                    Inserir Espaço</p>
             </div>
 
-            <p #startElementRef style="font-size: 90px;">*</p>
+            <div #supportDivFatherElementRef></div>
 
             <div fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" fxLayoutAlign="center center">Mostrar Mais
@@ -46,15 +50,13 @@
             </div>
         </div>
 
-        <div (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
-
+        <div #rightElementRef (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
             <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-i="index">
                 <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[i]"
                     [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
                     [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
                     fxFlex></app-dasher-on-screen-player>
             </ng-template>
-
         </div>
 
     </div>
