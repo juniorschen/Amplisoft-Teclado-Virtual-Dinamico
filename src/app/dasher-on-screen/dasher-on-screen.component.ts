@@ -57,16 +57,16 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   public displayVideo = false;
   public input = '';
   public wordsOnScreen: Array<string> = [
-    "Olá",
-    "Oi",
-    "Eaew",
-    "Bom dia",
-    "Como vai",
-    "Fala mano",
-    "Tudo certo",
-    "Vamos indo",
-    "Estou bem",
-    "Mostrar opções",
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
   ];
 
   constructor(private controlProviderService: ControlProviderService, private perfomanceIndicatorService: PerfomanceIndicatorService) {
@@ -193,16 +193,16 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   private redefinedWords() {
-    this.wordsOnScreen[0] = "Olá";
-    this.wordsOnScreen[1] = "Oi";
-    this.wordsOnScreen[2] = "Eaew";
-    this.wordsOnScreen[3] = "Bom dia";
-    this.wordsOnScreen[4] = "Como vai";
-    this.wordsOnScreen[5] = "Fala mano";
-    this.wordsOnScreen[6] = "Tudo certo";
-    this.wordsOnScreen[7] = "Vamos indo";
-    this.wordsOnScreen[8] = "Estou bem";
-    this.wordsOnScreen[9] = "Mostrar opções";
+    this.wordsOnScreen[0] = "a";
+    this.wordsOnScreen[1] = "b";
+    this.wordsOnScreen[2] = "c";
+    this.wordsOnScreen[3] = "d";
+    this.wordsOnScreen[4] = "e";
+    this.wordsOnScreen[5] = "f";
+    this.wordsOnScreen[6] = "g";
+    this.wordsOnScreen[7] = "h";
+    this.wordsOnScreen[8] = "i";
+    this.wordsOnScreen[9] = "j";
   }
 
   //#region Suporte Controles HID

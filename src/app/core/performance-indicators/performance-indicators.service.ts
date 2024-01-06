@@ -88,7 +88,24 @@ export class PerfomanceIndicatorService {
         }
 
         const deviceInfo = this.deviceService.getDeviceInfo();
-        await setDoc(doc(this.firestore, "feedback", this.identifierService.generateUUIDV4()), {
+        /* await setDoc(doc(this.firestore, "feedback", this.identifierService.generateUUIDV4()), {
+            "browser": window.navigator.userAgent,
+            "os": deviceInfo.os,
+            "os_version": deviceInfo.os_version,
+            "device": deviceInfo.deviceType,
+            "deviceId": this.identifierService.getDeviceId(),
+            "control": this.controlProviderService.getActiveControl(),
+            "data": {
+                "cpmIndicator": cpmIndicator,
+                "wmpIndicator": wmpIndicator,
+                "epmIndicator": epmIndicator,
+                "ppmIndicator": ppmIndicator,
+                "startDate": this.startDate,
+                "endDate": this.endDate,
+                "totalUsageSeconds": calcularDiferencaEmSegundos(this.startDate, this.endDate)
+            }
+        }); */
+        console.log("feedback sended", {
             "browser": window.navigator.userAgent,
             "os": deviceInfo.os,
             "os_version": deviceInfo.os_version,
