@@ -2,7 +2,10 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { Component, NgZone, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
 import { doc, setDoc } from "firebase/firestore";
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { take } from 'rxjs';
+import { IdentifierService } from '../core/services/identifier.service';
+import { ControlProviderService } from '../core/services/control-provider.service';
 
 @Component({
   selector: 'app-dasher-feedback',
@@ -15,7 +18,8 @@ export class DasherFeedbackComponent implements OnInit, OnDestroy {
   private firestore: Firestore = inject(Firestore);
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
-  constructor(private _ngZone: NgZone) { }
+  constructor(private _ngZone: NgZone, private deviceService: DeviceDetectorService, private identifierService: IdentifierService,
+    private controlProviderService: ControlProviderService) { }
 
   ngOnInit(): void {
   }
@@ -29,7 +33,15 @@ export class DasherFeedbackComponent implements OnInit, OnDestroy {
   }
 
   public async sendFeedback() {
-    console.log(this.input)
-    await setDoc(doc(this.firestore, "feedback", "new-feedback"), { "data": this.input });
+    const deviceInfo = this.deviceService.getDeviceInfo();
+    await setDoc(doc(this.firestore, "feedback", this.identifierService.generateUUIDV4()), {
+      "browser": window.navigator.userAgent,
+      "os": deviceInfo.os,
+      "os_version": deviceInfo.os_version,
+      "device": deviceInfo.deviceType,
+      "deviceId": this.identifierService.getDeviceId(),
+      "control": this.controlProviderService.getActiveControl(),
+      "data": this.input
+    });
   }
 }

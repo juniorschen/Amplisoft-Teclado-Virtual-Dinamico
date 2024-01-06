@@ -1,4 +1,4 @@
-<div (click)="onStartStopDasher()" fxLayout="column" fxFill>
+<div fxLayout="column" fxFill>
 
     <div fxFlex="5">
         <mat-form-field style="display: flex;">
@@ -8,7 +8,14 @@
 
     <div fxFlex>
 
-        <div #leftElementRef (mousemove)="mouseMovedOutDasher()" fxLayout="column" style="padding: 16px;">
+        <div fxLayoutAlign="center start" class="stop-div">
+            <div>
+                <!-- <mat-icon class="icon-display">play_circle_outline</mat-icon> -->
+                <mat-spinner diameter="40"></mat-spinner>
+            </div>
+        </div>
+
+        <div fxLayout="column" style="padding: 16px;">
             <video *ngIf="displayVideo" fxLayoutAlign="center none" id="myVideo" width="400" height="200" preload
                 autoplay loop muted></video>
 
@@ -29,31 +36,23 @@
             </div>
         </div>
 
-        <div id="playDiv" fxLayoutAlign="center start" [ngClass]="pausedPlayer ? 'start-div' : 'stop-div '">
-            <div #startElementRef>
-                <mat-icon *ngIf="pausedPlayer" class="icon-display">play_circle_outline</mat-icon>
-                <mat-icon *ngIf="!pausedPlayer" class="icon-display">stop</mat-icon>
-            </div>
-        </div>
-
-        <div #centerElementRef fxLayoutAlign="center center" fxLayout="column">
+        <div fxLayoutAlign="center center" fxLayout="column">
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" fxLayoutAlign="center center" (mouseover)="mouseOverBlankSpace()">
+                <p class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center" (mouseover)="mouseOverBlankSpace()">
                     Inserir Espaço</p>
             </div>
 
-            <div #supportDivFatherElementRef></div>
+            <div></div>
 
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" fxLayoutAlign="center center">Mostrar Mais
+                <p class="label-default-font-size" #mostrarMaisElementRef fxLayoutAlign="center center" (mouseover)="mouseOverMoreOptions()">Mostrar Mais
                 </p>
             </div>
         </div>
 
-        <div #rightElementRef (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
+        <div (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
             <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-i="index">
-                <app-dasher-on-screen-player *ngIf="showDasherWords" [word]="wordsOnScreen[i]"
-                    [onStartStopDasherEvent]="onStartStopDasherEvent" [mouseMovedEvent]="mouseMovedEvent"
+                <app-dasher-on-screen-player [word]="wordsOnScreen[i]" [mouseMovedEvent]="mouseMovedEvent"
                     [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
                     fxFlex></app-dasher-on-screen-player>
             </ng-template>

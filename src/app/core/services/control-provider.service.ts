@@ -20,6 +20,8 @@ export class ControlProviderService {
     private onPacketSended = new Subject<any>();
     private activeControl: string;
 
+    public sensorialSelectionDelayMs = 45000;
+
     constructor() { }
 
     public getActiveControl() {
@@ -139,8 +141,14 @@ export class ControlProviderService {
                 if (event.data.length > 0) {
                     this.onPacketSended.next({
                         detail: {
-                            x: event.data[0].x,
-                            y: event.data[0].y,
+                            leftEye: {
+                                x: event.data[0].x,
+                                y: event.data[0].y,
+                            },
+                            rightEye: {
+                                x: event.data[1].x,
+                                y: event.data[1].y,
+                            }
                         }
                     });
                 }

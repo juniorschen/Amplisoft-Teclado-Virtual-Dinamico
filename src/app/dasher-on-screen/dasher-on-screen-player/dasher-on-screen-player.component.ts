@@ -14,15 +14,12 @@ import { ControlProviderService } from 'src/app/core/services/control-provider.s
 export class DasherOnScreenPlayerComponent implements OnInit {
 
   private player: AnimationPlayer;
-  private pausedPlayer = true;
   private lastClientXPosition = 0;
   private defaultAnimationDelay = 3000;
   private animationRunning: Subject<void> = new Subject();
 
   @Input('word')
   public word: string;
-  @Input('onStartStopDasherEvent')
-  public onStartStopDasherEvent: Subject<boolean> = new Subject();
   @Input('mouseMovedEvent')
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   @Input('onResetDasherEvent')
@@ -46,10 +43,6 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   constructor(public animationBuilder: AnimationBuilder, private controlProviderService: ControlProviderService) { }
 
   ngOnInit(): void {
-    this.onStartStopDasherEvent.subscribe((paused) => {
-      this.onStartStopDasher(paused);
-    });
-
     this.mouseMovedEvent.subscribe((event) => {
       this.mouseMoved(event);
     });
@@ -70,7 +63,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
     }
     this.player = animationFactory.create(this.divElementRef.nativeElement, { params: this.animationParams });
 
-    if (shouldPlay && !this.pausedPlayer) {
+    if (shouldPlay) {
       this.player.play();
     }
   }
@@ -78,25 +71,14 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   private calculateAnimationDuration() {
     if (!this.player)
       return this.defaultAnimationDelay;
-    return this.defaultAnimationDelay * Number(this.player.getPosition().toFixed(2));
-  }
-
-  private onStartStopDasher(paused: boolean) {
-    if (!paused) {
-      if (this.player)
-        this.player.play();
-      this.pausedPlayer = false;
-    } else {
-      if (this.player)
-        this.player.pause();
-      this.pausedPlayer = true;
+    const currentDelay = this.defaultAnimationDelay * Number(this.player.getPosition().toFixed(2));
+    if (currentDelay > 500) {
+      return currentDelay;
     }
+    return 500;
   }
 
   private mouseMoved(event: any) {
-    if (this.pausedPlayer)
-      return;
-
     if (Math.abs(this.lastClientXPosition - event.clientX) < 25)
       return;
 
@@ -125,7 +107,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   }
 
   mouseOverWordEvent() {
-    if (!this.player || this.controlProviderService.isAnyControlConfigured() || this.pausedPlayer)
+    if (!this.player || this.controlProviderService.isAnyControlConfigured())
       return;
 
     this.wordSelectedEvent.next(this.word);
@@ -137,11 +119,11 @@ export class DasherOnScreenPlayerComponent implements OnInit {
         this.animationRunning.complete();
         this.wordSelectedEvent.next(this.word);
       }
-      if (!this.pausedPlayer && this.player) {
+      if (this.player) {
         this.animationRunning.next();
       }
     });
-    if (!this.pausedPlayer && this.player) {
+    if (this.player) {
       this.animationRunning.next();
     }
   }
