@@ -34,9 +34,9 @@ export class DasherControlSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  public toggleChanged(event, name: string) {
+  public async toggleChanged(event, name: string) {
     this.controlProviderService.desactiveControl();
-    this.controlProviderService.forgetDevices();
+    await this.controlProviderService.forgetDevices();
 
     if (event.checked)
       this.controlProviderService.setActiveControl(name);

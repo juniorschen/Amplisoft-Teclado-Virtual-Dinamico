@@ -20,7 +20,7 @@ export class ControlProviderService {
     private onPacketSended = new Subject<any>();
     private activeControl: string;
 
-    public sensorialSelectionDelayMs = 45000;
+    public sensorialSelectionDelayMs = 1000 * 4;
 
     constructor() { }
 
@@ -82,7 +82,7 @@ export class ControlProviderService {
 
     async connectControlHid(filters = []): Promise<boolean> {
         if (navigator.hid == null) {
-            console.error("This browser does not support USB HID communication!");
+            alert("Atenção o navegador atual não apresenta suporte para dispositvos HID utilize Google Chrome, Edge ou Opera!")
             return false;
         }
 
@@ -120,6 +120,7 @@ export class ControlProviderService {
             }
             return true;
         } catch (error) {
+            console.log('error', error)
             return false;
         }
     }
@@ -127,7 +128,6 @@ export class ControlProviderService {
     handleInputReport(e) {
         var uint8View = new Uint8Array(e.data.buffer);
         if (e.data.getUint8(0) === 0) return;
-        console.log(uint8View)
     }
 
     public async connectControlCamera() {
@@ -135,10 +135,13 @@ export class ControlProviderService {
         if (video) {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
             document.getElementById('myVideo')["srcObject"] = stream;
-            this.tracker = new tracking.ObjectTracker("eye");
+            this.tracker = new tracking.ObjectTracker('eye');
+
+            this.tracker.setInitialScale(1);
+            this.tracker.setStepSize(1);
 
             this.tracker.on('track', (event) => {
-                if (event.data.length > 0) {
+                if (event.data.length > 1) {
                     this.onPacketSended.next({
                         detail: {
                             leftEye: {

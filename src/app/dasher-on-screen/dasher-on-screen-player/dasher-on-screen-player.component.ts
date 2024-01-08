@@ -17,6 +17,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   private lastClientXPosition = 0;
   private defaultAnimationDelay = 3000;
   private animationRunning: Subject<void> = new Subject();
+  private wordSelected = false;
 
   @Input('word')
   public word: string;
@@ -49,6 +50,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
 
     this.onResetDasherEvent.subscribe(() => {
       this.resetPlayer();
+      this.wordSelected = false;
     });
   }
 
@@ -114,9 +116,9 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   }
 
   private checkElementOverAnotherWhenAnimationRunning(el1: HTMLDivElement) {
-    this.animationRunning.pipe(debounceTime(200)).subscribe(() => {
-      if (elementOverAnother(el1, this.pElementRef.nativeElement)) {
-        this.animationRunning.complete();
+    this.animationRunning.pipe(debounceTime(100)).subscribe(() => {
+      if (elementOverAnother(el1, this.pElementRef.nativeElement) && !this.wordSelected) {
+        this.wordSelected = true;
         this.wordSelectedEvent.next(this.word);
       }
       if (this.player) {

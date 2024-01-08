@@ -8,10 +8,10 @@
 
     <div fxFlex>
 
-        <div fxLayoutAlign="center start" class="stop-div">
+        <div fxLayoutAlign="center start" [ngClass]="!isAfk ? 'stop-div' : 'start-div'">
             <div>
-                <!-- <mat-icon class="icon-display">play_circle_outline</mat-icon> -->
-                <mat-spinner diameter="40"></mat-spinner>
+                <mat-icon *ngIf="isAfk" class="icon-display">stop</mat-icon>
+                <mat-spinner *ngIf="!isAfk" diameter="40"></mat-spinner>
             </div>
         </div>
 
@@ -38,14 +38,16 @@
 
         <div fxLayoutAlign="center center" fxLayout="column">
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center" (mouseover)="mouseOverBlankSpace()">
+                <p class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
+                    (mouseover)="mouseOverBlankSpace()">
                     Inserir Espaço</p>
             </div>
 
             <div></div>
 
             <div fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #mostrarMaisElementRef fxLayoutAlign="center center" (mouseover)="mouseOverMoreOptions()">Mostrar Mais
+                <p class="label-default-font-size" #mostrarMaisElementRef fxLayoutAlign="center center"
+                    (mouseover)="mouseOverMoreOptions()">Mostrar Mais
                 </p>
             </div>
         </div>
