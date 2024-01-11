@@ -62,6 +62,31 @@ export class DasherControlSettingsComponent implements OnInit, OnDestroy {
                 productId: 0x2007 // Joy-Con Right
               });
             }
+          } else if (name.includes("JoystickDualShock")) {
+            hid = [
+              // Official Sony Controllers
+              { vendorId: 0x054C, productId: 0x0BA0 },
+              { vendorId: 0x054C, productId: 0x05C4 },
+              { vendorId: 0x054C, productId: 0x09CC },
+              { vendorId: 0x054C, productId: 0x05C5 },
+              // Razer Raiju
+              { vendorId: 0x1532, productId: 0x1000 },
+              { vendorId: 0x1532, productId: 0x1007 },
+              { vendorId: 0x1532, productId: 0x1004 },
+              { vendorId: 0x1532, productId: 0x1009 },
+              // Nacon Revol
+              { vendorId: 0x146B, productId: 0x0D01 },
+              { vendorId: 0x146B, productId: 0x0D02 },
+              { vendorId: 0x146B, productId: 0x0D08 },
+              // Other third party controllers
+              { vendorId: 0x0F0D, productId: 0x00EE },
+              { vendorId: 0x7545, productId: 0x0104 },
+              { vendorId: 0x2E95, productId: 0x7725 },
+              { vendorId: 0x11C0, productId: 0x4001 },
+              { vendorId: 0x0C12, productId: 0x57AB },
+              { vendorId: 0x0C12, productId: 0x0E16 },
+              { vendorId: 0x0F0D, productId: 0x0084 }
+            ];
           }
 
           if (hid.length > 0) {
@@ -69,7 +94,6 @@ export class DasherControlSettingsComponent implements OnInit, OnDestroy {
             if (!connected) {
               this.form.get(formControlName).setValue(false);
               this.controlProviderService.desactiveControl();
-              alert("Atenção é necessário aceitar as permissões do dispositivo HID para utilizar o mesmo.")
             }
           }
         }

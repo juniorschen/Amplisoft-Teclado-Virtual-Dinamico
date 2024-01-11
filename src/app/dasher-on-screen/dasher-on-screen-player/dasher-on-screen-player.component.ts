@@ -116,7 +116,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   }
 
   private checkElementOverAnotherWhenAnimationRunning(el1: HTMLDivElement) {
-    this.animationRunning.pipe(debounceTime(100)).subscribe(() => {
+    this.animationRunning.pipe(debounceTime(10)).subscribe(() => {
       if (elementOverAnother(el1, this.pElementRef.nativeElement) && !this.wordSelected) {
         this.wordSelected = true;
         this.wordSelectedEvent.next(this.word);

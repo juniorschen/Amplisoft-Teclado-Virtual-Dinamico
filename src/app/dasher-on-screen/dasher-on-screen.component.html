@@ -6,7 +6,7 @@
         </mat-form-field>
     </div>
 
-    <div fxFlex>
+    <div #playerDivElementRef fxFlex>
 
         <div fxLayoutAlign="center start" [ngClass]="!isAfk ? 'stop-div' : 'start-div'">
             <div>
@@ -19,39 +19,54 @@
             <video *ngIf="displayVideo" fxLayoutAlign="center none" id="myVideo" width="400" height="200" preload
                 autoplay loop muted></video>
 
-            <div fxLayoutAlign="center none" fxFill fxFlex>
+            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
                     fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
 
-            <div fxLayoutAlign="center none" fxFill fxFlex>
+            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+                <p class="label-default-font-size" #vogaisElementRef fxLayoutAlign="center center"
+                    (mouseover)="mouseOverBlankSpace()">
+                    Vogais</p>
+            </div>
+
+            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #limparElementRef (mouseover)="mouseOverReset(false)"
                     fxLayoutAlign="center center">Limpar Último
                 </p>
             </div>
 
-            <div fxLayoutAlign="center none" fxFill fxFlex>
+            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+                <p class="label-default-font-size" #consoantesElementRef fxLayoutAlign="center center"
+                    (mouseover)="mouseOverMoreOptions()">Consoantes
+                </p>
+            </div>
+
+            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()"
                     fxLayoutAlign="center center">Falar Texto Completo</p>
             </div>
         </div>
 
+        <div style="width: 100px;">
+
+        </div>
+
         <div fxLayoutAlign="center center" fxLayout="column">
-            <div fxLayoutAlign="center none" fxFill fxFlex>
+            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverBlankSpace()">
                     Inserir Espaço</p>
             </div>
 
-            <div></div>
+            <div #centerDivElementRef fxFill fxFlex></div>
 
-            <div fxLayoutAlign="center none" fxFill fxFlex>
+            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #mostrarMaisElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverMoreOptions()">Mostrar Mais
                 </p>
             </div>
         </div>
-
         <div (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
             <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-i="index">
                 <app-dasher-on-screen-player [word]="wordsOnScreen[i]" [mouseMovedEvent]="mouseMovedEvent"

@@ -8,6 +8,8 @@ declare var tracking: any;
 
 
 import { enableJoyconFunctions, _onInputReportJoycon } from 'src/app/core/support/joycon-support/joycon-support';
+import { _onInputReportDualShock } from '../support/dualshock/dualshock-support';
+import { connectControlCamera } from '../support/camera/camera-support';
 
 @Injectable({
     providedIn: 'root'
@@ -73,10 +75,10 @@ export class ControlProviderService {
     }
 
     public async initializeControl() {
-        if (this.isHidDeviceConfigured()) {
+        if (this.isOcularDeviceConfigured()) {
+            await connectControlCamera(this.tracker, this.trackerTask, this.onPacketSended);
+        } else if (this.isHidDeviceConfigured()) {
             await this.connectControlHid();
-        } else if (this.isOcularDeviceConfigured()) {
-            await this.connectControlCamera();
         }
     }
 
@@ -113,6 +115,14 @@ export class ControlProviderService {
                 this.currentHidDevice.addEventListener('hidinput', (e) => {
                     this.onPacketSended.next(e);
                 });
+            } else if (this.getActiveControl().includes("DualShock")) {
+                let controlInterface;
+                this.currentHidDevice.oninputreport = e => {
+                    _onInputReportDualShock(e, this.currentHidDevice, controlInterface);
+                }
+                this.currentHidDevice.addEventListener('hidinput', (e) => {
+                    this.onPacketSended.next(e);
+                });
             } else {
                 this.currentHidDevice.oninputreport = e => {
                     this.handleInputReport(e);
@@ -128,36 +138,5 @@ export class ControlProviderService {
     handleInputReport(e) {
         var uint8View = new Uint8Array(e.data.buffer);
         if (e.data.getUint8(0) === 0) return;
-    }
-
-    public async connectControlCamera() {
-        var video = document.getElementById('myVideo');
-        if (video) {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-            document.getElementById('myVideo')["srcObject"] = stream;
-            this.tracker = new tracking.ObjectTracker('eye');
-
-            this.tracker.setInitialScale(1);
-            this.tracker.setStepSize(1);
-
-            this.tracker.on('track', (event) => {
-                if (event.data.length > 1) {
-                    this.onPacketSended.next({
-                        detail: {
-                            leftEye: {
-                                x: event.data[0].x,
-                                y: event.data[0].y,
-                            },
-                            rightEye: {
-                                x: event.data[1].x,
-                                y: event.data[1].y,
-                            }
-                        }
-                    });
-                }
-            });
-
-            this.trackerTask = tracking.track('#myVideo', this.tracker, { camera: true });
-        }
     }
 }

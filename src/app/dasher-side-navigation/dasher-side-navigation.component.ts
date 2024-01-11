@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDrawer } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,6 +8,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./dasher-side-navigation.component.scss']
 })
 export class DasherSideNavigationComponent implements OnInit {
+
+  @ViewChild('drawer') drawer: MatDrawer;
 
   constructor(private router: Router) {
   }
@@ -17,6 +20,9 @@ export class DasherSideNavigationComponent implements OnInit {
 
   onNavigate(route: string) {
     this.router.navigate([route]);
+    if (route.includes("dasher-on-screen")) {
+      this.drawer.close();
+    }
   }
 
 }

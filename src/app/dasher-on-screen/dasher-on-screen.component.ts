@@ -1,13 +1,13 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
-import { elementOverAnother } from '../common/document-helper';
+import { elementOverAnother, getOffset } from '../common/document-helper';
 
 import { ControlProviderService } from '../core/services/control-provider.service';
 import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
-import { findClosestIndex } from '../common/array-consts';
 import { calcularDiferencaEmMilissegundos } from '../common/date';
 import { PerfomanceIndicatorService } from '../core/performance-indicators/performance-indicators.service';
 import { Sector } from '../common/sector.enum';
+import { WordType } from '../common/word-type.enum';
 
 @Component({
   selector: 'app-dasher-on-screen',
@@ -23,6 +23,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private afkInterval;
   private suportDiv: HTMLDivElement;
   private sector: Sector;
+  private wordType = WordType.Mixed;
 
   // Detecção sensorial
   private lastSensorialDetectionTime: Date;
@@ -43,6 +44,18 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('mostrarMaisElementRef')
   public mostrarMaisElementRef: ElementRef<HTMLParagraphElement>;
+
+  @ViewChild('vogaisElementRef')
+  public vogaisElementRef: ElementRef<HTMLParagraphElement>;
+
+  @ViewChild('consoantesElementRef')
+  public consoantesElementRef: ElementRef<HTMLParagraphElement>;
+
+  @ViewChild('centerDivElementRef')
+  public centerDivElementRef: ElementRef<HTMLDivElement>;
+
+  @ViewChild('playerDivElementRef')
+  public playerDivElementRef: ElementRef<HTMLDivElement>;
 
   @ViewChildren(DasherOnScreenPlayerComponent) wordsElements: QueryList<DasherOnScreenPlayerComponent>
 
@@ -104,6 +117,21 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.mouseMovedEvent.next(event);
     }
   }
+
+  mouseOverVowels() {
+    if (!this.controlProviderService.isAnyControlConfigured()) {
+      this.wordType = WordType.Vowels;
+      this.redefinedWords();
+    }
+  }
+
+  mouseOverConsonants() {
+    if (!this.controlProviderService.isAnyControlConfigured()) {
+      this.wordType = WordType.Consonants;
+      this.redefinedWords();
+    }
+  }
+
 
   mouseOverBlankSpace() {
     if (!this.controlProviderService.isAnyControlConfigured()) {
@@ -203,20 +231,30 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.wordsOnScreen[7] = "h";
     this.wordsOnScreen[8] = "i";
     this.wordsOnScreen[9] = "j";
+    this.wordType = WordType.Mixed;
   }
 
   //#region Suporte Controles HID
   private createAuxDisplay() {
     this.displayVideo = this.controlProviderService.isOcularDeviceConfigured();
-    this.suportDiv = document.createElement("div");
-    this.suportDiv.style.position = "absolute";
-    this.suportDiv.style.left = "50%";
-    this.suportDiv.style.top = "50%";
-    this.suportDiv.style.width = "20px";
-    this.suportDiv.style.height = "20px";
-    this.suportDiv.style.background = "red";
-    this.suportDiv.style.zIndex = "1";
-    document.body.appendChild(this.suportDiv);
+    setTimeout(() => {
+      this.suportDiv = document.createElement("div");
+      this.suportDiv.style.position = "absolute";
+      this.suportDiv.style.left = (this.centerDivElementRef.nativeElement.offsetLeft + this.centerDivElementRef.nativeElement.offsetWidth / 2) + "px";
+      this.suportDiv.style.top = (this.centerDivElementRef.nativeElement.offsetTop + this.centerDivElementRef.nativeElement.offsetHeight / 2) + "px";
+      this.suportDiv.style.width = "20px";
+      this.suportDiv.style.height = "20px";
+      this.suportDiv.style.background = "red";
+      this.suportDiv.style.zIndex = "1";
+      this.playerDivElementRef.nativeElement.appendChild(this.suportDiv);
+    });
+  }
+
+  private resetAuxDisplay() {
+    if (this.controlProviderService.isAnyControlConfigured()) {
+      this.playerDivElementRef.nativeElement.appendChild(this.suportDiv);
+      this.createAuxDisplay();
+    }
   }
 
   private doResetSensorialDetection() {
@@ -230,6 +268,32 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  private setBackGroundColorActions() {
+    if (elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement)) {
+      this.limparElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else if (elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement)) {
+      this.falarElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else if (elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement)) {
+      this.limparTudoElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
+      this.espacoElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else if (elementOverAnother(this.suportDiv, this.mostrarMaisElementRef.nativeElement)) {
+      this.mostrarMaisElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else if (elementOverAnother(this.suportDiv, this.vogaisElementRef.nativeElement)) {
+      this.vogaisElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else if (elementOverAnother(this.suportDiv, this.consoantesElementRef.nativeElement)) {
+      this.consoantesElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else {
+      this.limparElementRef.nativeElement.style.backgroundColor = "unset";
+      this.falarElementRef.nativeElement.style.backgroundColor = "unset";
+      this.limparTudoElementRef.nativeElement.style.backgroundColor = "unset";
+      this.espacoElementRef.nativeElement.style.backgroundColor = "unset";
+      this.mostrarMaisElementRef.nativeElement.style.backgroundColor = "unset";
+      this.vogaisElementRef.nativeElement.style.backgroundColor = "unset";
+      this.consoantesElementRef.nativeElement.style.backgroundColor = "unset";
+    }
+  }
+
   private reciveControlMovedEvent(packet) {
     if (!packet) {
       return;
@@ -241,26 +305,14 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
 
       if (this.controlProviderService.getActiveControl().includes("Sensorial")) {
-        /* if (Math.abs(packet.actualAccelerometer.y) > 0.009) {
-          if (packet.actualAccelerometer.y > 0) {
-            this.suportDiv.style.left = (percentLeft + 0.6) > 100 ? '100%' : ((percentLeft + 0.6) < 0 ? '0%' : (percentLeft + 0.6) + "%");
-          } else {
-            this.suportDiv.style.left = (percentLeft + -0.6) > 100 ? '100%' : ((percentLeft + -0.6) < 0 ? '0%' : (percentLeft + -0.6) + "%");
-          }
-          this.mouseMovedEvent.next({
-            clientX: this.suportDiv.getBoundingClientRect().x,
-            HTMLDivElement: this.suportDiv
-          } as any);
-        } */
-
+        
         if (Math.abs(packet.actualAccelerometer.y) > 0.009) {
           if (packet.actualAccelerometer.y > 0) {
             this.sector = Sector.Right;
-            this.suportDiv.style.left = "98%";
-
+            this.suportDiv.style.left = "97.5%";
             this.wordsElements.forEach((w, index) => {
               if (elementOverAnother(this.suportDiv, w.pElementRef.nativeElement) && this.lastWordDetectionIndex != index) {
-                w.pElementRef.nativeElement.style.backgroundColor = "red";
+                w.pElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
                 this.lastSensorialDetectionTime = new Date();
                 this.lastWordDetectionIndex = index;
                 wordDetected = true;
@@ -277,12 +329,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
           } else if (this.sector != Sector.Left) {
             this.doResetSensorialDetection();
             this.sector = Sector.Left;
-            this.suportDiv.style.left = "5%";
+            this.suportDiv.style.left = (this.limparElementRef.nativeElement.offsetLeft + this.limparElementRef.nativeElement.offsetWidth / 2) + "px";
           }
         } else if (Math.abs(packet.actualAccelerometer.y) < 0.001 && this.sector != Sector.Center) {
           this.doResetSensorialDetection();
           this.sector = Sector.Center;
-          this.suportDiv.style.left = "15%";
+          this.suportDiv.style.left = (this.centerDivElementRef.nativeElement.offsetLeft + this.centerDivElementRef.nativeElement.offsetWidth / 2) + "px";
         }
 
         if (packet.actualAccelerometer.x > 0 && Math.abs(packet.actualAccelerometer.x) > 0.005) {
@@ -305,7 +357,71 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         }
       }
     } else if (this.controlProviderService.getActiveControl().includes("Ocular")) {
-      //console.log(packet)
+    } else {
+      // TODO DUALSHOCK E MICROSOFT
+      const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
+      const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
+    }
+
+    const overAnyActionElement = elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement) ||
+      elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement) ||
+      elementOverAnother(this.suportDiv, this.mostrarMaisElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.vogaisElementRef.nativeElement) ||
+      elementOverAnother(this.suportDiv, this.consoantesElementRef.nativeElement);
+
+    this.setBackGroundColorActions();
+    if (overAnyActionElement) {
+      if (this.controlProviderService.getActiveControl().includes("Sensorial") && !this.lastSensorialDetectionTime) {
+        this.lastSensorialDetectionTime = new Date();
+      }
+
+      if (this.controlProviderService.getActiveControl().includes("Sensorial") && calcularDiferencaEmMilissegundos(new Date(), this.lastSensorialDetectionTime) < this.controlProviderService.sensorialSelectionDelayMs)
+        return;
+
+      if (elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement)) {
+        this.reset();
+        this.resetAuxDisplay();
+      } else if (elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement)) {
+        this.speak();
+        this.resetAuxDisplay();
+      } else if (elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement)) {
+        this.reset(true);
+        this.resetAuxDisplay();
+      } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
+        this.insertBlankSpace();
+        this.resetAuxDisplay();
+      } else if (elementOverAnother(this.suportDiv, this.mostrarMaisElementRef.nativeElement)) {
+        this.moreOptions();
+        this.resetAuxDisplay();
+      } else if (elementOverAnother(this.suportDiv, this.vogaisElementRef.nativeElement)) {
+        this.wordType = WordType.Vowels;
+        this.redefinedWords();
+        this.resetAuxDisplay();
+      } else if (elementOverAnother(this.suportDiv, this.consoantesElementRef.nativeElement)) {
+        this.wordType = WordType.Consonants;
+        this.redefinedWords();
+        this.resetAuxDisplay();
+      }
+      this.doResetSensorialDetection();
+    } else if (!overAnyActionElement && !wordDetected) {
+      this.doResetSensorialDetection();
+    }
+  }
+  //#endregion
+}
+
+
+/* if (Math.abs(packet.actualAccelerometer.y) > 0.009) {
+          if (packet.actualAccelerometer.y > 0) {
+            this.suportDiv.style.left = (percentLeft + 0.6) > 100 ? '100%' : ((percentLeft + 0.6) < 0 ? '0%' : (percentLeft + 0.6) + "%");
+          } else {
+            this.suportDiv.style.left = (percentLeft + -0.6) > 100 ? '100%' : ((percentLeft + -0.6) < 0 ? '0%' : (percentLeft + -0.6) + "%");
+          }
+          this.mouseMovedEvent.next({
+            clientX: this.suportDiv.getBoundingClientRect().x,
+            HTMLDivElement: this.suportDiv
+          } as any);
+        } */
+//console.log(packet)
       /* let domOcularRad = Math.atan2(packet.leftEye.y, packet.leftEye.x);
       let domOcularGraus = domOcularRad * (180 / Math.PI);
       let domWordsGraus = [];
@@ -336,40 +452,3 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
           }
         }
       } */
-
-    } else {
-      // TODO DUALSHOCK E MICROSOFT
-      const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
-      const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
-    }
-
-    const overAnyActionElement = elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement) ||
-      elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.mostrarMaisElementRef.nativeElement);
-
-    if (overAnyActionElement) {
-      if (this.controlProviderService.getActiveControl().includes("Sensorial") && !this.lastSensorialDetectionTime) {
-        this.lastSensorialDetectionTime = new Date();
-      }
-
-      if (this.controlProviderService.getActiveControl().includes("Sensorial") && calcularDiferencaEmMilissegundos(new Date(), this.lastSensorialDetectionTime) < this.controlProviderService.sensorialSelectionDelayMs)
-        return;
-
-      if (elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement)) {
-        this.reset();
-      } else if (elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement)) {
-        this.speak();
-      } else if (elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement)) {
-        this.reset(true);
-      } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
-        this.insertBlankSpace();
-      } else if (elementOverAnother(this.suportDiv, this.mostrarMaisElementRef.nativeElement)) {
-        this.moreOptions();
-      }
-      this.doResetSensorialDetection();
-    } else if (!overAnyActionElement && !wordDetected) {
-      this.doResetSensorialDetection();
-    }
-  }
-  //#endregion
-}
-

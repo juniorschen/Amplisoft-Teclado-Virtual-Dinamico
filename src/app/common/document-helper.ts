@@ -9,3 +9,11 @@ export function elementOverAnother(el1: any, el2: any) {
       domRect1.left > domRect2.right
     );
 }
+
+export function getOffset(el) {
+  const rect = el.getBoundingClientRect();
+  return {
+    left: rect.left + window.scrollX,
+    top: rect.top + window.scrollY
+  };
+}
