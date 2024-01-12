@@ -118,7 +118,7 @@ export class ControlProviderService {
             } else if (this.getActiveControl().includes("DualShock")) {
                 let controlInterface;
                 this.currentHidDevice.oninputreport = e => {
-                    _onInputReportDualShock(e, this.currentHidDevice, controlInterface);
+                    controlInterface = _onInputReportDualShock(e, this.currentHidDevice, controlInterface);
                 }
                 this.currentHidDevice.addEventListener('hidinput', (e) => {
                     this.onPacketSended.next(e);

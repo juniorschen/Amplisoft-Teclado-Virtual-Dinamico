@@ -1,7 +1,7 @@
 <div fxLayout="column" fxFill>
 
     <div fxFlex="5">
-        <mat-form-field style="display: flex;">
+        <mat-form-field>
             <input matInput type="text" [(ngModel)]="input">
         </mat-form-field>
     </div>
@@ -15,9 +15,10 @@
             </div>
         </div>
 
-        <div fxLayout="column" style="padding: 16px;">
-            <video *ngIf="displayVideo" fxLayoutAlign="center none" id="myVideo" width="400" height="200" preload
-                autoplay loop muted></video>
+        <div fxLayout="column">
+            <video *ngIf="displayVideo" style="opacity: 0;
+            position: fixed;" fxLayoutAlign="center none" id="myVideo" width="400" height="200" preload autoplay loop
+                muted></video>
 
             <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"

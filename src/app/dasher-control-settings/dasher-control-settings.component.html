@@ -1,6 +1,6 @@
-<div [formGroup]="form" fxFill fxLayout="column">
+<div fxFill fxLayout="column">
     <p fxLayoutAlign="center center" class="label-high-font-size">Dispositivos Suportados</p>
-    <div fxLayoutAlign="center center" fxLayout="column">
+    <div [formGroup]="formBooleans" fxLayoutAlign="center center" fxLayout="column">
         <mat-slide-toggle formControlName="NinetendoJoyconDireitoJoystick" color="accent" class="mat-slide-toggle"
             (change)="toggleChanged($event, 'NinetendoJoyconDireitoJoystick')">
             Joystick Nintendo Joycon Direito
@@ -36,4 +36,13 @@
             Controle Ocular
         </mat-slide-toggle>
     </div>
+
+
+    <div [formGroup]="formInputs" fxLayout="column" fxLayoutAlign="center center">
+        <p fxLayoutAlign="center center" class="label-medium-font-size">Delay controles sensoriais (MS)</p>
+        <mat-form-field>
+            <input matInput type="number" formControlName="DelayControleSensorial">
+        </mat-form-field>
+    </div>
+
 </div>
