@@ -95,7 +95,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       });
     }
 
-    this.afkInterval = setInterval(() => this.checkDasherAfk(), this.afkCheckDelayMs);
+    this.afkInterval = setInterval(() => this.checkDasherAfk(), 1000);
   }
 
   async ngOnDestroy(): Promise<void> {
@@ -119,15 +119,26 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   mouseOverVowels() {
     if (!this.controlProviderService.isAnyControlConfigured()) {
       this.wordType = WordType.Vowels;
-      this.redefinedWords();
+      this.showVowels();
     }
+  }
+
+  private showVowels() {
+    this.wordType = WordType.Vowels;
+    this.redefinedWords();
+    this.lastActionExecuted = new Date();
   }
 
   mouseOverConsonants() {
     if (!this.controlProviderService.isAnyControlConfigured()) {
-      this.wordType = WordType.Consonants;
-      this.redefinedWords();
+      this.showConsonants();
     }
+  }
+
+  private showConsonants() {
+    this.wordType = WordType.Consonants;
+    this.redefinedWords();
+    this.lastActionExecuted = new Date();
   }
 
   mouseOverBlankSpace() {
@@ -276,25 +287,43 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private setBackGroundColorActions() {
     if (elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement)) {
       this.limparElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
-    } else if (elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement)) {
-      this.falarElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
-    } else if (elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement)) {
-      this.limparTudoElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
-    } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
-      this.espacoElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
-    } else if (elementOverAnother(this.suportDiv, this.mostrarMaisElementRef.nativeElement)) {
-      this.mostrarMaisElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
-    } else if (elementOverAnother(this.suportDiv, this.vogaisElementRef.nativeElement)) {
-      this.vogaisElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
-    } else if (elementOverAnother(this.suportDiv, this.consoantesElementRef.nativeElement)) {
-      this.consoantesElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
     } else {
       this.limparElementRef.nativeElement.style.backgroundColor = "unset";
+    }
+
+    if (elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement)) {
+      this.falarElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else {
       this.falarElementRef.nativeElement.style.backgroundColor = "unset";
+    }
+
+    if (elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement)) {
+      this.limparTudoElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else {
       this.limparTudoElementRef.nativeElement.style.backgroundColor = "unset";
+    }
+
+    if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
+      this.espacoElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else {
       this.espacoElementRef.nativeElement.style.backgroundColor = "unset";
+    }
+
+    if (elementOverAnother(this.suportDiv, this.mostrarMaisElementRef.nativeElement)) {
+      this.mostrarMaisElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else {
       this.mostrarMaisElementRef.nativeElement.style.backgroundColor = "unset";
+    }
+
+    if (elementOverAnother(this.suportDiv, this.vogaisElementRef.nativeElement)) {
+      this.vogaisElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else {
       this.vogaisElementRef.nativeElement.style.backgroundColor = "unset";
+    }
+
+    if (elementOverAnother(this.suportDiv, this.consoantesElementRef.nativeElement)) {
+      this.consoantesElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+    } else {
       this.consoantesElementRef.nativeElement.style.backgroundColor = "unset";
     }
   }
@@ -319,7 +348,6 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private moveBySensorialAcelerometers(packet) {
     let wordDetected = false;
 
-    const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
     if (Math.abs(packet?.actualAccelerometer?.y) > 0.009) {
       if (packet.actualAccelerometer.y > 0) {
         this.sector = Sector.Right;
@@ -350,10 +378,23 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.suportDiv.style.left = (this.centerDivElementRef.nativeElement.offsetLeft + this.centerDivElementRef.nativeElement.offsetWidth / 2) + "px";
     }
 
+    const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
     if (packet.actualAccelerometer.x > 0 && Math.abs(packet.actualAccelerometer.x) > 0.005) {
-      this.suportDiv.style.top = (percentTop + -1) > 100 ? '100%' : ((percentTop + -1) < 0 ? '0%' : (percentTop + -1) + "%");
+      if (this.sector == Sector.Center) {
+        const topPx = (this.espacoElementRef.nativeElement.offsetTop + this.espacoElementRef.nativeElement.offsetHeight / 2);
+        const totalHeight = this.playerDivElementRef.nativeElement.clientHeight;
+        this.suportDiv.style.top = (topPx * 100 / totalHeight) + "%";
+      } else {
+        this.suportDiv.style.top = (percentTop + -2.5) > 100 ? '100%' : ((percentTop + -2.5) < 0 ? '0%' : (percentTop + -2.5) + "%");
+      }
     } else if (packet.actualAccelerometer.x < 0 && Math.abs(packet.actualAccelerometer.x) > 0.003) {
-      this.suportDiv.style.top = (percentTop + 1) > 100 ? '100%' : ((percentTop + 1) < 0 ? '0%' : (percentTop + 1) + "%");
+      if (this.sector == Sector.Center) {
+        const topPx = (this.mostrarMaisElementRef.nativeElement.offsetTop + this.mostrarMaisElementRef.nativeElement.offsetHeight / 2);
+        const totalHeight = this.playerDivElementRef.nativeElement.clientHeight;
+        this.suportDiv.style.top = (topPx * 100 / totalHeight) + "%";
+      } else {
+        this.suportDiv.style.top = (percentTop + 2.5) > 100 ? '100%' : ((percentTop + 2.5) < 0 ? '0%' : (percentTop + 2.5) + "%");
+      }
     }
 
     return wordDetected;
