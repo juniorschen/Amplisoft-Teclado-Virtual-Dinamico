@@ -15,7 +15,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
 
   private player: AnimationPlayer;
   private lastClientXPosition = 0;
-  private defaultAnimationDelay = 3000;
+  private defaultAnimationDelay = 2000;
   private animationRunning: Subject<void> = new Subject();
   private wordSelected = false;
 

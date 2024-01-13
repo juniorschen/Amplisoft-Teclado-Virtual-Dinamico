@@ -62,6 +62,7 @@ export class ControlProviderService {
         if (this.currentHidDevice) {
             await this.currentHidDevice.close();
             await this.currentHidDevice.forget();
+            this.currentHidDevice = undefined;
             localStorage.removeItem('currentDeviceHidId');
         }
         if (this.tracker) {

@@ -372,7 +372,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         this.sector = Sector.Left;
         this.suportDiv.style.left = (this.limparElementRef.nativeElement.offsetLeft + this.limparElementRef.nativeElement.offsetWidth / 2) + "px";
       }
-    } else if (Math.abs(packet.actualAccelerometer.y) < 0.001 && this.sector != Sector.Center) {
+    } else if (Math.abs(packet?.actualAccelerometer?.y) < 0.001 && this.sector != Sector.Center) {
       this.doResetSensorialDetection();
       this.sector = Sector.Center;
       this.suportDiv.style.left = (this.centerDivElementRef.nativeElement.offsetLeft + this.centerDivElementRef.nativeElement.offsetWidth / 2) + "px";
