@@ -16,45 +16,52 @@
         </div>
 
         <div fxLayout="column">
-            <video *ngIf="displayVideo" style="opacity: 0;
-            position: fixed;" fxLayoutAlign="center none" id="myVideo" width="400" height="200" preload autoplay loop
-                muted></video>
-
-            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+            <div (click)="onClickElementCalibration(0)"
+                [ngClass]="clickElementsCount.get(0) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+                fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
                     fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
 
-            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+            <div (click)="onClickElementCalibration(1)"
+                [ngClass]="clickElementsCount.get(1) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+                fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #vogaisElementRef fxLayoutAlign="center center"
-                    (mouseover)="mouseOverBlankSpace()">
+                    (mouseover)="mouseOverVowels()">
                     Vogais</p>
             </div>
 
-            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+            <div (click)="onClickElementCalibration(2)"
+                [ngClass]="clickElementsCount.get(2) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+                fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #limparElementRef (mouseover)="mouseOverReset(false)"
                     fxLayoutAlign="center center">Limpar Último
                 </p>
             </div>
 
-            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+            <div (click)="onClickElementCalibration(3)"
+                [ngClass]="clickElementsCount.get(3) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+                fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #consoantesElementRef fxLayoutAlign="center center"
-                    (mouseover)="mouseOverMoreOptions()">Consoantes
+                    (mouseover)="mouseOverConsonants()">Consoantes
                 </p>
             </div>
 
-            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+            <div (click)="onClickElementCalibration(4)"
+                [ngClass]="clickElementsCount.get(4) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+                fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()"
                     fxLayoutAlign="center center">Falar Texto Completo</p>
             </div>
         </div>
 
         <div style="width: 100px;">
-
         </div>
 
         <div fxLayoutAlign="center center" fxLayout="column">
-            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+            <div (click)="onClickElementCalibration(5)"
+                [ngClass]="clickElementsCount.get(5) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+                fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverBlankSpace()">
                     Inserir Espaço</p>
@@ -62,15 +69,20 @@
 
             <div #centerDivElementRef fxFill fxFlex></div>
 
-            <div class="action-div-border" fxLayoutAlign="center none" fxFill fxFlex>
+            <div (click)="onClickElementCalibration(6)"
+                [ngClass]="clickElementsCount.get(6) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+                fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #mostrarMaisElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverMoreOptions()">Mostrar Mais
                 </p>
             </div>
         </div>
+
         <div (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
             <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-i="index">
-                <app-dasher-on-screen-player [word]="wordsOnScreen[i]" [mouseMovedEvent]="mouseMovedEvent"
+                <app-dasher-on-screen-player (click)="onClickElementCalibration(7 + i)"
+                    [ngClass]="clickElementsCount.get(7 + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                    [word]="wordsOnScreen[i]" [mouseMovedEvent]="mouseMovedEvent"
                     [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
                     fxFlex></app-dasher-on-screen-player>
             </ng-template>

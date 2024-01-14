@@ -4,7 +4,7 @@ import { debounceTime, Subject } from 'rxjs';
 import { animationIn, animationOut } from 'src/app/common/animation';
 import { AnimationParams } from 'src/app/common/animation-model';
 import { elementOverAnother } from 'src/app/common/document-helper';
-import { ControlProviderService } from 'src/app/core/services/control-provider.service';
+import { ConfigurationsService } from 'src/app/core/services/configuration.service';
 
 @Component({
   selector: 'app-dasher-on-screen-player',
@@ -41,7 +41,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
     timeOut: '3000ms'
   };
 
-  constructor(public animationBuilder: AnimationBuilder, private controlProviderService: ControlProviderService) { }
+  constructor(public animationBuilder: AnimationBuilder, private controlProviderService: ConfigurationsService) { }
 
   ngOnInit(): void {
     this.mouseMovedEvent.subscribe((event) => {

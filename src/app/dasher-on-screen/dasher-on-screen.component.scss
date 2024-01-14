@@ -21,6 +21,17 @@
     border-color: lightgoldenrodyellow;
 }
 
+.action-div-border-color {
+    border-width: 2px;
+    border-style: groove;
+    border-color: lightgoldenrodyellow;
+    background-color: lightgoldenrodyellow;
+}
+
+.selection-background-color {
+    background-color: lightgoldenrodyellow;
+}
+
 :host::ng-deep {
     mat-form-field {
         display: flex;
@@ -49,3 +60,4 @@
         }
     }
 }
+

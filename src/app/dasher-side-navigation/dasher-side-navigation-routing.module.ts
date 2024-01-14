@@ -12,8 +12,8 @@ const routes: Routes = [
         loadChildren: () => import('../dasher-on-screen/dasher-on-screen.module').then((m) => m.DasherOnScreenModule),
       },
       {
-        path: 'dasher-control-settings',
-        loadChildren: () => import('../dasher-control-settings/dasher-control-settings.module').then((m) => m.DasherControlSettingsModule),
+        path: 'dasher-configurations',
+        loadChildren: () => import('../dasher-configurations/dasher-configurations.module').then((m) => m.DasherConfigurationsModule),
       },
       {
         path: 'dasher-feedback',

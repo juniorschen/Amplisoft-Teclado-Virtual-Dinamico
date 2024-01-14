@@ -2,27 +2,21 @@
 /// <reference types="w3c-web-hid" />
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import "tracking";
-import "tracking/build/data/eye";
-declare var tracking: any;
-
 
 import { enableJoyconFunctions, _onInputReportJoycon } from 'src/app/core/support/joycon-support/joycon-support';
 import { _onInputReportDualShock } from '../support/dualshock/dualshock-support';
-import { connectControlCamera } from '../support/camera/camera-support';
+import { calibrateCamera, connectControlCamera, stopCameraControl } from '../support/camera/camera-support';
 
 @Injectable({
     providedIn: 'root'
 })
-export class ControlProviderService {
+export class ConfigurationsService {
 
     private currentHidDevice: HIDDevice;
-    private tracker: any;
-    private trackerTask: any;
     private onPacketSended = new Subject<any>();
     private activeControl: string;
-
     public sensorialSelectionDelayMs = 1000 * 4;
+    public maxWordsOnScreen = 11;
 
     constructor() { }
 
@@ -64,10 +58,8 @@ export class ControlProviderService {
             await this.currentHidDevice.forget();
             this.currentHidDevice = undefined;
             localStorage.removeItem('currentDeviceHidId');
-        }
-        if (this.tracker) {
-            this.trackerTask.stop();
-            this.tracker = undefined;
+        } else {
+            stopCameraControl();
         }
     }
 
@@ -77,7 +69,11 @@ export class ControlProviderService {
 
     public async initializeControl() {
         if (this.isOcularDeviceConfigured()) {
-            await connectControlCamera(this.tracker, this.trackerTask, this.onPacketSended);
+            if (localStorage.getItem('CalibratedEyeControl') == null) {
+                calibrateCamera();
+            } else {
+                await connectControlCamera(this.onPacketSended);
+            }
         } else if (this.isHidDeviceConfigured()) {
             await this.connectControlHid();
         }

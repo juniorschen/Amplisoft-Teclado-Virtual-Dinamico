@@ -5,7 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { take } from 'rxjs';
 import { IdentifierService } from '../core/services/identifier.service';
-import { ControlProviderService } from '../core/services/control-provider.service';
+import { ConfigurationsService } from '../core/services/configuration.service';
 
 @Component({
   selector: 'app-dasher-feedback',
@@ -19,7 +19,7 @@ export class DasherFeedbackComponent implements OnInit, OnDestroy {
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
   constructor(private _ngZone: NgZone, private deviceService: DeviceDetectorService, private identifierService: IdentifierService,
-    private controlProviderService: ControlProviderService) { }
+    private controlProviderService: ConfigurationsService) { }
 
   ngOnInit(): void {
   }

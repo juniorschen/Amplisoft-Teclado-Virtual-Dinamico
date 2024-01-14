@@ -2,12 +2,14 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, QueryList, ViewChild, 
 import { debounceTime, Subject } from 'rxjs';
 import { elementOverAnother, getOffset } from '../common/document-helper';
 
-import { ControlProviderService } from '../core/services/control-provider.service';
+import { ConfigurationsService } from '../core/services/configuration.service';
 import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
 import { calcularDiferencaEmMilissegundos } from '../common/date';
 import { PerfomanceIndicatorService } from '../core/performance-indicators/performance-indicators.service';
 import { Sector } from '../common/sector.enum';
 import { WordType } from '../common/word-type.enum';
+import { endCalibrateCamera } from '../core/support/camera/camera-support';
+import { getMixedAlphabet, getMixedConsonants, getVowels } from '../common/words';
 
 @Component({
   selector: 'app-dasher-on-screen',
@@ -18,9 +20,9 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   // Controle Privado
   private lastActionExecuted = new Date();
-  private lastSpeaked = "";
   private afkCheckDelayMs = 1000 * 45;
   private afkInterval;
+  private lastSpeaked = "";
   private suportDiv: HTMLDivElement;
   private sector: Sector;
   private wordType = WordType.Mixed;
@@ -62,35 +64,26 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   // Controle Geral Html
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   public onResetDasherEvent: Subject<void> = new Subject();
-  public displayVideo = false;
   public isAfk = false;
   public input = '';
-  public wordsOnScreen: Array<string> = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "z"
-  ];
+  public wordsOnScreen: Array<string> = getMixedAlphabet(this.configurationService.maxWordsOnScreen);
 
-  constructor(private controlProviderService: ControlProviderService, private perfomanceIndicatorService: PerfomanceIndicatorService) {
+  // Calibracao
+  public clickElementsCount = new Map<number, number>();
+  public defaultCalibrationCount = 5;
+
+  constructor(private configurationService: ConfigurationsService, private perfomanceIndicatorService: PerfomanceIndicatorService) {
     speechSynthesis.addEventListener("voiceschanged", () => { });
     this.perfomanceIndicatorService.start();
   }
 
   async ngAfterViewInit() {
-    if (this.controlProviderService.isAnyControlConfigured()) {
+    if (this.configurationService.isAnyControlConfigured()) {
       this.createAuxDisplay();
       setTimeout(() => {
-        this.controlProviderService.initializeControl();
+        this.configurationService.initializeControl();
       });
-      this.controlProviderService.getPacketOutput().pipe(debounceTime(this.controlProviderService.getControlDebounceTime())).subscribe((e) => {
+      this.configurationService.getPacketOutput().pipe(debounceTime(this.configurationService.getControlDebounceTime())).subscribe((e) => {
         this.reciveControlMovedEvent(e.detail);
       });
     }
@@ -103,6 +96,29 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     await this.perfomanceIndicatorService.end();
   }
 
+  onClickElementCalibration(elementIndex) {
+    const defaultActionElementsCount = 7 + this.wordsOnScreen.length;
+
+    const clickElementCount = this.clickElementsCount.get(elementIndex);
+    if (clickElementCount && clickElementCount < this.defaultCalibrationCount) {
+      this.clickElementsCount.set(elementIndex, clickElementCount + 1);
+    } else if (!clickElementCount) {
+      this.clickElementsCount.set(elementIndex, 1);
+    }
+
+    let totalElementsClicksCount = 0;
+    for (let value of this.clickElementsCount.values()) {
+      totalElementsClicksCount += value;
+    }
+
+    if (totalElementsClicksCount == (defaultActionElementsCount * this.defaultCalibrationCount)) {
+      this.clickElementsCount = new Map<number, number>();
+      // deixei bem especifico para camera por enquanto mas esse é o unico controlador que é calibrado se precisar no futuro melhorar este código para ser mais genérico
+      endCalibrateCamera();
+      this.configurationService.initializeControl();
+    }
+  }
+
   checkDasherAfk() {
     this.isAfk = calcularDiferencaEmMilissegundos(new Date(), this.lastActionExecuted) > this.afkCheckDelayMs;
     if (this.isAfk) {
@@ -111,38 +127,35 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseMovedDasher(event: MouseEvent) {
-    if (!this.controlProviderService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured()) {
       this.mouseMovedEvent.next(event);
     }
   }
 
   mouseOverVowels() {
-    if (!this.controlProviderService.isAnyControlConfigured()) {
-      this.wordType = WordType.Vowels;
+    if (!this.configurationService.isAnyControlConfigured()) {
       this.showVowels();
     }
   }
 
   private showVowels() {
-    this.wordType = WordType.Vowels;
-    this.redefinedWords();
+    this.redefinedWords(WordType.Vowels);
     this.lastActionExecuted = new Date();
   }
 
   mouseOverConsonants() {
-    if (!this.controlProviderService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured()) {
       this.showConsonants();
     }
   }
 
   private showConsonants() {
-    this.wordType = WordType.Consonants;
-    this.redefinedWords();
+    this.redefinedWords(WordType.Consonants);
     this.lastActionExecuted = new Date();
   }
 
   mouseOverBlankSpace() {
-    if (!this.controlProviderService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured()) {
       this.insertBlankSpace();
     }
   }
@@ -150,23 +163,23 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private insertBlankSpace() {
     this.input = this.input + " ";
     this.perfomanceIndicatorService.blankSpace();
-    this.redefinedWords();
+    this.redefinedWords(WordType.Mixed);
     this.lastActionExecuted = new Date();
   }
 
   mouseOverMoreOptions() {
-    if (!this.controlProviderService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured()) {
       this.moreOptions();
     }
   }
 
   private moreOptions() {
-    this.redefinedWords();
+    this.redefinedWords(this.wordType, this.wordsElements.length);
     this.lastActionExecuted = new Date();
   }
 
   mouseOverReset(fullReset = false) {
-    if (!this.controlProviderService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured()) {
       this.reset(fullReset);
     }
   }
@@ -178,12 +191,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.input = this.input.substring(0, this.input.length - 1);
       this.perfomanceIndicatorService.backSpace();
     }
-    this.redefinedWords();
+    this.redefinedWords(WordType.Mixed);
     this.lastActionExecuted = new Date();
   }
 
   mouseOverSpeak() {
-    if (!this.controlProviderService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured()) {
       this.speak();
     }
   }
@@ -195,7 +208,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseOverRepeat() {
-    if (!this.controlProviderService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured()) {
       this.repeat();
     }
   }
@@ -217,7 +230,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
 
     this.perfomanceIndicatorService.wordSelected(word);
-    this.redefinedWords();
+    this.redefinedWords(WordType.Mixed);
     this.onResetDasherEvent.next();
     this.lastActionExecuted = new Date();
   }
@@ -228,23 +241,25 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     speechSynthesis.speak(utterance);
   }
 
-  private redefinedWords() {
-    this.wordsOnScreen[0] = "a";
-    this.wordsOnScreen[1] = "b";
-    this.wordsOnScreen[2] = "c";
-    this.wordsOnScreen[3] = "d";
-    this.wordsOnScreen[4] = "e";
-    this.wordsOnScreen[5] = "f";
-    this.wordsOnScreen[6] = "g";
-    this.wordsOnScreen[7] = "h";
-    this.wordsOnScreen[8] = "i";
-    this.wordsOnScreen[9] = "j";
-    this.wordType = WordType.Mixed;
+  private redefinedWords(type: WordType, skip = 0) {
+    this.wordType = type;
+    switch (this.wordType) {
+      case WordType.Vowels:
+        this.wordsOnScreen = getVowels();
+        break;
+      case WordType.Consonants:
+        this.wordsOnScreen = getMixedConsonants(this.configurationService.maxWordsOnScreen, skip);
+        break;
+      case WordType.Mixed:
+        this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, skip);
+        break;
+    }
+    console.log(this.wordsOnScreen)
   }
 
   //#region Suporte Controles HID
   private createAuxDisplay() {
-    this.displayVideo = this.controlProviderService.isOcularDeviceConfigured();
+    //this.displayVideo = this.controlProviderService.isOcularDeviceConfigured();
     setTimeout(() => {
       this.suportDiv = document.createElement("div");
       this.suportDiv.style.position = "absolute";
@@ -257,7 +272,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.suportDiv.style.width = "20px";
       this.suportDiv.style.height = "20px";
       this.suportDiv.style.zIndex = "1";
-      if (!this.controlProviderService.getActiveControl().includes("Sensorial")) {
+      if (!this.configurationService.getActiveControl().includes("Sensorial")) {
         this.suportDiv.style.background = "red";
       } else {
         this.suportDiv.style.background = "unset";
@@ -267,14 +282,14 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   private resetAuxDisplay() {
-    if (this.controlProviderService.isAnyControlConfigured()) {
+    if (this.configurationService.isAnyControlConfigured()) {
       this.playerDivElementRef.nativeElement.removeChild(this.suportDiv);
       this.createAuxDisplay();
     }
   }
 
   private doResetSensorialDetection() {
-    if (!this.controlProviderService.getActiveControl().includes("Sensorial"))
+    if (!this.configurationService.getActiveControl().includes("Sensorial"))
       return;
 
     this.lastSensorialDetectionTime = undefined;
@@ -331,7 +346,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private moveByJoystick(packet) {
     const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
     const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
-    const joystick = this.controlProviderService.getActiveControl().includes("Esquerdo") ? packet.analogStickLeft : packet.analogStickRight;
+    const joystick = this.configurationService.getActiveControl().includes("Esquerdo") ? packet.analogStickLeft : packet.analogStickRight;
     if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
       this.suportDiv.style.left = (percentLeft + joystick.horizontal) > 100 ? '100%' : ((percentLeft + joystick.horizontal) < 0 ? '0%' : (percentLeft + joystick.horizontal) + "%");
       this.mouseMovedEvent.next({
@@ -360,7 +375,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
             wordDetected = true;
           } else if (this.lastWordDetectionIndex != index) {
             w.pElementRef.nativeElement.style.backgroundColor = "unset";
-          } else if (calcularDiferencaEmMilissegundos(this.lastSensorialDetectionTime, new Date()) > this.controlProviderService.sensorialSelectionDelayMs) {
+          } else if (calcularDiferencaEmMilissegundos(this.lastSensorialDetectionTime, new Date()) > this.configurationService.sensorialSelectionDelayMs) {
             this.doResetSensorialDetection();
             this.onWordSelectedEvent(w.word);
           } else {
@@ -407,15 +422,15 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
     let wordDetected = false;
 
-    if (this.controlProviderService.getActiveControl().includes("Ocular")) {
+    if (this.configurationService.getActiveControl().includes("Ocular")) {
       // TODO OCULAR
-    } else if (this.controlProviderService.getActiveControl().includes("Joycon")) {
-      if (this.controlProviderService.getActiveControl().includes("Sensorial")) {
+    } else if (this.configurationService.getActiveControl().includes("Joycon")) {
+      if (this.configurationService.getActiveControl().includes("Sensorial")) {
         wordDetected = this.moveBySensorialAcelerometers(packet);
       } else {
         this.moveByJoystick(packet);
       }
-    } else if (this.controlProviderService.getActiveControl().includes("JoystickDualShock")) {
+    } else if (this.configurationService.getActiveControl().includes("JoystickDualShock")) {
       this.moveByJoystick(packet);
     } else {
       this.moveByJoystick(packet);
@@ -428,11 +443,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
     this.setBackGroundColorActions();
     if (overAnyActionElement) {
-      if (this.controlProviderService.getActiveControl().includes("Sensorial") && !this.lastSensorialDetectionTime) {
+      if (this.configurationService.getActiveControl().includes("Sensorial") && !this.lastSensorialDetectionTime) {
         this.lastSensorialDetectionTime = new Date();
       }
 
-      if (this.controlProviderService.getActiveControl().includes("Sensorial") && calcularDiferencaEmMilissegundos(new Date(), this.lastSensorialDetectionTime) < this.controlProviderService.sensorialSelectionDelayMs)
+      if (this.configurationService.getActiveControl().includes("Sensorial") && calcularDiferencaEmMilissegundos(new Date(), this.lastSensorialDetectionTime) < this.configurationService.sensorialSelectionDelayMs)
         return;
 
       if (elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement)) {
@@ -451,12 +466,10 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         this.moreOptions();
         this.resetAuxDisplay();
       } else if (elementOverAnother(this.suportDiv, this.vogaisElementRef.nativeElement)) {
-        this.wordType = WordType.Vowels;
-        this.redefinedWords();
+        this.redefinedWords(WordType.Vowels);
         this.resetAuxDisplay();
       } else if (elementOverAnother(this.suportDiv, this.consoantesElementRef.nativeElement)) {
-        this.wordType = WordType.Consonants;
-        this.redefinedWords();
+        this.redefinedWords(WordType.Consonants);
         this.resetAuxDisplay();
       }
       this.doResetSensorialDetection();

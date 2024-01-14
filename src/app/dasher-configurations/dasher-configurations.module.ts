@@ -6,16 +6,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 
-import { DasherControlSettingsComponent } from './dasher-control-settings.component';
-import { DasherControlSettingsRoutingModule } from './dasher-control-settings-routing.module';
+import { DasherConfigurationsComponent } from './dasher-configurations.component';
+import { DasherConfigurationsRoutingModule } from './dasher-configurations-routing.module';
 
 @NgModule({
   declarations: [
-    DasherControlSettingsComponent
+    DasherConfigurationsComponent
   ],
   imports: [
     CommonModule,
-    DasherControlSettingsRoutingModule,
+    DasherConfigurationsRoutingModule,
     FlexLayoutModule,
     MatSlideToggleModule,
     MatInputModule,
@@ -24,4 +24,4 @@ import { DasherControlSettingsRoutingModule } from './dasher-control-settings-ro
     ReactiveFormsModule
   ]
 })
-export class DasherControlSettingsModule { }
+export class DasherConfigurationsModule { }

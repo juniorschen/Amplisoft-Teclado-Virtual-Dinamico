@@ -1,19 +1,19 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { ControlProviderService } from '../core/services/control-provider.service';
+import { ConfigurationsService } from '../core/services/configuration.service';
 
 @Component({
-  selector: 'app-dasher-control-settings',
-  templateUrl: './dasher-control-settings.component.html',
-  styleUrls: ['./dasher-control-settings.component.scss']
+  selector: 'app-dasher-configurations',
+  templateUrl: './dasher-configurations.component.html',
+  styleUrls: ['./dasher-configurations.component.scss']
 })
-export class DasherControlSettingsComponent implements OnInit, OnDestroy {
+export class DasherConfigurationsComponent implements OnInit, OnDestroy {
 
   public formBooleans: FormGroup;
   public formInputs: FormGroup;
 
-  constructor(private fbBuilder: FormBuilder, private controlProviderService: ControlProviderService) {
+  constructor(private fbBuilder: FormBuilder, private configurationService: ConfigurationsService) {
   }
 
   ngOnInit() {
@@ -22,31 +22,30 @@ export class DasherControlSettingsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.formInputs.get("DelayControleSensorial").value > 0) {
-      this.controlProviderService.sensorialSelectionDelayMs = this.formInputs.get("DelayControleSensorial").value;
+      this.configurationService.sensorialSelectionDelayMs = this.formInputs.get("DelayControleSensorial").value;
     }
   }
 
   private initForm() {
     this.formBooleans = this.fbBuilder.group({
-      NinetendoJoyconDireitoJoystick: [this.controlProviderService.getActiveControl() == 'NinetendoJoyconDireitoJoystick'],
-      NinetendoJoyconEsquerdoJoystick: [this.controlProviderService.getActiveControl() == 'NinetendoJoyconEsquerdoJoystick'],
-      NinetendoJoyconDireitoSensorial: [this.controlProviderService.getActiveControl() == 'NinetendoJoyconDireitoSensorial'],
-      NinetendoJoyconEsquerdoSensorial: [this.controlProviderService.getActiveControl() == 'NinetendoJoyconEsquerdoSensorial'],
-      JoystickDualShock: [this.controlProviderService.getActiveControl() == 'JoystickDualShock'],
-      JoystickMicrosoft: [this.controlProviderService.getActiveControl() == 'JoystickMicrosoft'],
-      ControleFocoOcularSensorial: [this.controlProviderService.getActiveControl() == 'ControleFocoOcularSensorial']
+      NinetendoJoyconDireitoJoystick: [this.configurationService.getActiveControl() == 'NinetendoJoyconDireitoJoystick'],
+      NinetendoJoyconEsquerdoJoystick: [this.configurationService.getActiveControl() == 'NinetendoJoyconEsquerdoJoystick'],
+      NinetendoJoyconDireitoSensorial: [this.configurationService.getActiveControl() == 'NinetendoJoyconDireitoSensorial'],
+      NinetendoJoyconEsquerdoSensorial: [this.configurationService.getActiveControl() == 'NinetendoJoyconEsquerdoSensorial'],
+      JoystickDualShock: [this.configurationService.getActiveControl() == 'JoystickDualShock'],
+      ControleFocoOcularSensorial: [this.configurationService.getActiveControl() == 'ControleFocoOcularSensorial']
     });
     this.formInputs = this.fbBuilder.group({
-      DelayControleSensorial: [this.controlProviderService.sensorialSelectionDelayMs]
+      DelayControleSensorial: [this.configurationService.sensorialSelectionDelayMs]
     });
   }
 
   public async toggleChanged(event, name: string) {
-    this.controlProviderService.desactiveControl();
-    await this.controlProviderService.forgetDevices();
+    this.configurationService.desactiveControl();
+    await this.configurationService.forgetDevices();
 
     if (event.checked)
-      this.controlProviderService.setActiveControl(name);
+      this.configurationService.setActiveControl(name);
 
     Object.keys(this.formBooleans["controls"]).forEach(async formControlName => {
       if (!event.checked) {
@@ -97,10 +96,10 @@ export class DasherControlSettingsComponent implements OnInit, OnDestroy {
           }
 
           if (hid.length > 0) {
-            const connected = await this.controlProviderService.connectControlHid(hid);
+            const connected = await this.configurationService.connectControlHid(hid);
             if (!connected) {
               this.formBooleans.get(formControlName).setValue(false);
-              this.controlProviderService.desactiveControl();
+              this.configurationService.desactiveControl();
             }
           }
         }

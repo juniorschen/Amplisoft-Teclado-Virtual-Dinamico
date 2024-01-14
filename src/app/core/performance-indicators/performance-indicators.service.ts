@@ -3,7 +3,7 @@ import { Firestore, doc, setDoc } from "@angular/fire/firestore";
 import { IdentifierService } from "../services/identifier.service";
 import { DeviceDetectorService } from "ngx-device-detector";
 import { calcularDiferencaEmMilissegundos, calcularDiferencaEmSegundos } from "src/app/common/date";
-import { ControlProviderService } from "../services/control-provider.service";
+import { ConfigurationsService } from "../services/configuration.service";
 
 @Injectable({
     providedIn: 'root'
@@ -23,7 +23,7 @@ export class PerfomanceIndicatorService {
     }>();
     private fullInput = "";
 
-    constructor(private deviceService: DeviceDetectorService, private identifierService: IdentifierService, private controlProviderService: ControlProviderService) { }
+    constructor(private deviceService: DeviceDetectorService, private identifierService: IdentifierService, private controlProviderService: ConfigurationsService) { }
 
     public start() {
         this.startDate = new Date();

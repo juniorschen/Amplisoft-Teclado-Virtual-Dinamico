@@ -40,3 +40,10 @@ body {
     height: 100%;
     flex-direction: column;
 }
+
+#webgazerVideoContainer {
+    z-index: 999;
+    left: 45% !important;
+    top: 75% !important;
+    /* Um valor menor para garantir que fique abaixo dos seus componentes Angular */
+}

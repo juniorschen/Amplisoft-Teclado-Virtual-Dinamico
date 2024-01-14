@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DasherControlSettingsComponent } from './dasher-control-settings.component';
+import { DasherConfigurationsComponent } from './dasher-configurations.component';
 
 const routes: Routes = [
   {
     path: 'dasher-control-settings',
-    component: DasherControlSettingsComponent
+    component: DasherConfigurationsComponent
   },
   {
     path: '**', redirectTo: 'dasher-control-settings'
@@ -16,4 +16,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DasherControlSettingsRoutingModule { }
+export class DasherConfigurationsRoutingModule { }
