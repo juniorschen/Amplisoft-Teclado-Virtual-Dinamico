@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ConfigurationsService } from '../core/services/configuration.service';
 
@@ -21,8 +21,12 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.formInputs.get("DelayControleSensorial").value > 0) {
+    if (this.formInputs.get("DelayControleSensorial").value > 0 && this.formInputs.get("DelayControleSensorial").valid) {
       this.configurationService.sensorialSelectionDelayMs = this.formInputs.get("DelayControleSensorial").value;
+    }
+
+    if (this.formInputs.get("MaxWordsOnScreen").value > 0 && this.formInputs.get("MaxWordsOnScreen").valid) {
+      this.configurationService.maxWordsOnScreen = this.formInputs.get("MaxWordsOnScreen").value;
     }
   }
 
@@ -36,7 +40,8 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
       ControleFocoOcularSensorial: [this.configurationService.getActiveControl() == 'ControleFocoOcularSensorial']
     });
     this.formInputs = this.fbBuilder.group({
-      DelayControleSensorial: [this.configurationService.sensorialSelectionDelayMs]
+      DelayControleSensorial: [this.configurationService.sensorialSelectionDelayMs, [Validators.required, Validators.min(1)]],
+      MaxWordsOnScreen: [this.configurationService.maxWordsOnScreen, [Validators.required, Validators.max(26), Validators.min(1)]]
     });
   }
 

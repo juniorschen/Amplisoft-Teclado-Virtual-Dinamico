@@ -42,6 +42,12 @@ function trackByWeGazer(onPacketSended) {
         if (data == null) {
             return;
         }
+        onPacketSended.next({
+            detail: {
+                x: data.x,
+                y: data.y
+            }
+        });
     }).begin();
     webgazer.showPredictionPoints(true);
 }
@@ -51,7 +57,7 @@ function stopTrackByWeGazer() {
     try {
         webgazer.clearData();
         webgazer.end();
-    } catch {}
+    } catch { }
 }
 //#endregion
 

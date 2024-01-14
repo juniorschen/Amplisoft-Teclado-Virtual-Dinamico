@@ -230,7 +230,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
 
     this.perfomanceIndicatorService.wordSelected(word);
-    this.redefinedWords(WordType.Mixed);
+    this.redefinedWords(WordType.Mixed, true);
     this.onResetDasherEvent.next();
     this.lastActionExecuted = new Date();
   }
@@ -241,21 +241,21 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     speechSynthesis.speak(utterance);
   }
 
-  private redefinedWords(type: WordType) {
+  private redefinedWords(type: WordType, fullReset = false) {
     const changedType = this.wordType != type;
     switch (type) {
       case WordType.Vowels:
         this.wordsOnScreen = getVowels();
         break;
       case WordType.Consonants:
-        this.wordsOnScreen = getMixedConsonants(this.configurationService.maxWordsOnScreen, !changedType);
+        this.wordsOnScreen = getMixedConsonants(this.configurationService.maxWordsOnScreen, !changedType && !fullReset);
         if (this.wordsOnScreen.length == 0) {
           this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, false);
           this.wordType = WordType.Mixed;
         }
         break;
       case WordType.Mixed:
-        this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, !changedType);
+        this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, !changedType && !fullReset);
         break;
     }
     this.wordType = type;
@@ -263,7 +263,6 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   //#region Suporte Controles HID
   private createAuxDisplay() {
-    //this.displayVideo = this.controlProviderService.isOcularDeviceConfigured();
     setTimeout(() => {
       this.suportDiv = document.createElement("div");
       this.suportDiv.style.position = "absolute";
@@ -364,6 +363,28 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  private wordDetectedBySensorial() {
+    let wordDetected = false;
+
+    this.wordsElements.forEach((w, index) => {
+      if (elementOverAnother(this.suportDiv, w.pElementRef.nativeElement) && this.lastWordDetectionIndex != index) {
+        w.pElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
+        this.lastSensorialDetectionTime = new Date();
+        this.lastWordDetectionIndex = index;
+        wordDetected = true;
+      } else if (this.lastWordDetectionIndex != index) {
+        w.pElementRef.nativeElement.style.backgroundColor = "unset";
+      } else if (calcularDiferencaEmMilissegundos(this.lastSensorialDetectionTime, new Date()) > this.configurationService.sensorialSelectionDelayMs) {
+        this.doResetSensorialDetection();
+        this.onWordSelectedEvent(w.word);
+      } else {
+        wordDetected = true;
+      }
+    });
+
+    return wordDetected;
+  }
+
   private moveBySensorialAcelerometers(packet) {
     let wordDetected = false;
 
@@ -371,21 +392,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       if (packet.actualAccelerometer.y > 0) {
         this.sector = Sector.Right;
         this.suportDiv.style.left = "97.5%";
-        this.wordsElements.forEach((w, index) => {
-          if (elementOverAnother(this.suportDiv, w.pElementRef.nativeElement) && this.lastWordDetectionIndex != index) {
-            w.pElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
-            this.lastSensorialDetectionTime = new Date();
-            this.lastWordDetectionIndex = index;
-            wordDetected = true;
-          } else if (this.lastWordDetectionIndex != index) {
-            w.pElementRef.nativeElement.style.backgroundColor = "unset";
-          } else if (calcularDiferencaEmMilissegundos(this.lastSensorialDetectionTime, new Date()) > this.configurationService.sensorialSelectionDelayMs) {
-            this.doResetSensorialDetection();
-            this.onWordSelectedEvent(w.word);
-          } else {
-            wordDetected = true;
-          }
-        });
+        wordDetected = this.wordDetectedBySensorial();
       } else if (this.sector != Sector.Left) {
         this.doResetSensorialDetection();
         this.sector = Sector.Left;
@@ -419,6 +426,13 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     return wordDetected;
   }
 
+  private moveByCamera(packet) {
+    this.suportDiv.style.top = packet.y + "px";
+    this.suportDiv.style.left = packet.x + "px";
+
+    return this.wordDetectedBySensorial();
+  }
+
   private reciveControlMovedEvent(packet) {
     if (!packet) {
       return;
@@ -427,7 +441,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     let wordDetected = false;
 
     if (this.configurationService.getActiveControl().includes("Ocular")) {
-      // TODO OCULAR
+      wordDetected = this.moveByCamera(packet);
     } else if (this.configurationService.getActiveControl().includes("Joycon")) {
       if (this.configurationService.getActiveControl().includes("Sensorial")) {
         wordDetected = this.moveBySensorialAcelerometers(packet);
