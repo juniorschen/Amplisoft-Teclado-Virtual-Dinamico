@@ -66,7 +66,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   public onResetDasherEvent: Subject<void> = new Subject();
   public isAfk = false;
   public input = '';
-  public wordsOnScreen: Array<string> = getMixedAlphabet(this.configurationService.maxWordsOnScreen);
+  public wordsOnScreen: Array<string> = getMixedAlphabet(this.configurationService.maxWordsOnScreen, false);
 
   // Calibracao
   public clickElementsCount = new Map<number, number>();
@@ -174,7 +174,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   private moreOptions() {
-    this.redefinedWords(this.wordType, this.wordsElements.length);
+    this.redefinedWords(this.wordType);
     this.lastActionExecuted = new Date();
   }
 
@@ -241,20 +241,24 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     speechSynthesis.speak(utterance);
   }
 
-  private redefinedWords(type: WordType, skip = 0) {
-    this.wordType = type;
-    switch (this.wordType) {
+  private redefinedWords(type: WordType) {
+    const changedType = this.wordType != type;
+    switch (type) {
       case WordType.Vowels:
         this.wordsOnScreen = getVowels();
         break;
       case WordType.Consonants:
-        this.wordsOnScreen = getMixedConsonants(this.configurationService.maxWordsOnScreen, skip);
+        this.wordsOnScreen = getMixedConsonants(this.configurationService.maxWordsOnScreen, !changedType);
+        if (this.wordsOnScreen.length == 0) {
+          this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, false);
+          this.wordType = WordType.Mixed;
+        }
         break;
       case WordType.Mixed:
-        this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, skip);
+        this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, !changedType);
         break;
     }
-    console.log(this.wordsOnScreen)
+    this.wordType = type;
   }
 
   //#region Suporte Controles HID
