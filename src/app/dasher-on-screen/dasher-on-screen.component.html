@@ -2,11 +2,11 @@
 
     <div fxFlex="5">
         <mat-form-field>
-            <input matInput type="text" [(ngModel)]="input">
+            <input id="input" matInput type="text" [(ngModel)]="input">
         </mat-form-field>
     </div>
 
-    <div #playerDivElementRef fxFlex>
+    <div id="playerDivElementRef" #playerDivElementRef fxFlex>
 
         <div fxLayoutAlign="center start" [ngClass]="!isAfk ? 'stop-div' : 'start-div'">
             <div>
@@ -26,7 +26,7 @@
             <div (click)="onClickElementCalibration(1)"
                 [ngClass]="clickElementsCount.get(1) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #vogaisElementRef fxLayoutAlign="center center"
+                <p id="vogaisElementRef" class="label-default-font-size" #vogaisElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverVowels()">
                     Vogais</p>
             </div>
@@ -34,7 +34,7 @@
             <div (click)="onClickElementCalibration(2)"
                 [ngClass]="clickElementsCount.get(2) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #limparElementRef (mouseover)="mouseOverReset(false)"
+                <p id="limparElementRef" class="label-default-font-size" #limparElementRef (mouseover)="mouseOverReset(false)"
                     fxLayoutAlign="center center">Limpar Último
                 </p>
             </div>
@@ -62,17 +62,17 @@
             <div (click)="onClickElementCalibration(5)"
                 [ngClass]="clickElementsCount.get(5) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
+                <p id="espacoElementRef" class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverBlankSpace()">
                     Inserir Espaço</p>
             </div>
 
-            <div #centerDivElementRef fxFill fxFlex></div>
+            <div id="centerDivElementRef" #centerDivElementRef fxFill fxFlex></div>
 
             <div (click)="onClickElementCalibration(6)"
                 [ngClass]="clickElementsCount.get(6) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #mostrarMaisElementRef fxLayoutAlign="center center"
+                <p id="mostrarMaisElementRef" class="label-default-font-size" #mostrarMaisElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverMoreOptions()">Mostrar Mais
                 </p>
             </div>

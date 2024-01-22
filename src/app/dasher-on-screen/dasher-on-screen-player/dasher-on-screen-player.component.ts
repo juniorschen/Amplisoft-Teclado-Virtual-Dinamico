@@ -3,7 +3,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { debounceTime, Subject } from 'rxjs';
 import { animationIn, animationOut } from 'src/app/common/animation';
 import { AnimationParams } from 'src/app/common/animation-model';
-import { elementOverAnother } from 'src/app/common/document-helper';
+import { elementOverAnother, isTestEnv } from 'src/app/common/document-helper';
 import { ConfigurationsService } from 'src/app/core/services/configuration.service';
 
 @Component({
@@ -29,8 +29,8 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   @Output('wordSelectedEvent')
   public wordSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
 
-  @ViewChild('divElementRef')
-  public divElementRef: ElementRef<HTMLDivElement>;
+  @ViewChild('wordElementRef')
+  public wordElementRef: ElementRef<HTMLDivElement>;
 
   @ViewChild('pElementRef')
   public pElementRef: ElementRef<HTMLParagraphElement>;
@@ -63,7 +63,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
       this.animationParams.timeOut = this.calculateAnimationDuration() + 'ms';
       animationFactory = this.animationBuilder.build(animationOut);
     }
-    this.player = animationFactory.create(this.divElementRef.nativeElement, { params: this.animationParams });
+    this.player = animationFactory.create(this.wordElementRef.nativeElement, { params: this.animationParams });
 
     if (shouldPlay) {
       this.player.play();
@@ -109,7 +109,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   }
 
   mouseOverWordEvent() {
-    if (!this.player || this.controlProviderService.isAnyControlConfigured())
+    if ((!this.player || this.controlProviderService.isAnyControlConfigured()) && !isTestEnv)
       return;
 
     this.wordSelectedEvent.next(this.word);

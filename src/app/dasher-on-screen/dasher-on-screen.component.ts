@@ -245,10 +245,17 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     const changedType = this.wordType != type;
     switch (type) {
       case WordType.Vowels:
-        this.wordsOnScreen = getVowels();
+        if (!changedType) {
+          this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, false);
+          this.wordType = WordType.Mixed;
+        } else {
+          this.wordsOnScreen = getVowels();
+          this.wordType = WordType.Vowels;
+        }
         break;
       case WordType.Consonants:
         this.wordsOnScreen = getMixedConsonants(this.configurationService.maxWordsOnScreen, !changedType && !fullReset);
+        this.wordType = WordType.Consonants;
         if (this.wordsOnScreen.length == 0) {
           this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, false);
           this.wordType = WordType.Mixed;
@@ -256,9 +263,9 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         break;
       case WordType.Mixed:
         this.wordsOnScreen = getMixedAlphabet(this.configurationService.maxWordsOnScreen, !changedType && !fullReset);
+        this.wordType = WordType.Mixed;
         break;
     }
-    this.wordType = type;
   }
 
   //#region Suporte Controles HID
@@ -391,7 +398,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     if (Math.abs(packet?.actualAccelerometer?.y) > 0.009) {
       if (packet.actualAccelerometer.y > 0) {
         this.sector = Sector.Right;
-        this.suportDiv.style.left = "97.5%";
+        this.suportDiv.style.left = "99%";
         wordDetected = this.wordDetectedBySensorial();
       } else if (this.sector != Sector.Left) {
         this.doResetSensorialDetection();

@@ -102,6 +102,7 @@ export class PerfomanceIndicatorService {
                 "ppmIndicator": ppmIndicator,
                 "startDate": this.startDate,
                 "endDate": this.endDate,
+                "predictionClassifierList": this.predictionClassifierList,
                 "totalUsageSeconds": calcularDiferencaEmSegundos(this.startDate, this.endDate)
             }
         }); */
@@ -119,6 +120,7 @@ export class PerfomanceIndicatorService {
                 "ppmIndicator": ppmIndicator,
                 "startDate": this.startDate,
                 "endDate": this.endDate,
+                "predictionClassifierList": this.predictionClassifierList,
                 "totalUsageSeconds": calcularDiferencaEmSegundos(this.startDate, this.endDate)
             }
         });

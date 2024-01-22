@@ -5,9 +5,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
-import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { isTestEnv } from './common/document-helper';
 
 @NgModule({
   declarations: [
@@ -16,10 +16,11 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
+    BrowserAnimationsModule.withConfig({
+      disableAnimations: isTestEnv
+    }),
     MatDialogModule,
     provideFirebaseApp(() => initializeApp({
-
     })),
     provideFirestore(() => getFirestore()),
   ],

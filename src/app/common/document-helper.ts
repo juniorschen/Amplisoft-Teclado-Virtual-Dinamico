@@ -17,3 +17,5 @@ export function getOffset(el) {
     top: rect.top + window.scrollY
   };
 }
+
+export const isTestEnv = window["Cypress"] != undefined;
