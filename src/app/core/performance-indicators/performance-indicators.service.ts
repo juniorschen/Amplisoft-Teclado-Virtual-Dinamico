@@ -1,9 +1,10 @@
 import { Injectable, inject } from "@angular/core";
-import { Firestore, doc, setDoc } from "@angular/fire/firestore";
+import { Firestore } from "@angular/fire/firestore";
 import { IdentifierService } from "../services/identifier.service";
 import { DeviceDetectorService } from "ngx-device-detector";
-import { calcularDiferencaEmMilissegundos, calcularDiferencaEmSegundos } from "src/app/common/date";
+import { calcularDiferencaEmSegundos } from "src/app/common/date";
 import { ConfigurationsService } from "../services/configuration.service";
+import { isTestEnv } from "src/app/common/document-helper";
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +12,7 @@ import { ConfigurationsService } from "../services/configuration.service";
 export class PerfomanceIndicatorService {
 
     private firestore: Firestore = inject(Firestore);
-    private miniumUsageSeconds = 15 * 60; // 15 minutos
+    private miniumUsageSeconds = (isTestEnv ? 1 : 15) * 60; // 15 minutos normalmente, 1 minuto para teste
     private startDate: Date;
     private endDate: Date;
     private backSpaceDateList = new Array<Date>();
@@ -88,42 +89,55 @@ export class PerfomanceIndicatorService {
         }
 
         const deviceInfo = this.deviceService.getDeviceInfo();
-        /* await setDoc(doc(this.firestore, "feedback", this.identifierService.generateUUIDV4()), {
-            "browser": window.navigator.userAgent,
-            "os": deviceInfo.os,
-            "os_version": deviceInfo.os_version,
-            "device": deviceInfo.deviceType,
-            "deviceId": this.identifierService.getDeviceId(),
-            "control": this.controlProviderService.getActiveControl(),
-            "data": {
-                "cpmIndicator": cpmIndicator,
-                "wmpIndicator": wmpIndicator,
-                "epmIndicator": epmIndicator,
-                "ppmIndicator": ppmIndicator,
-                "startDate": this.startDate,
-                "endDate": this.endDate,
-                "predictionClassifierList": this.predictionClassifierList,
-                "totalUsageSeconds": calcularDiferencaEmSegundos(this.startDate, this.endDate)
-            }
-        }); */
-        console.log("feedback sended", {
-            "browser": window.navigator.userAgent,
-            "os": deviceInfo.os,
-            "os_version": deviceInfo.os_version,
-            "device": deviceInfo.deviceType,
-            "deviceId": this.identifierService.getDeviceId(),
-            "control": this.controlProviderService.getActiveControl(),
-            "data": {
-                "cpmIndicator": cpmIndicator,
-                "wmpIndicator": wmpIndicator,
-                "epmIndicator": epmIndicator,
-                "ppmIndicator": ppmIndicator,
-                "startDate": this.startDate,
-                "endDate": this.endDate,
-                "predictionClassifierList": this.predictionClassifierList,
-                "totalUsageSeconds": calcularDiferencaEmSegundos(this.startDate, this.endDate)
-            }
-        });
+        if (isTestEnv) {
+            alert(`Resultados dos Testes para Palavras ${window["Cypress"]["Palavras"]}, Dpi ${window["Cypress"]["Dpi"]}, Precisao ${window["Cypress"]["Precisao"]}:
+                "cpmIndicator": ${cpmIndicator}
+                "wmpIndicator": ${wmpIndicator}
+                "epmIndicator": ${epmIndicator}
+                "ppmIndicator": ${ppmIndicator}
+                "startDate": ${this.startDate}
+                "endDate": ${this.endDate}
+                "predictionClassifierList": ${this.predictionClassifierList}
+                "totalUsageSeconds": ${calcularDiferencaEmSegundos(this.startDate, this.endDate)}
+            `);
+        } else {
+            /* await setDoc(doc(this.firestore, "feedback", this.identifierService.generateUUIDV4()), {
+                "browser": window.navigator.userAgent,
+                "os": deviceInfo.os,
+                "os_version": deviceInfo.os_version,
+                "device": deviceInfo.deviceType,
+                "deviceId": this.identifierService.getDeviceId(),
+                "control": this.controlProviderService.getActiveControl(),
+                "data": {
+                    "cpmIndicator": cpmIndicator,
+                    "wmpIndicator": wmpIndicator,
+                    "epmIndicator": epmIndicator,
+                    "ppmIndicator": ppmIndicator,
+                    "startDate": this.startDate,
+                    "endDate": this.endDate,
+                    "predictionClassifierList": this.predictionClassifierList,
+                    "totalUsageSeconds": calcularDiferencaEmSegundos(this.startDate, this.endDate)
+                }
+            }); */
+            console.log("feedback sended", {
+                "browser": window.navigator.userAgent,
+                "os": deviceInfo.os,
+                "os_version": deviceInfo.os_version,
+                "device": deviceInfo.deviceType,
+                "deviceId": this.identifierService.getDeviceId(),
+                "control": this.controlProviderService.getActiveControl(),
+                "data": {
+                    "cpmIndicator": cpmIndicator,
+                    "wmpIndicator": wmpIndicator,
+                    "epmIndicator": epmIndicator,
+                    "ppmIndicator": ppmIndicator,
+                    "startDate": this.startDate,
+                    "endDate": this.endDate,
+                    "predictionClassifierList": this.predictionClassifierList,
+                    "totalUsageSeconds": calcularDiferencaEmSegundos(this.startDate, this.endDate)
+                }
+            });
+        }
     }
 
     private resetCache() {

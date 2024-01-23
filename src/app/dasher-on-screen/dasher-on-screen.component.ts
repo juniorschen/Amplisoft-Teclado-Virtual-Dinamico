@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
-import { elementOverAnother, getOffset } from '../common/document-helper';
+import { elementOverAnother, getOffset, isTestEnv } from '../common/document-helper';
 
 import { ConfigurationsService } from '../core/services/configuration.service';
 import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
@@ -20,7 +20,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   // Controle Privado
   private lastActionExecuted = new Date();
-  private afkCheckDelayMs = 1000 * 45;
+  private afkCheckDelayMs = 1000 * (isTestEnv ? 10 : 45);
   private afkInterval;
   private lastSpeaked = "";
   private suportDiv: HTMLDivElement;
@@ -191,7 +191,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.input = this.input.substring(0, this.input.length - 1);
       this.perfomanceIndicatorService.backSpace();
     }
-    this.redefinedWords(WordType.Mixed);
+    this.redefinedWords(WordType.Mixed, true);
     this.lastActionExecuted = new Date();
   }
 

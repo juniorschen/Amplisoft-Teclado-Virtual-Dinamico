@@ -1,4 +1,4 @@
-export const WordsText400 = `imensidaoimensidao`
+export const WordsText400 = `na imensidao do tempo e do espaco somos apenas poeira estelar flutuando ao sabor dos ventos cosmicos a existencia humana como um breve lampejo de luz em meio a vastidao sideral sem razao`
 /* na imensidao do tempo e do espaco somos apenas poeira estelar flutuando ao sabor dos ventos cosmicos a existencia humana como um breve lampejo de luz em meio a vastidao sideral sem razao aparente para nossa jornada efemera no cosmos
 a vida surge como um fenomeno aleatorio em um planeta distante sem proposito predefinido apenas a pulsacao incessante da natureza moldando as formas de vida em um ballet caotico de evolucao e extincao
 os dias se desenrolam como cenas de um filme sem roteiro a trama se desdobrando sem uma narrativa predeterminada somos atores improvisando nossos papeis em um palco improvisado na vastidao do universo
