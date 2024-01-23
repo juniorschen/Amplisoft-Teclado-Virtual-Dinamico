@@ -5,6 +5,8 @@ import { DeviceDetectorService } from "ngx-device-detector";
 import { calcularDiferencaEmSegundos } from "src/app/common/date";
 import { ConfigurationsService } from "../services/configuration.service";
 import { isTestEnv } from "src/app/common/document-helper";
+import { MatDialog } from "@angular/material/dialog";
+import { DasherOnScreenFeedbackModalComponent } from "src/app/dasher-on-screen/dasher-on-screen-feedback-modal/dasher-on-screen-feedback-modal.component";
 
 @Injectable({
     providedIn: 'root'
@@ -24,7 +26,8 @@ export class PerfomanceIndicatorService {
     }>();
     private fullInput = "";
 
-    constructor(private deviceService: DeviceDetectorService, private identifierService: IdentifierService, private controlProviderService: ConfigurationsService) { }
+    constructor(private deviceService: DeviceDetectorService, private identifierService: IdentifierService, private controlProviderService: ConfigurationsService,
+        public dialog: MatDialog) { }
 
     public start() {
         this.startDate = new Date();
@@ -88,19 +91,30 @@ export class PerfomanceIndicatorService {
             ppmIndicator = (this.predictonsDateList.length / calcularDiferencaEmSegundos(this.startDate, this.endDate)) * 60;
         }
 
-        const deviceInfo = this.deviceService.getDeviceInfo();
         if (isTestEnv) {
-            alert(`Resultados dos Testes para Palavras ${window["Cypress"]["Palavras"]}, Dpi ${window["Cypress"]["Dpi"]}, Precisao ${window["Cypress"]["Precisao"]}:
-                "cpmIndicator": ${cpmIndicator}
-                "wmpIndicator": ${wmpIndicator}
-                "epmIndicator": ${epmIndicator}
-                "ppmIndicator": ${ppmIndicator}
-                "startDate": ${this.startDate}
-                "endDate": ${this.endDate}
-                "predictionClassifierList": ${this.predictionClassifierList}
-                "totalUsageSeconds": ${calcularDiferencaEmSegundos(this.startDate, this.endDate)}
-            `);
+            let title = "";
+            if (window["Cypress"]["Tipo"] == "Sensorial") {
+                title = `Resultados dos Testes ${window["Cypress"]["Tipo"]} DelayMsEscolha ${window["Cypress"]["DelayMsEscolha"]}, DelayMsIteracao ${window["Cypress"]["DelayMsIteracao"]}, Precisao ${window["Cypress"]["Precisao"]}:`;
+            } else {
+                title = `Resultados dos Testes ${window["Cypress"]["Tipo"]} Dpi ${window["Cypress"]["Dpi"]}, Precisao ${window["Cypress"]["Precisao"]}:`;
+            }
+
+            this.dialog.open(DasherOnScreenFeedbackModalComponent, {
+                data: {
+                    message: `${title}
+                    "cpmIndicator": ${cpmIndicator}
+                    "wmpIndicator": ${wmpIndicator}
+                    "epmIndicator": ${epmIndicator}
+                    "ppmIndicator": ${ppmIndicator}
+                    "startDate": ${this.startDate}
+                    "endDate": ${this.endDate}
+                    "predictionClassifierList": ${this.predictionClassifierList}
+                    "totalUsageSeconds": ${calcularDiferencaEmSegundos(this.startDate, this.endDate)}
+                    `
+                }
+              });
         } else {
+            const deviceInfo = this.deviceService.getDeviceInfo();
             /* await setDoc(doc(this.firestore, "feedback", this.identifierService.generateUUIDV4()), {
                 "browser": window.navigator.userAgent,
                 "os": deviceInfo.os,

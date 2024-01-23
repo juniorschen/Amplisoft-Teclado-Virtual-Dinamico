@@ -10,11 +10,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { DasherOnScreenComponent } from './dasher-on-screen.component';
 import { DasherOnScreenRoutingModule } from './dasher-on-screen-routing.module';
 import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
+import { DasherOnScreenFeedbackModalComponent } from './dasher-on-screen-feedback-modal/dasher-on-screen-feedback-modal.component';
 
 @NgModule({
   declarations: [
     DasherOnScreenComponent,
-    DasherOnScreenPlayerComponent
+    DasherOnScreenPlayerComponent,
+    DasherOnScreenFeedbackModalComponent
   ],
   imports: [
     CommonModule,
