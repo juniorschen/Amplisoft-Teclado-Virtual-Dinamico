@@ -187,11 +187,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private reset(fullReset = false) {
     if (fullReset) {
       this.input = "";
+      this.redefinedWords(WordType.Mixed, true);
     } else {
       this.input = this.input.substring(0, this.input.length - 1);
       this.perfomanceIndicatorService.backSpace();
     }
-    this.redefinedWords(WordType.Mixed, true);
     this.lastActionExecuted = new Date();
   }
 

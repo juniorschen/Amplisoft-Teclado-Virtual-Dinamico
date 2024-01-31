@@ -77,6 +77,7 @@ describe('Validar Desempenho do Software', () => {
 
             // espera 10 segundos para que o software fique afk e printe os resultados
             await promisify(cy.wait(10));
+            await promisify(cy.screenshot(window["Cypress"]["Tipo"] + "_Dpi" +  window["Cypress"]["Dpi"] + "_Prec" + window["Cypress"]["Precisao"]));
         }
 
     });
