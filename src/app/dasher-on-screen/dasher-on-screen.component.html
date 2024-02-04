@@ -34,8 +34,8 @@
             <div (click)="onClickElementCalibration(2)"
                 [ngClass]="clickElementsCount.get(2) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p id="limparElementRef" class="label-default-font-size" #limparElementRef (mouseover)="mouseOverReset(false)"
-                    fxLayoutAlign="center center">Limpar Último
+                <p id="limparElementRef" class="label-default-font-size" #limparElementRef
+                    (mouseover)="mouseOverReset(false)" fxLayoutAlign="center center">Limpar Último
                 </p>
             </div>
 
@@ -72,19 +72,37 @@
             <div (click)="onClickElementCalibration(6)"
                 [ngClass]="clickElementsCount.get(6) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p id="mostrarMaisElementRef" class="label-default-font-size" #mostrarMaisElementRef fxLayoutAlign="center center"
-                    (mouseover)="mouseOverMoreOptions()">Mostrar Mais
+                <p id="mostrarMaisElementRef" class="label-default-font-size" #mostrarMaisElementRef
+                    fxLayoutAlign="center center" (mouseover)="mouseOverMoreOptions()">Mostrar Mais
                 </p>
             </div>
         </div>
 
         <div (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
             <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-i="index">
-                <app-dasher-on-screen-player (click)="onClickElementCalibration(7 + i)"
+
+                <div *ngIf="i == 0" style="margin-right: 40px; display: flex; flex-direction: row;" fxFill fxFlex>
+                    <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-it="index">
+                        <app-dasher-on-screen-player [word]="wordsOnScreen[it]" [mouseMovedEvent]="mouseMovedEvent"
+                            [playerType]="0" [onResetDasherEvent]="onResetDasherEvent"></app-dasher-on-screen-player>
+                    </ng-template>
+                </div>
+
+                <app-dasher-on-screen-player *ngIf="i > 0 && i < (wordsOnScreen.length - 1)"
+                    (click)="onClickElementCalibration(7 + i)" [playerType]="1"
                     [ngClass]="clickElementsCount.get(7 + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                     [word]="wordsOnScreen[i]" [mouseMovedEvent]="mouseMovedEvent"
                     [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
                     fxFlex></app-dasher-on-screen-player>
+
+                <div *ngIf="i == (wordsOnScreen.length - 1)" fxFill fxFlex
+                    style="margin-right: 40px; display: flex; flex-direction: row;">
+                    <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-ib="index">
+                        <app-dasher-on-screen-player [word]="wordsOnScreen[ib]" [mouseMovedEvent]="mouseMovedEvent"
+                            [playerType]="2" [onResetDasherEvent]="onResetDasherEvent"></app-dasher-on-screen-player>
+                    </ng-template>
+                </div>
+
             </ng-template>
         </div>
 

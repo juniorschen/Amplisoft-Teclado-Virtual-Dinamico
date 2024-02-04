@@ -1,3 +1,5 @@
 <div #wordElementRef fxLayoutAlign="end none" fxFill fxFlex>
-    <p [id]="word" class="label-default-font-size action-div-border" style="width: 40px;" #pElementRef (mouseover)="mouseOverWordEvent()" fxLayoutAlign="center center">{{ word }}</p>
+    <p [id]="word"
+        [ngClass]="playerType === 1 ? 'label-default-font-size action-div-border big-action-size' : 'label-default-font-size action-div-border big-action-size'"
+        #pElementRef (mouseover)="mouseOverWordEvent()" fxLayoutAlign="center center">{{ word }}</p>
 </div>

@@ -272,6 +272,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private createAuxDisplay() {
     setTimeout(() => {
       this.suportDiv = document.createElement("div");
+      this.suportDiv.id = "suportDiv";
       this.suportDiv.style.position = "absolute";
       const leftPx = (this.centerDivElementRef.nativeElement.offsetLeft + this.centerDivElementRef.nativeElement.offsetWidth / 2);
       const totalWidth = this.playerDivElementRef.nativeElement.clientWidth;
