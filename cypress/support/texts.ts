@@ -35,13 +35,8 @@ export function CalcularDelayRealizarAcao(origin, target: HTMLElement, dpi: numb
     return distancia / dpi;
 }
 
-export function LetraVogal(c) {
-    return ['a', 'e', 'i', 'o', 'u'].indexOf(c.toLowerCase()) !== -1;
-}
-
-export const velocidadeIncrementalPonteiroAnimacao = 1.5;
 export const cenariosTestePonteiro = [
-    { texto: WordsText, dpi: 200, precisao: 60 },
+    /* { texto: WordsText, dpi: 200, precisao: 60 },
     { texto: WordsText, dpi: 200, precisao: 75 },
     { texto: WordsText, dpi: 200, precisao: 90 },
 
@@ -50,7 +45,7 @@ export const cenariosTestePonteiro = [
     { texto: WordsText, dpi: 400, precisao: 90 },
 
     { texto: WordsText, dpi: 600, precisao: 60 },
-    { texto: WordsText, dpi: 600, precisao: 75 },
+    { texto: WordsText, dpi: 600, precisao: 75 }, */
     { texto: WordsText, dpi: 600, precisao: 90 },
 ];
 

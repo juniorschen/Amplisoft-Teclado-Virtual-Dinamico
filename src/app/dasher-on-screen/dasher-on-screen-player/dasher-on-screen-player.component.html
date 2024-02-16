@@ -1,5 +1,4 @@
-<div #wordElementRef fxLayoutAlign="end none" fxFill fxFlex>
-    <p [id]="word"
-        [ngClass]="playerType === 1 ? 'label-default-font-size action-div-border big-action-size' : 'label-default-font-size action-div-border big-action-size'"
-        #pElementRef (mouseover)="mouseOverWordEvent()" fxLayoutAlign="center center">{{ word }}</p>
+<div #wordElementRef [ngClass]="getDivWordFatherClass()">
+    <p [id]="word" [ngClass]="getActionWordClass()" #pElementRef (mouseover)="mouseOverWordEvent()"
+        fxLayoutAlign="center center">{{ word }}</p>
 </div>

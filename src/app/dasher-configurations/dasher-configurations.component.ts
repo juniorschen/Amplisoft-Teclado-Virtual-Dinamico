@@ -24,10 +24,6 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     if (this.formInputs.get("DelayControleSensorial").value > 0 && this.formInputs.get("DelayControleSensorial").valid) {
       this.configurationService.sensorialSelectionDelayMs = this.formInputs.get("DelayControleSensorial").value;
     }
-
-    if (this.formInputs.get("MaxWordsOnScreen").value > 0 && this.formInputs.get("MaxWordsOnScreen").valid) {
-      this.configurationService.maxWordsOnScreen = this.formInputs.get("MaxWordsOnScreen").value;
-    }
   }
 
   private initForm() {
@@ -41,7 +37,6 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     });
     this.formInputs = this.fbBuilder.group({
       DelayControleSensorial: [this.configurationService.sensorialSelectionDelayMs, [Validators.required, Validators.min(1)]],
-      MaxWordsOnScreen: [this.configurationService.maxWordsOnScreen, [Validators.required, Validators.max(26), Validators.min(1)]]
     });
   }
 

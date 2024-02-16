@@ -61,3 +61,27 @@
     }
 }
 
+.grid-header {
+    grid-area: header;
+}
+
+.grid-main {
+    grid-area: main;
+    background-color: lightgoldenrodyellow;
+}
+
+.grid-bottom {
+    grid-area: bottom;
+}
+
+.grid-right {
+    grid-area: right;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-areas:
+        'header'
+        'main'
+        'bottom';
+}

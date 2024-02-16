@@ -16,12 +16,11 @@ export class ConfigurationsService {
     private onPacketSended = new Subject<any>();
     private activeControl: string;
     public sensorialSelectionDelayMs = 1000 * 4;
-    public maxWordsOnScreen = 11;
 
     constructor() { }
 
     public getActiveControl() {
-        return localStorage.getItem('ActiveControl');
+        return localStorage.getItem('ActiveControl') ?? "";
     }
 
     public setActiveControl(control: string) {

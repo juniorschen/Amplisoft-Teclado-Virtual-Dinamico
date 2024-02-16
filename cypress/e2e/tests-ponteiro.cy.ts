@@ -1,4 +1,4 @@
-import { CalcularDelayRealizarAcao, LetraVogal, VaiErrar, VaiPredizer, cenariosTestePonteiro, velocidadeIncrementalPonteiroAnimacao } from "cypress/support/texts";
+import { CalcularDelayRealizarAcao, VaiErrar, VaiPredizer, cenariosTestePonteiro } from "cypress/support/texts";
 import promisify from 'cypress-promise';
 
 describe('Validar Desempenho do Software', () => {
@@ -15,9 +15,7 @@ describe('Validar Desempenho do Software', () => {
             const dc = await promisify(cy.document());
             const limparEl = dc.getElementById("limparElementRef");
             const espacoEl = dc.getElementById("espacoElementRef");
-            const vogaisEl = dc.getElementById("vogaisElementRef");
             const centerEl = dc.getElementById("centerDivElementRef");
-            const mostrarMaisEl = dc.getElementById("mostrarMaisElementRef");
 
             const textoDivididoPorEspacoVazio = cenarioTeste.texto.replace(/\n/g, '').toLowerCase().split(" ");
             for (let [indexPalavra, palavraAtual] of textoDivididoPorEspacoVazio.entries()) {
@@ -29,23 +27,8 @@ describe('Validar Desempenho do Software', () => {
                 for (let [indexLetra, letra] of letrasPalavra.entries()) {
                     const vaiPredizer = VaiPredizer(cenarioTeste.precisao, palavraAtual, palavraDigitadaAtual);
                     if (!vaiPredizer) {
-                        let letraElement;
-                        for (let index = 0; index < 5; index++) {
-                            letraElement = dc.getElementById(letra);
-                            if (!letraElement) {
-                                if (LetraVogal(letra)) {
-                                    await promisify(cy.wait(CalcularDelayRealizarAcao(centerEl, vogaisEl, cenarioTeste.dpi) * 1000));
-                                    await promisify(cy.get('p[id="vogaisElementRef"]').trigger('mouseover'));
-                                } else {
-                                    await promisify(cy.wait(CalcularDelayRealizarAcao(centerEl, mostrarMaisEl, cenarioTeste.dpi) * 1000));
-                                    await promisify(cy.get('p[id="mostrarMaisElementRef"]').trigger('mouseover'));
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
-                        defaultDelayAcharLetra = CalcularDelayRealizarAcao(centerEl, letraElement, cenarioTeste.dpi * velocidadeIncrementalPonteiroAnimacao) * 1000;
+                        let letraElement = dc.getElementById(letra);
+                        defaultDelayAcharLetra = CalcularDelayRealizarAcao(centerEl, letraElement, cenarioTeste.dpi) * 1000;
                         await promisify(cy.wait(defaultDelayAcharLetra));
 
                         const vaiErrar = VaiErrar();
@@ -55,7 +38,7 @@ describe('Validar Desempenho do Software', () => {
                             await promisify(cy.wait(CalcularDelayRealizarAcao(centerEl, limparEl, cenarioTeste.dpi) * 1000));
                             await promisify(cy.get('p[id="limparElementRef"]').trigger('mouseover'));
 
-                            await promisify(cy.wait(CalcularDelayRealizarAcao(centerEl, letraElement, cenarioTeste.dpi * velocidadeIncrementalPonteiroAnimacao) * 1000));
+                            await promisify(cy.wait(CalcularDelayRealizarAcao(centerEl, letraElement, cenarioTeste.dpi) * 1000));
                         }
 
                         await promisify(cy.get(`p[id="${letra}"]`).trigger('mouseover'));

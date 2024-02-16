@@ -1,4 +1,4 @@
-import { CalcularDelayRealizarAcao, LetraVogal, VaiErrar, VaiPredizer, cenariosTesteSensorial } from "cypress/support/texts";
+import { VaiErrar, VaiPredizer, cenariosTesteSensorial } from "cypress/support/texts";
 import promisify from 'cypress-promise';
 
 // quantidadeIteracoesNecessariasEncontrarSetor para se localizar no setor correto que vai iteragir (centro esquerda direta), 1.5 ação é a média no caso
@@ -28,11 +28,6 @@ describe('Validar Desempenho do Software', () => {
             await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
             const dc = await promisify(cy.document());
-            const limparEl = dc.getElementById("limparElementRef");
-            const espacoEl = dc.getElementById("espacoElementRef");
-            const vogaisEl = dc.getElementById("vogaisElementRef");
-            const centerEl = dc.getElementById("centerDivElementRef");
-            const mostrarMaisEl = dc.getElementById("mostrarMaisElementRef");
 
             const textoDivididoPorEspacoVazio = cenarioTeste.texto.replace(/\n/g, '').toLowerCase().split(" ");
             for (let [indexPalavra, palavraAtual] of textoDivididoPorEspacoVazio.entries()) {
@@ -43,22 +38,6 @@ describe('Validar Desempenho do Software', () => {
                 for (let [indexLetra, letra] of letrasPalavra.entries()) {
                     const vaiPredizer = VaiPredizer(cenarioTeste.precisao, palavraAtual, palavraDigitadaAtual);
                     if (!vaiPredizer) {
-                        let letraElement;
-                        for (let index = 0; index < 5; index++) {
-                            letraElement = dc.getElementById(letra);
-                            if (!letraElement) {
-                                if (LetraVogal(letra)) {
-                                    await promisify(cy.wait(getDelaySensorial(cenarioTeste.delayMsEscolha, cenarioTeste.delayIteracoes, "esquerda")));
-                                    await promisify(cy.get('p[id="vogaisElementRef"]').trigger('mouseover'));
-                                } else {
-                                    await promisify(cy.wait(getDelaySensorial(cenarioTeste.delayMsEscolha, cenarioTeste.delayIteracoes, "centro")));
-                                    await promisify(cy.get('p[id="mostrarMaisElementRef"]').trigger('mouseover'));
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
                         await promisify(cy.wait(getDelaySensorial(cenarioTeste.delayMsEscolha, cenarioTeste.delayIteracoes, "direita")));
 
                         const vaiErrar = VaiErrar();

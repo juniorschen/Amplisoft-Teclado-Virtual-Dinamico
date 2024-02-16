@@ -1,5 +1,6 @@
 export enum Sector {
-    Left = 0,
-    Center = 1,
-    Right = 2
+    SectorOne = 0,
+    SectorTwo = 1,
+    SectorTree = 2,
+    SectorFour = 3
 }

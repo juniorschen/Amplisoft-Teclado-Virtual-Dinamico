@@ -16,39 +16,15 @@
         </div>
 
         <div fxLayout="column">
-            <div (click)="onClickElementCalibration(0)"
-                [ngClass]="clickElementsCount.get(0) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+            <div (click)="onClickElementCalibration(0, 'limparTudoElementRef')"
+                [ngClass]="clickElementsCount.get('limparTudoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
                     fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
 
-            <div (click)="onClickElementCalibration(1)"
-                [ngClass]="clickElementsCount.get(1) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" fxFill fxFlex>
-                <p id="vogaisElementRef" class="label-default-font-size" #vogaisElementRef fxLayoutAlign="center center"
-                    (mouseover)="mouseOverVowels()">
-                    Vogais</p>
-            </div>
-
-            <div (click)="onClickElementCalibration(2)"
-                [ngClass]="clickElementsCount.get(2) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" fxFill fxFlex>
-                <p id="limparElementRef" class="label-default-font-size" #limparElementRef
-                    (mouseover)="mouseOverReset(false)" fxLayoutAlign="center center">Limpar Último
-                </p>
-            </div>
-
-            <div (click)="onClickElementCalibration(3)"
-                [ngClass]="clickElementsCount.get(3) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #consoantesElementRef fxLayoutAlign="center center"
-                    (mouseover)="mouseOverConsonants()">Consoantes
-                </p>
-            </div>
-
-            <div (click)="onClickElementCalibration(4)"
-                [ngClass]="clickElementsCount.get(4) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+            <div (click)="onClickElementCalibration(0, 'falarElementRef')"
+                [ngClass]="clickElementsCount.get('falarElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()"
                     fxLayoutAlign="center center">Falar Texto Completo</p>
@@ -59,8 +35,8 @@
         </div>
 
         <div fxLayoutAlign="center center" fxLayout="column">
-            <div (click)="onClickElementCalibration(5)"
-                [ngClass]="clickElementsCount.get(5) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+            <div (click)="onClickElementCalibration(0, 'espacoElementRef')"
+                [ngClass]="clickElementsCount.get('espacoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p id="espacoElementRef" class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverBlankSpace()">
@@ -69,41 +45,45 @@
 
             <div id="centerDivElementRef" #centerDivElementRef fxFill fxFlex></div>
 
-            <div (click)="onClickElementCalibration(6)"
-                [ngClass]="clickElementsCount.get(6) == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+            <div (click)="onClickElementCalibration(0, 'limparElementRef')"
+                [ngClass]="clickElementsCount.get('limparElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p id="mostrarMaisElementRef" class="label-default-font-size" #mostrarMaisElementRef
-                    fxLayoutAlign="center center" (mouseover)="mouseOverMoreOptions()">Mostrar Mais
+                <p id="limparElementRef" class="label-default-font-size" #limparElementRef
+                    (mouseover)="mouseOverReset(false)" fxLayoutAlign="center center">Limpar Último
                 </p>
             </div>
         </div>
 
-        <div (mousemove)="mouseMovedDasher($event)" fxLayout="column" fxLayoutAlign="none end" fxFlex>
-            <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-i="index">
-
-                <div *ngIf="i == 0" style="margin-right: 40px; display: flex; flex-direction: row;" fxFill fxFlex>
-                    <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-it="index">
-                        <app-dasher-on-screen-player [word]="wordsOnScreen[it]" [mouseMovedEvent]="mouseMovedEvent"
-                            [playerType]="0" [onResetDasherEvent]="onResetDasherEvent"></app-dasher-on-screen-player>
-                    </ng-template>
+        <div fxFlex fxLayout="column" fxFill>
+            <div class="grid-container" fxFill>
+                <div class="grid-header" fxFill>
+                    <div fxLayout="row" fxFill>
+                        <ng-template ngFor let-item [ngForOf]="wordsOnScreenTop" let-i="index">
+                            <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'top')" [playerType]="0"
+                                [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                                [word]="wordsOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
+                                [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
+                                (wordSelectedEvent)="onWordSelectedEvent($event)"></app-dasher-on-screen-player>
+                        </ng-template>
+                    </div>
                 </div>
 
-                <app-dasher-on-screen-player *ngIf="i > 0 && i < (wordsOnScreen.length - 1)"
-                    (click)="onClickElementCalibration(7 + i)" [playerType]="1"
-                    [ngClass]="clickElementsCount.get(7 + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                    [word]="wordsOnScreen[i]" [mouseMovedEvent]="mouseMovedEvent"
-                    [onResetDasherEvent]="onResetDasherEvent" (wordSelectedEvent)="onWordSelectedEvent($event)" fxFill
-                    fxFlex></app-dasher-on-screen-player>
+                <div class="grid-main"></div>
 
-                <div *ngIf="i == (wordsOnScreen.length - 1)" fxFill fxFlex
-                    style="margin-right: 40px; display: flex; flex-direction: row;">
-                    <ng-template ngFor let-item [ngForOf]="wordsOnScreen" let-ib="index">
-                        <app-dasher-on-screen-player [word]="wordsOnScreen[ib]" [mouseMovedEvent]="mouseMovedEvent"
-                            [playerType]="2" [onResetDasherEvent]="onResetDasherEvent"></app-dasher-on-screen-player>
-                    </ng-template>
+                <div class="grid-bottom" fxFill>
+                    <div fxLayout="row" fxFill>
+                        <ng-template ngFor let-item [ngForOf]="wordsOnScreenBottom" let-i="index">
+                            <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'bottom')"
+                                [playerType]="2"
+                                [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                                [word]="wordsOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
+                                [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
+                                (wordSelectedEvent)="onWordSelectedEvent($event)">
+                            </app-dasher-on-screen-player>
+                        </ng-template>
+                    </div>
                 </div>
-
-            </ng-template>
+            </div>
         </div>
 
     </div>
