@@ -2,12 +2,13 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
-import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { isTestEnv } from './common/document-helper';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -16,11 +17,19 @@ import { isTestEnv } from './common/document-helper';
   imports: [
     BrowserModule,
     AppRoutingModule,
+
     BrowserAnimationsModule.withConfig({
       disableAnimations: isTestEnv
     }),
     MatDialogModule,
     provideFirebaseApp(() => initializeApp({
+      apiKey: environment.firebase.apiKey,
+      authDomain: environment.firebase.authDomain,
+      projectId: environment.firebase.projectId,
+      storageBucket: environment.firebase.storageBucket,
+      messagingSenderId: environment.firebase.messagingSenderId,
+      appId: environment.firebase.appId,
+      measurementId: environment.firebase.measurementId
     })),
     provideFirestore(() => getFirestore()),
   ],
