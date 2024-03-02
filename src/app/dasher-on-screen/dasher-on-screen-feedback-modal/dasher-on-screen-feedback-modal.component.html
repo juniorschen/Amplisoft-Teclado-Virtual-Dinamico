@@ -1,1 +1,4 @@
-<p>{{message}}</p>
+<div fxLayoutAlign="center center" fxLayout="column" style="padding: 20px;">
+    <p>{{message}}</p>
+    <mat-spinner *ngIf="showSpinner" diameter="40"></mat-spinner>
+</div>

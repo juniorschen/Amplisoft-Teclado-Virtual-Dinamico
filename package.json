@@ -25,6 +25,8 @@
     "@types/w3c-web-hid": "^1.0.3",
     "cypress-promise": "^1.1.0",
     "cypress-real-events": "^1.11.0",
+    "fs": "^0.0.1-security",
+    "lokijs": "^1.5.12",
     "ngx-device-detector": "^7.0.0",
     "openai": "^4.28.0",
     "rxjs": "~7.5.0",

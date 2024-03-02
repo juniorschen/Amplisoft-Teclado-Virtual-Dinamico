@@ -2,7 +2,7 @@ import * as openAI from 'openai';
 import { environment } from 'src/environments/environment';
 
 const apiModel = 'gpt-3.5-turbo';
-const GPT_3 = new openAI.OpenAI({ apiKey: environment.openAiToken });
+const GPT_3 = new openAI.OpenAI({ apiKey: environment.openAiToken, dangerouslyAllowBrowser: true });
 const basePrompt = `
 Voce é uma inteligencia artificial responsável por completar palavras.
 Voce recebe dados no seguinte formato:
@@ -27,6 +27,7 @@ export async function predictNextWord(currentPhrase, currentWord) {
             currentPhrase: "${currentPhrase}",
             currentWord: "${currentWord}"
         }`;
+        console.log(userPrompt)
 
         const response = await GPT_3.chat.completions.create({
             messages: [
@@ -36,10 +37,8 @@ export async function predictNextWord(currentPhrase, currentWord) {
             model: apiModel,
         });
         console.info({ response });
-
-        //const generatedText = response.choices[0].logprobs;
         try {
-            return []; /* JSON.parse(generatedText); */
+            return [];
         }
         catch (error) {
             console.warn(`Error during parse: ${error}`);

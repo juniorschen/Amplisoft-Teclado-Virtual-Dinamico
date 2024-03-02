@@ -56,18 +56,20 @@ export class PerfomanceIndicatorService {
     public wordSelected(word: string) {
         if (word.length > 1) {
             const wordsList = this.fullInput.split(" ");
-            const lastWord = wordsList[word.length - 1];
-            if (lastWord != " ") {
-                const diff = word.length - lastWord.length;
-                if (diff > 1) {
-                    this.predictonsDateList.push(new Date());
-                    this.predictionClassifierList.push({
-                        charactersOtimization: diff,
-                        predictionWord: word,
-                        word: lastWord
-                    });
-                }
+            const lastWord = wordsList[wordsList.length - 1];
+            
+            const diff = word.length - lastWord.length;
+            if (diff > 1) {
+                this.predictonsDateList.push(new Date());
+                this.predictionClassifierList.push({
+                    charactersOtimization: diff,
+                    predictionWord: word,
+                    word: lastWord
+                });
             }
+
+            this.fullInput = this.fullInput.substring(0, this.fullInput.length - lastWord.length);
+            this.fullInput = this.fullInput + word;
         } else {
             this.fullInput = this.fullInput + word;
         }
@@ -94,9 +96,9 @@ export class PerfomanceIndicatorService {
         if (isTestEnv) {
             let title = "";
             if (window["Cypress"]["Tipo"] == "Sensorial") {
-                title = `Resultados dos Testes ${window["Cypress"]["Tipo"]} DelayMsEscolha ${window["Cypress"]["DelayMsEscolha"]}, DelayMsIteracao ${window["Cypress"]["DelayMsIteracao"]}, Precisao ${window["Cypress"]["Precisao"]}:`;
+                title = `Resultados dos Testes ${window["Cypress"]["Tipo"]} DelayMsEscolha ${window["Cypress"]["DelayMsEscolha"]}, DelayMsIteracao ${window["Cypress"]["DelayMsIteracao"]}}:`;
             } else {
-                title = `Resultados dos Testes ${window["Cypress"]["Tipo"]} Dpi ${window["Cypress"]["Dpi"]}, Precisao ${window["Cypress"]["Precisao"]}:`;
+                title = `Resultados dos Testes ${window["Cypress"]["Tipo"]} Dpi ${window["Cypress"]["Dpi"]}}:`;
             }
 
             this.dialog.open(DasherOnScreenFeedbackModalComponent, {
@@ -112,7 +114,7 @@ export class PerfomanceIndicatorService {
                     "totalUsageSeconds": ${calcularDiferencaEmSegundos(this.startDate, this.endDate)}
                     `
                 }
-              });
+            });
         } else {
             const deviceInfo = this.deviceService.getDeviceInfo();
             /* await setDoc(doc(this.firestore, "feedback", this.identifierService.generateUUIDV4()), {

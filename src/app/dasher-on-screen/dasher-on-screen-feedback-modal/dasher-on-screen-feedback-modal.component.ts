@@ -8,9 +8,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class DasherOnScreenFeedbackModalComponent {
   public message: string;
+  public showSpinner: boolean;
+
   constructor(public dialogRef: MatDialogRef<DasherOnScreenFeedbackModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { message }) {
-    console.log(this.data)
+    @Inject(MAT_DIALOG_DATA) public data: { message, showSpinner }) {
     this.message = this.data.message;
+    this.showSpinner = this.data.showSpinner;
   }
 }

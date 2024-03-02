@@ -7,8 +7,9 @@ import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-
 import { calcularDiferencaEmMilissegundos } from '../common/date';
 import { PerfomanceIndicatorService } from '../core/performance-indicators/performance-indicators.service';
 import { endCalibrateCamera } from '../core/support/camera/camera-support';
-import { initialTopWords, initialBottomWords } from '../common/words';
+import { initialTopWords, initialBottomWords, getTopAndBottomWordsByPredictions } from '../common/words';
 import { Sector } from '../common/sector.enum';
+import { LokiJsPredictionsService } from '../core/predictions/lokijs-predictions.service';
 
 @Component({
   selector: 'app-dasher-on-screen',
@@ -64,23 +65,17 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   public clickElementsCount = new Map<string, number>();
   public defaultCalibrationCount = 5;
 
-  constructor(private configurationService: ConfigurationsService, private perfomanceIndicatorService: PerfomanceIndicatorService) {
+  constructor(private configurationService: ConfigurationsService, private perfomanceIndicatorService: PerfomanceIndicatorService,
+    private predicionsService: LokiJsPredictionsService) {
     speechSynthesis.addEventListener("voiceschanged", () => { });
-    this.perfomanceIndicatorService.start();
   }
 
   async ngAfterViewInit() {
-    if (this.configurationService.isAnyControlConfigured()) {
-      this.createAuxDisplay();
-      setTimeout(() => {
-        this.configurationService.initializeControl();
-      });
-      this.configurationService.getPacketOutput().pipe(debounceTime(this.configurationService.getControlDebounceTime())).subscribe((e) => {
-        this.reciveControlMovedEvent(e.detail);
-      });
-    }
-
+    await this.predicionsService.ensureHasCreatedDatabases();
+    this.initHidControl();
+    this.lastActionExecuted = new Date();
     this.afkInterval = setInterval(() => this.checkDasherAfk(), 1000);
+    this.perfomanceIndicatorService.start();
   }
 
   async ngOnDestroy(): Promise<void> {
@@ -130,10 +125,18 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private insertBlankSpace() {
+  private insertBlankSpace(shouldRedefinedWords = true) {
+    const wordsList = this.input.split(" ");
     this.input = this.input + " ";
     this.perfomanceIndicatorService.blankSpace();
-    this.redefinedWords();
+
+    if (wordsList.length > 0) {
+      this.predicionsService.doAddWordOnDb(wordsList[wordsList.length - 1]);
+    }
+
+    if (shouldRedefinedWords)
+      this.redefinedWords();
+
     this.lastActionExecuted = new Date();
   }
 
@@ -146,11 +149,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private reset(fullReset = false) {
     if (fullReset) {
       this.input = "";
-      this.redefinedWords(true);
     } else {
       this.input = this.input.substring(0, this.input.length - 1);
       this.perfomanceIndicatorService.backSpace();
     }
+    this.redefinedWords(fullReset);
     this.lastActionExecuted = new Date();
   }
 
@@ -178,18 +181,18 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   onWordSelectedEvent(word: string) {
     this.resetAuxDisplay();
+    this.perfomanceIndicatorService.wordSelected(word);
+
     if (word.length > 1) {
       const wordsList = this.input.split(" ");
-      const lastWord = wordsList[word.length - 1];
-      if (lastWord != " ") {
-        this.input = this.input.substring(0, this.input.length - lastWord.length);
-        this.input = this.input + word;
-      }
+      const lastWord = wordsList[wordsList.length - 1];
+      this.input = this.input.substring(0, this.input.length - lastWord.length);
+      this.input = this.input + word;
+      this.insertBlankSpace(false);
     } else {
       this.input = this.input + word;
     }
 
-    this.perfomanceIndicatorService.wordSelected(word);
     this.redefinedWords();
     this.onResetDasherEvent.next();
     this.lastActionExecuted = new Date();
@@ -206,11 +209,33 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.wordsOnScreenTop = initialTopWords;
       this.wordsOnScreenBottom = initialBottomWords;
     } else {
-
+      const wordsList = this.input.split(" ");
+      const lastWord = wordsList[wordsList.length - 1];
+      var result = this.predicionsService.getWord(lastWord);
+      if (result.length > 3) {
+        const wordsByPredictions = getTopAndBottomWordsByPredictions(result);
+        this.wordsOnScreenTop = wordsByPredictions.topWords;
+        this.wordsOnScreenBottom = wordsByPredictions.bottomWords;
+      } else {
+        this.wordsOnScreenTop = initialTopWords;
+        this.wordsOnScreenBottom = initialBottomWords;
+      }
     }
   }
 
   //#region Suporte Controles HID
+  private initHidControl() {
+    if (this.configurationService.isAnyControlConfigured()) {
+      this.createAuxDisplay();
+      setTimeout(() => {
+        this.configurationService.initializeControl();
+      });
+      this.configurationService.getPacketOutput().pipe(debounceTime(this.configurationService.getControlDebounceTime())).subscribe((e) => {
+        this.reciveControlMovedEvent(e.detail);
+      });
+    }
+  }
+
   private createAuxDisplay() {
     setTimeout(() => {
       this.suportDiv = document.createElement("div");
@@ -226,11 +251,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.suportDiv.style.height = "20px";
       this.suportDiv.style.zIndex = "1";
       this.suportDiv.style.background = "red";
-      /* if (!this.configurationService.getActiveControl().includes("Sensorial")) {
+      if (!this.configurationService.getActiveControl().includes("Sensorial")) {
         this.suportDiv.style.background = "red";
       } else {
         this.suportDiv.style.background = "unset";
-      } */
+      }
       this.playerDivElementRef.nativeElement.appendChild(this.suportDiv);
     });
   }
@@ -385,7 +410,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     } else if (this.suportDivOnSector == Sector.SectorTree && goToRight) {
       currentWords = this.suportDivOnDirection == 'top' ? this.wordsOnScreenTop : this.wordsOnScreenBottom;
       const lastIndex = currentWords.findIndex(l => l == this.lastWordDetected);
-      if(lastIndex + 1 == (this.suportDivOnDirection == 'top' ? this.wordsOnScreenTop.length : this.wordsOnScreenBottom.length)) {
+      if (lastIndex + 1 == (this.suportDivOnDirection == 'top' ? this.wordsOnScreenTop.length : this.wordsOnScreenBottom.length)) {
         this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.limparTudoElementRef : this.falarElementRef);
         this.suportDivOnSector = Sector.SectorOne;
       } else {
