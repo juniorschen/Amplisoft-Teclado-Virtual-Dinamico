@@ -59,7 +59,7 @@
                 <div class="grid-header" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor let-item [ngForOf]="wordsOnScreenTop" let-i="index">
-                            <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'top')" [playerType]="0"
+                            <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'top')"
                                 [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                                 [word]="wordsOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
                                 [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
@@ -74,7 +74,6 @@
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor let-item [ngForOf]="wordsOnScreenBottom" let-i="index">
                             <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'bottom')"
-                                [playerType]="2"
                                 [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                                 [word]="wordsOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
                                 [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill

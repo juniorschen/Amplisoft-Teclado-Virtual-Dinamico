@@ -26,6 +26,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private suportDiv: HTMLDivElement;
 
   // Detecção sensorial
+  private canSelectWod: boolean = true;
   private suportDivOnDirection: 'top' | 'bottom';
   private suportDivOnSector: Sector;
   private lastSensorialDetectionTime: Date;
@@ -180,6 +181,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   onWordSelectedEvent(word: string) {
+    if (!this.canSelectWod) {
+      return;
+    }
+
+    this.canSelectWod = false;
+
     this.resetAuxDisplay();
     this.perfomanceIndicatorService.wordSelected(word);
 
@@ -196,6 +203,10 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.redefinedWords();
     this.onResetDasherEvent.next();
     this.lastActionExecuted = new Date();
+
+    setTimeout(() => {
+      this.canSelectWod = true;
+    }, 100);
   }
 
   private synthesizeSpeechFromText(text: string): void {

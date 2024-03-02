@@ -2,7 +2,6 @@ import { AnimationBuilder } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { elementOverAnother, isTestEnv } from 'src/app/common/document-helper';
-import { PlayerType } from 'src/app/common/player-type.enum';
 import { ConfigurationsService } from 'src/app/core/services/configuration.service';
 
 @Component({
@@ -21,8 +20,6 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   @Input('onResetDasherEvent')
   public onResetDasherEvent: Subject<void> = new Subject();
-  @Input('playerType')
-  public playerType: PlayerType;
 
   @Output('wordSelectedEvent')
   public wordSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
@@ -36,7 +33,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   constructor(public animationBuilder: AnimationBuilder, private configurationService: ConfigurationsService) { }
 
   ngOnInit(): void {
-    this.mouseMovedEvent.subscribe((event) => {});
+    this.mouseMovedEvent.subscribe((event) => { });
 
     this.onResetDasherEvent.subscribe(() => {
       this.wordSelected = false;
