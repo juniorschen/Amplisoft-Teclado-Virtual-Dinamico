@@ -4,16 +4,18 @@ import promisify from 'cypress-promise';
 describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
         for (let index = 0; index < 10; index++) {
-            await promisify(cy.visit('/'));
-            await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
-
-            // espera 30 segundos para que a base seja configurada
-            await promisify(cy.wait(30));
-            
-            const dc = await promisify(cy.document());
             for (let cenarioTeste of cenariosTestePonteiro) {
+                await promisify(cy.visit('/'));
+                await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
+
+                // espera 30 segundos para que a base seja configurada
+                await promisify(cy.wait(30));
+
+                const dc = await promisify(cy.document());
+
                 window["Cypress"]["Tipo"] = "Ponteiro";
                 window["Cypress"]["Dpi"] = cenarioTeste.dpi;
+                window["Cypress"]["Loop"] = index.toString();
 
                 const limparEl = dc.getElementById("limparElementRef");
                 const espacoEl = dc.getElementById("espacoElementRef");
@@ -56,9 +58,8 @@ describe('Validar Desempenho do Software', () => {
                     }
                 }
 
-                // espera para que o software fique afk e printe os resultados
+                // espera para que o software fique afk para contabilizar os resultados
                 await promisify(cy.contains('Resultados dos Testes', { timeout: 1000000 }).should('be.visible'));
-                await promisify(cy.screenshot(window["Cypress"]["Tipo"] + "_Dpi" + window["Cypress"]["Dpi"] + "_Loop" + index));
             }
         }
     });

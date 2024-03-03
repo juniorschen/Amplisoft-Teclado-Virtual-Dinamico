@@ -16,17 +16,19 @@ function getDelaySensorial(delayEscolha, delayIteracao, setor) {
 describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
         for (let index = 0; index < 10; index++) {
-            await promisify(cy.visit('/'));
-            await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
-
-            // espera 30 segundos para que a base seja configurada
-            await promisify(cy.wait(30));
-            
-            const dc = await promisify(cy.document());
             for (let cenarioTeste of cenariosTesteSensorial) {
+                await promisify(cy.visit('/'));
+                await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
+
+                // espera 30 segundos para que a base seja configurada
+                await promisify(cy.wait(30));
+
+                const dc = await promisify(cy.document());
+
                 window["Cypress"]["Tipo"] = "Sensorial";
                 window["Cypress"]["DelayMsEscolha"] = cenarioTeste.delayMsEscolha;
                 window["Cypress"]["DelayMsIteracao"] = cenarioTeste.delayIteracoes;
+                window["Cypress"]["Loop"] = index.toString();
 
                 const textoDivididoPorEspacoVazio = cenarioTeste.texto.replace(/\n/g, '').toLowerCase().split(" ");
                 for (let [indexPalavra, palavraAtual] of textoDivididoPorEspacoVazio.entries()) {
@@ -64,9 +66,8 @@ describe('Validar Desempenho do Software', () => {
                     }
                 }
 
-                // espera para que o software fique afk e printe os resultados
+                // espera para que o software fique afk para contabilizar os resultados
                 await promisify(cy.contains('Resultados dos Testes', { timeout: 1000000 }).should('be.visible'));
-                await promisify(cy.screenshot(window["Cypress"]["Tipo"] + "_DMsE" + window["Cypress"]["DelayMsEscolha"] + "_DMsI" + window["Cypress"]["DelayMsIteracao"] + "_Loop" + index));
             }
         }
     });

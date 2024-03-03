@@ -205,6 +205,9 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.lastActionExecuted = new Date();
 
     setTimeout(() => {
+      const inputEl = document.getElementById("input") as HTMLInputElement;
+      inputEl.focus();
+      inputEl.setSelectionRange(this.input.length, this.input.length);
       this.canSelectWordLetter = true;
     }, 100);
   }

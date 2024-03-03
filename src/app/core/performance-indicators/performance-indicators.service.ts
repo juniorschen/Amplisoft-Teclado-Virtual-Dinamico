@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { Firestore } from "@angular/fire/firestore";
+import { Firestore, doc, setDoc } from "@angular/fire/firestore";
 import { IdentifierService } from "../services/identifier.service";
 import { DeviceDetectorService } from "ngx-device-detector";
 import { calcularDiferencaEmSegundos } from "src/app/common/date";
@@ -57,7 +57,7 @@ export class PerfomanceIndicatorService {
         if (word.length > 1) {
             const wordsList = this.fullInput.split(" ");
             const lastWord = wordsList[wordsList.length - 1];
-            
+
             const diff = word.length - lastWord.length;
             if (diff > 1) {
                 this.predictonsDateList.push(new Date());
@@ -81,7 +81,7 @@ export class PerfomanceIndicatorService {
 
         const cpmIndicator = (characters.length / calcularDiferencaEmSegundos(this.startDate, this.endDate)) * 60;
 
-        const wmpIndicator = cpmIndicator / 5;
+        const wpmIndicator = cpmIndicator / 5;
 
         let epmIndicator = 0;
         if (this.backSpaceDateList.length > 0) {
@@ -93,19 +93,42 @@ export class PerfomanceIndicatorService {
             ppmIndicator = (this.predictonsDateList.length / calcularDiferencaEmSegundos(this.startDate, this.endDate)) * 60;
         }
 
+        const deviceInfo = this.deviceService.getDeviceInfo();
         if (isTestEnv) {
             let title = "";
+            let id = "";
             if (window["Cypress"]["Tipo"] == "Sensorial") {
                 title = `Resultados dos Testes ${window["Cypress"]["Tipo"]} DelayMsEscolha ${window["Cypress"]["DelayMsEscolha"]}, DelayMsIteracao ${window["Cypress"]["DelayMsIteracao"]}}:`;
+                id = window["Cypress"]["Tipo"] + "_DelayMsEscolha_" + window["Cypress"]["DelayMsEscolha"] + "_DelayMsIteracao_" + window["Cypress"]["DelayMsIteracao"] + "_Loop_" + window["Cypress"]["Loop"];
             } else {
                 title = `Resultados dos Testes ${window["Cypress"]["Tipo"]} Dpi ${window["Cypress"]["Dpi"]}}:`;
+                id = window["Cypress"]["Tipo"] + "_DPI_" + window["Cypress"]["Dpi"] + "_Loop_" + window["Cypress"]["Loop"];
             }
+
+            await setDoc(doc(this.firestore, "Testes", id), {
+                "browser": window.navigator.userAgent,
+                "os": deviceInfo.os,
+                "os_version": deviceInfo.os_version,
+                "device": deviceInfo.deviceType,
+                "deviceId": this.identifierService.getDeviceId(),
+                "control": this.controlProviderService.getActiveControl(),
+                "data": {
+                    "cpmIndicator": cpmIndicator,
+                    "wpmIndicator": wpmIndicator,
+                    "epmIndicator": epmIndicator,
+                    "ppmIndicator": ppmIndicator,
+                    "startDate": this.startDate,
+                    "endDate": this.endDate,
+                    "predictionClassifierList": this.predictionClassifierList,
+                    "totalUsageSeconds": calcularDiferencaEmSegundos(this.startDate, this.endDate)
+                }
+            });
 
             this.dialog.open(DasherOnScreenFeedbackModalComponent, {
                 data: {
                     message: `${title}
                     "cpmIndicator": ${cpmIndicator}
-                    "wmpIndicator": ${wmpIndicator}
+                    "wpmIndicator": ${wpmIndicator}
                     "epmIndicator": ${epmIndicator}
                     "ppmIndicator": ${ppmIndicator}
                     "startDate": ${this.startDate}
@@ -115,7 +138,6 @@ export class PerfomanceIndicatorService {
                 }
             });
         } else {
-            const deviceInfo = this.deviceService.getDeviceInfo();
             /* await setDoc(doc(this.firestore, "feedback", this.identifierService.generateUUIDV4()), {
                 "browser": window.navigator.userAgent,
                 "os": deviceInfo.os,
@@ -125,7 +147,7 @@ export class PerfomanceIndicatorService {
                 "control": this.controlProviderService.getActiveControl(),
                 "data": {
                     "cpmIndicator": cpmIndicator,
-                    "wmpIndicator": wmpIndicator,
+                    "wpmIndicator": wpmIndicator,
                     "epmIndicator": epmIndicator,
                     "ppmIndicator": ppmIndicator,
                     "startDate": this.startDate,
@@ -143,7 +165,7 @@ export class PerfomanceIndicatorService {
                 "control": this.controlProviderService.getActiveControl(),
                 "data": {
                     "cpmIndicator": cpmIndicator,
-                    "wmpIndicator": wmpIndicator,
+                    "wpmIndicator": wpmIndicator,
                     "epmIndicator": epmIndicator,
                     "ppmIndicator": ppmIndicator,
                     "startDate": this.startDate,
