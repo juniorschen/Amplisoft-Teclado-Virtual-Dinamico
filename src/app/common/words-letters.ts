@@ -1,6 +1,6 @@
-export const initialTopWords = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h"];
-export const initialBottomWords = ["a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
-export const allWords = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h", "a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
+export const initialTopLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h"];
+export const initialBottomLetters = ["a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
+export const allLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h", "a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
 
 
 function mostFrequentLetters(stringArray: string[]) {
@@ -29,7 +29,7 @@ function isEven(number) {
     return number % 2 === 0;
 }
 
-export function getTopAndBottomWordsByPredictions(predictions: Array<{ word: string }>) {
+export function getTopAndBottomWordsLettersByPredictions(predictions: Array<{ word: string }>) {
     const topWords = [];
     const bottomWords = [];
 
@@ -51,7 +51,7 @@ export function getTopAndBottomWordsByPredictions(predictions: Array<{ word: str
         }
     }
 
-    const initialWords = initialTopWords.concat(initialBottomWords);
+    const initialWords = initialTopLetters.concat(initialBottomLetters);
     const initialWordsNotIncluded = [];
     initialWords.forEach((iw, _) => {
         const it = topWords.findIndex(l => l == iw);

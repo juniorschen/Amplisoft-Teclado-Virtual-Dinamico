@@ -1,8 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 
-const basePrompt2 = "Voce recebera como entrada: {textoAtual: <CURRENT_PHRASE_HERE>, palavraAtual: <CURRENT_WORD>}. Seu objetivo é sugerir no maximo 10 palavras que completem a palavraAtual levando em conta o contexto do textoAtual com precisao superior a 60%. Me retorne essas palavras em uma lista com virgulas e nada mais alem disso.";
-
 const basePrompt = `
 Voce é uma inteligencia artificial responsável por completar palavras.
 Voce recebe dados no seguinte formato:
@@ -25,7 +23,7 @@ const input = {
     debug: false,
     top_k: -1,
     top_p: 1,
-    prompt: "Tell me how to tailor a men's suit so I look fashionable.",
+    prompt: "",
     temperature: 0.75,
     system_prompt: basePrompt,
     max_new_tokens: 800,
@@ -44,5 +42,5 @@ export async function predictNextWord(currentPhrase, currentWord, http: HttpClie
     }`;
 
     const output = await http.post('https://api.replicate.com/v1/models/meta/llama-2-7b-chat/predictions', { version: "acdbe5a4987a29261ba7d7d4195ad4fa6b62ce27b034f989fcb9ab0421408a7c", input }, { headers: headers }).toPromise();
-    console.log(output);
+    return [];
 }

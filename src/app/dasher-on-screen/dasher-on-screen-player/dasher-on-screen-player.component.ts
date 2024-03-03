@@ -11,21 +11,21 @@ import { ConfigurationsService } from 'src/app/core/services/configuration.servi
 })
 export class DasherOnScreenPlayerComponent implements OnInit {
 
-  private animationRunning: Subject<void> = new Subject();
-  private wordSelected = false;
+  private elementOverCheckSub: Subject<void> = new Subject();
+  private wordOrLetterSelected = false;
 
-  @Input('word')
-  public word: string;
+  @Input('wordOrLetter')
+  public wordOrLetter: string;
   @Input('mouseMovedEvent')
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   @Input('onResetDasherEvent')
   public onResetDasherEvent: Subject<void> = new Subject();
 
-  @Output('wordSelectedEvent')
-  public wordSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
+  @Output('wordOrLetterSelectedEvent')
+  public wordOrLetterSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
 
-  @ViewChild('wordElementRef')
-  public wordElementRef: ElementRef<HTMLDivElement>;
+  @ViewChild('wordOrLetterElementRef')
+  public wordOrLetterElementRef: ElementRef<HTMLDivElement>;
 
   @ViewChild('pElementRef')
   public pElementRef: ElementRef<HTMLParagraphElement>;
@@ -36,7 +36,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
     this.mouseMovedEvent.subscribe((event) => { });
 
     this.onResetDasherEvent.subscribe(() => {
-      this.wordSelected = false;
+      this.wordOrLetterSelected = false;
     });
 
     if (this.configurationService.isAnyControlConfigured() && !this.configurationService.getActiveControl().includes("Sensorial")) {
@@ -44,30 +44,22 @@ export class DasherOnScreenPlayerComponent implements OnInit {
     }
   }
 
-  mouseOverWordEvent() {
+  mouseOverWordOrLetterEvent() {
     if ((this.configurationService.isAnyControlConfigured()) && !isTestEnv)
       return;
 
-    this.wordSelectedEvent.next(this.word);
-  }
-
-  getDivWordFatherClass() {
-    return "full-div";
-  }
-
-  getActionWordClass() {
-    return "label-default-font-size action-border action-sized";
+    this.wordOrLetterSelectedEvent.next(this.wordOrLetter);
   }
 
   private constantCheckElementOverAnother() {
-    this.animationRunning.pipe(debounceTime(10)).subscribe(() => {
-      if (elementOverAnother(document.getElementById("suportDiv"), this.pElementRef.nativeElement) && !this.wordSelected) {
-        this.wordSelected = true;
-        this.wordSelectedEvent.next(this.word);
+    this.elementOverCheckSub.pipe(debounceTime(10)).subscribe(() => {
+      if (elementOverAnother(document.getElementById("suportDiv"), this.pElementRef.nativeElement) && !this.wordOrLetterSelected) {
+        this.wordOrLetterSelected = true;
+        this.wordOrLetterSelectedEvent.next(this.wordOrLetter);
       }
-      this.animationRunning.next();
+      this.elementOverCheckSub.next();
     });
 
-    this.animationRunning.next();
+    this.elementOverCheckSub.next();
   }
 }

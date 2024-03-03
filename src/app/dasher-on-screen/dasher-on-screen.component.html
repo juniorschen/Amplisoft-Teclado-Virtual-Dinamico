@@ -58,12 +58,12 @@
             <div class="grid-container" fxFill>
                 <div class="grid-header" fxFill>
                     <div fxLayout="row" fxFill>
-                        <ng-template ngFor let-item [ngForOf]="wordsOnScreenTop" let-i="index">
+                        <ng-template ngFor let-item [ngForOf]="initialTopLetters" let-i="index">
                             <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'top')"
                                 [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                                [word]="wordsOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
+                                [wordOrLetter]="initialTopLetters[i]" [mouseMovedEvent]="mouseMovedEvent"
                                 [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
-                                (wordSelectedEvent)="onWordSelectedEvent($event)"></app-dasher-on-screen-player>
+                                (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)"></app-dasher-on-screen-player>
                         </ng-template>
                     </div>
                 </div>
@@ -72,12 +72,12 @@
 
                 <div class="grid-bottom" fxFill>
                     <div fxLayout="row" fxFill>
-                        <ng-template ngFor let-item [ngForOf]="wordsOnScreenBottom" let-i="index">
+                        <ng-template ngFor let-item [ngForOf]="initialBottomLetters" let-i="index">
                             <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'bottom')"
                                 [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                                [word]="wordsOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
+                                [wordOrLetter]="initialBottomLetters[i]" [mouseMovedEvent]="mouseMovedEvent"
                                 [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
-                                (wordSelectedEvent)="onWordSelectedEvent($event)">
+                                (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
                             </app-dasher-on-screen-player>
                         </ng-template>
                     </div>

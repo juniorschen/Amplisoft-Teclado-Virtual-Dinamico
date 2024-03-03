@@ -1,4 +1,4 @@
-<div #wordElementRef [ngClass]="getDivWordFatherClass()">
-    <p [id]="word" [ngClass]="getActionWordClass()" #pElementRef (mouseover)="mouseOverWordEvent()"
-        fxLayoutAlign="center center">{{ word }}</p>
+<div #wordOrLetterElementRef class="full-div">
+    <p [id]="word" class="label-default-font-size action-border action-sized" #pElementRef (mouseover)="mouseOverWordOrLetterEvent()"
+        fxLayoutAlign="center center">{{ wordOrLetter }}</p>
 </div>

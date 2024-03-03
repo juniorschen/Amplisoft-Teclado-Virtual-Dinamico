@@ -7,7 +7,7 @@ import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-
 import { calcularDiferencaEmMilissegundos } from '../common/date';
 import { PerfomanceIndicatorService } from '../core/performance-indicators/performance-indicators.service';
 import { endCalibrateCamera } from '../core/support/camera/camera-support';
-import { initialTopWords, initialBottomWords, getTopAndBottomWordsByPredictions } from '../common/words';
+import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions } from '../common/words-letters';
 import { Sector } from '../common/sector.enum';
 import { LokiJsPredictionsService } from '../core/predictions/lokijs-predictions.service';
 
@@ -26,11 +26,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private suportDiv: HTMLDivElement;
 
   // Detecção sensorial
-  private canSelectWod: boolean = true;
+  private canSelectWordLetter: boolean = true;
   private suportDivOnDirection: 'top' | 'bottom';
   private suportDivOnSector: Sector;
   private lastSensorialDetectionTime: Date;
-  private lastWordDetected: string;
+  private lastWordLetterDetected: string;
   private actionSensorialDetectionBuffer = { top: undefined, right: undefined, bottom: undefined, left: undefined };
 
   // Referencias do html
@@ -52,15 +52,15 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   @ViewChild('playerDivElementRef')
   public playerDivElementRef: ElementRef<HTMLDivElement>;
 
-  @ViewChildren(DasherOnScreenPlayerComponent) wordsElements: QueryList<DasherOnScreenPlayerComponent>
+  @ViewChildren(DasherOnScreenPlayerComponent) wordsOrLettersElements: QueryList<DasherOnScreenPlayerComponent>
 
   // Controle Geral Html
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   public onResetDasherEvent: Subject<void> = new Subject();
   public isAfk = false;
   public input = '';
-  public wordsOnScreenTop: Array<string> = initialTopWords;
-  public wordsOnScreenBottom: Array<string> = initialBottomWords;
+  public wordsOrLetterOnScreenTop: Array<string> = initialTopLetters;
+  public wordsOrLetterOnScreenBottom: Array<string> = initialBottomLetters;
 
   // Calibracao
   public clickElementsCount = new Map<string, number>();
@@ -85,7 +85,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   onClickElementCalibration(elementId, prefix) {
-    const defaultActionElementsCount = 4 + this.wordsOnScreenTop.length + this.wordsOnScreenBottom.length;
+    const defaultActionElementsCount = 4 + this.wordsOrLetterOnScreenTop.length + this.wordsOrLetterOnScreenBottom.length;
 
     const clickElementCount = this.clickElementsCount.get(prefix + "_" + elementId);
     if (clickElementCount && clickElementCount < this.defaultCalibrationCount) {
@@ -180,24 +180,24 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.synthesizeSpeechFromText(this.lastSpeaked);
   }
 
-  onWordSelectedEvent(word: string) {
-    if (!this.canSelectWod) {
+  wordOrLetterSelectedEvent(wordOrLetter: string) {
+    if (!this.canSelectWordLetter) {
       return;
     }
 
-    this.canSelectWod = false;
+    this.canSelectWordLetter = false;
 
     this.resetAuxDisplay();
-    this.perfomanceIndicatorService.wordSelected(word);
+    this.perfomanceIndicatorService.wordSelected(wordOrLetter);
 
-    if (word.length > 1) {
+    if (wordOrLetter.length > 1) {
       const wordsList = this.input.split(" ");
       const lastWord = wordsList[wordsList.length - 1];
       this.input = this.input.substring(0, this.input.length - lastWord.length);
-      this.input = this.input + word;
+      this.input = this.input + wordOrLetter;
       this.insertBlankSpace(false);
     } else {
-      this.input = this.input + word;
+      this.input = this.input + wordOrLetter;
     }
 
     this.redefinedWords();
@@ -205,7 +205,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.lastActionExecuted = new Date();
 
     setTimeout(() => {
-      this.canSelectWod = true;
+      this.canSelectWordLetter = true;
     }, 500);
   }
 
@@ -217,19 +217,19 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   private redefinedWords(fullReset = false) {
     if (fullReset) {
-      this.wordsOnScreenTop = initialTopWords;
-      this.wordsOnScreenBottom = initialBottomWords;
+      this.wordsOrLetterOnScreenTop = initialTopLetters;
+      this.wordsOrLetterOnScreenBottom = initialBottomLetters;
     } else {
       const wordsList = this.input.split(" ");
       const lastWord = wordsList[wordsList.length - 1];
       var result = this.predicionsService.getWord(lastWord);
       if (result.length > 0) {
-        const wordsByPredictions = getTopAndBottomWordsByPredictions(result);
-        this.wordsOnScreenTop = wordsByPredictions.topWords;
-        this.wordsOnScreenBottom = wordsByPredictions.bottomWords;
+        const wordsByPredictions = getTopAndBottomWordsLettersByPredictions(result);
+        this.wordsOrLetterOnScreenTop = wordsByPredictions.topWords;
+        this.wordsOrLetterOnScreenBottom = wordsByPredictions.bottomWords;
       } else {
-        this.wordsOnScreenTop = initialTopWords;
-        this.wordsOnScreenBottom = initialBottomWords;
+        this.wordsOrLetterOnScreenTop = initialTopLetters;
+        this.wordsOrLetterOnScreenBottom = initialBottomLetters;
       }
     }
   }
@@ -297,8 +297,8 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       return;
 
     this.lastSensorialDetectionTime = undefined;
-    this.lastWordDetected = undefined;
-    this.wordsElements.forEach((w, index) => {
+    this.lastWordLetterDetected = undefined;
+    this.wordsOrLettersElements.forEach((w, index) => {
       w.pElementRef.nativeElement.style.backgroundColor = "unset";
     });
   }
@@ -347,38 +347,38 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private wordDetectedBySensorial() {
-    let wordDetected = false;
+  private wordOrLetterDetectedBySensorial() {
+    let wordOrLetterDetected = false;
 
-    this.wordsElements.forEach((w, index) => {
-      if (elementOverAnother(this.suportDiv, w.pElementRef.nativeElement) && this.lastWordDetected != w.word) {
+    this.wordsOrLettersElements.forEach((w, index) => {
+      if (elementOverAnother(this.suportDiv, w.pElementRef.nativeElement) && this.lastWordLetterDetected != w.wordOrLetter) {
         w.pElementRef.nativeElement.style.backgroundColor = "lightgoldenrodyellow";
         this.lastSensorialDetectionTime = new Date();
-        this.lastWordDetected = w.word;
-        wordDetected = true;
-      } else if (this.lastWordDetected != w.word) {
+        this.lastWordLetterDetected = w.wordOrLetter;
+        wordOrLetterDetected = true;
+      } else if (this.lastWordLetterDetected != w.wordOrLetter) {
         w.pElementRef.nativeElement.style.backgroundColor = "unset";
       } else if (calcularDiferencaEmMilissegundos(this.lastSensorialDetectionTime, new Date()) > this.configurationService.sensorialSelectionDelayMs) {
         this.doTriggerAction();
       } else {
-        wordDetected = true;
+        wordOrLetterDetected = true;
       }
     });
 
-    return wordDetected;
+    return wordOrLetterDetected;
   }
 
   private detectSensorialSectorPosition(goToRight, goToLeft, goToTop, goToBottom) {
-    let currentWordComponent;
+    let currentWordLetterComponent;
     let currentWords;
 
     const defineWordSectorPosition = (reverse = false) => {
       for (let index = 0; index < currentWords.length; index++) {
-        if (!this.lastWordDetected || this.lastWordDetected == currentWords[index]) {
-          const indexToNavigate = index + (!this.lastWordDetected ? 0 : (reverse ? -1 : 1));
-          const currentWordComponent = this.wordsElements.find(l => l.word == currentWords[indexToNavigate]);
-          if (currentWordComponent)
-            this.setAuxDisplayPositionCenterOn(currentWordComponent.wordElementRef);
+        if (!this.lastWordLetterDetected || this.lastWordLetterDetected == currentWords[index]) {
+          const indexToNavigate = index + (!this.lastWordLetterDetected ? 0 : (reverse ? -1 : 1));
+          const currentWordOrLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == currentWords[indexToNavigate]);
+          if (currentWordOrLetterComponent)
+            this.setAuxDisplayPositionCenterOn(currentWordOrLetterComponent.wordOrLetterElementRef);
           break;
         }
       }
@@ -388,8 +388,8 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.espacoElementRef : this.limparElementRef);
       this.suportDivOnSector = Sector.SectorTwo;
     } else if (this.suportDivOnSector == Sector.SectorOne && goToLeft) {
-      currentWordComponent = this.suportDivOnDirection == 'top' ? this.wordsElements.find(l => l.word == this.wordsOnScreenTop[this.wordsOnScreenTop.length - 1]) : this.wordsElements.find(l => l.word == this.wordsOnScreenBottom[this.wordsOnScreenBottom.length - 1]);
-      this.setAuxDisplayPositionCenterOn(currentWordComponent.wordElementRef);
+      currentWordLetterComponent = this.suportDivOnDirection == 'top' ? this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenTop[this.wordsOrLetterOnScreenTop.length - 1]) : this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenBottom[this.wordsOrLetterOnScreenBottom.length - 1]);
+      this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
       this.suportDivOnSector = Sector.SectorTree;
     } else if (this.suportDivOnSector == Sector.SectorOne && goToTop) {
       this.setAuxDisplayPositionCenterOn(this.limparTudoElementRef);
@@ -402,8 +402,8 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         this.doTriggerAction();
       }
     } else if (this.suportDivOnSector == Sector.SectorTwo && goToRight) {
-      currentWordComponent = this.suportDivOnDirection == 'top' ? this.wordsElements.find(l => l.word == this.wordsOnScreenTop[0]) : this.wordsElements.find(l => l.word == this.wordsOnScreenBottom[0]);
-      this.setAuxDisplayPositionCenterOn(currentWordComponent.wordElementRef);
+      currentWordLetterComponent = this.suportDivOnDirection == 'top' ? this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenTop[0]) : this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenBottom[0]);
+      this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
       this.suportDivOnSector = Sector.SectorTree;
     } else if (this.suportDivOnSector == Sector.SectorTwo && goToLeft) {
       this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.limparTudoElementRef : this.falarElementRef);
@@ -419,45 +419,45 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         this.doTriggerAction();
       }
     } else if (this.suportDivOnSector == Sector.SectorTree && goToRight) {
-      currentWords = this.suportDivOnDirection == 'top' ? this.wordsOnScreenTop : this.wordsOnScreenBottom;
-      const lastIndex = currentWords.findIndex(l => l == this.lastWordDetected);
-      if (lastIndex + 1 == (this.suportDivOnDirection == 'top' ? this.wordsOnScreenTop.length : this.wordsOnScreenBottom.length)) {
+      currentWords = this.suportDivOnDirection == 'top' ? this.wordsOrLetterOnScreenTop : this.wordsOrLetterOnScreenBottom;
+      const lastIndex = currentWords.findIndex(l => l == this.lastWordLetterDetected);
+      if (lastIndex + 1 == (this.suportDivOnDirection == 'top' ? this.wordsOrLetterOnScreenTop.length : this.wordsOrLetterOnScreenBottom.length)) {
         this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.limparTudoElementRef : this.falarElementRef);
         this.suportDivOnSector = Sector.SectorOne;
       } else {
         defineWordSectorPosition();
       }
     } else if (this.suportDivOnSector == Sector.SectorTree && goToLeft) {
-      currentWords = this.suportDivOnDirection == 'top' ? this.wordsOnScreenTop : this.wordsOnScreenBottom;
-      if (this.lastWordDetected == currentWords[0]) {
+      currentWords = this.suportDivOnDirection == 'top' ? this.wordsOrLetterOnScreenTop : this.wordsOrLetterOnScreenBottom;
+      if (this.lastWordLetterDetected == currentWords[0]) {
         this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.espacoElementRef : this.limparElementRef);
         this.suportDivOnSector = Sector.SectorTwo;
       } else {
-        const currentIndex = currentWords.findIndex(l => l == this.lastWordDetected);
-        currentWordComponent = this.wordsElements.find(l => l.word == currentWords[currentIndex - 1]);
-        this.setAuxDisplayPositionCenterOn(currentWordComponent.wordElementRef);
+        const currentIndex = currentWords.findIndex(l => l == this.lastWordLetterDetected);
+        currentWordLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == currentWords[currentIndex - 1]);
+        this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
       }
     } else if (this.suportDivOnSector == Sector.SectorTree && goToTop) {
-      if (this.lastWordDetected && this.suportDivOnDirection == 'bottom') {
-        const currentIndex = this.wordsOnScreenBottom.findIndex(l => l == this.lastWordDetected);
-        currentWords = this.wordsOnScreenTop;
-        currentWordComponent = this.wordsElements.find(l => l.word == currentWords[currentIndex]);
-        this.setAuxDisplayPositionCenterOn(currentWordComponent.wordElementRef);
+      if (this.lastWordLetterDetected && this.suportDivOnDirection == 'bottom') {
+        const currentIndex = this.wordsOrLetterOnScreenBottom.findIndex(l => l == this.lastWordLetterDetected);
+        currentWords = this.wordsOrLetterOnScreenTop;
+        currentWordLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == currentWords[currentIndex]);
+        this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
       } else if (this.suportDivOnDirection == 'top') {
         this.doTriggerAction();
       }
     } else if (this.suportDivOnSector == Sector.SectorTree && goToBottom) {
-      if (this.lastWordDetected && this.suportDivOnDirection == 'top') {
-        const currentIndex = this.wordsOnScreenTop.findIndex(l => l == this.lastWordDetected);
-        currentWords = this.wordsOnScreenBottom;
-        currentWordComponent = this.wordsElements.find(l => l.word == currentWords[currentIndex]);
-        this.setAuxDisplayPositionCenterOn(currentWordComponent.wordElementRef);
+      if (this.lastWordLetterDetected && this.suportDivOnDirection == 'top') {
+        const currentIndex = this.wordsOrLetterOnScreenTop.findIndex(l => l == this.lastWordLetterDetected);
+        currentWords = this.wordsOrLetterOnScreenBottom;
+        currentWordLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == currentWords[currentIndex]);
+        this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
       } else if (this.suportDivOnDirection == 'bottom') {
         this.doTriggerAction();
       }
     } else if (this.suportDivOnSector == undefined) {
-      currentWordComponent = this.wordsElements.find(l => l.word == this.wordsOnScreenTop[0]);
-      this.setAuxDisplayPositionCenterOn(currentWordComponent.wordElementRef);
+      currentWordLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenTop[0]);
+      this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
       this.suportDivOnSector = Sector.SectorTree;
       this.suportDivOnDirection = 'top';
     }
@@ -486,14 +486,14 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.suportDivOnDirection = goToTop ? 'top' : (goToBottom ? 'bottom' : this.suportDivOnDirection);
     this.actionSensorialDetectionBuffer = { top: goToTop, right: goToRight, bottom: goToBottom, left: goToLeft };
 
-    return this.wordDetectedBySensorial();
+    return this.wordOrLetterDetectedBySensorial();
   }
 
   private moveByCamera(packet) {
     this.suportDiv.style.top = packet.y + "px";
     this.suportDiv.style.left = packet.x + "px";
 
-    return this.wordDetectedBySensorial();
+    return this.wordOrLetterDetectedBySensorial();
   }
 
   private doTriggerAction() {
@@ -509,8 +509,8 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
       this.insertBlankSpace();
       this.resetAuxDisplay();
-    } else if (this.lastWordDetected) {
-      this.onWordSelectedEvent(this.lastWordDetected);
+    } else if (this.lastWordLetterDetected) {
+      this.wordOrLetterSelectedEvent(this.lastWordLetterDetected);
     }
 
     this.doResetSensorialPosition();
@@ -522,12 +522,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    let wordDetected = false;
+    let wordOrLetterDetected = false;
     if (this.configurationService.getActiveControl().includes("Ocular")) {
-      wordDetected = this.moveByCamera(packet);
+      wordOrLetterDetected = this.moveByCamera(packet);
     } else if (this.configurationService.getActiveControl().includes("Joycon")) {
       if (this.configurationService.getActiveControl().includes("Sensorial")) {
-        wordDetected = this.moveBySensorialAcelerometers(packet);
+        wordOrLetterDetected = this.moveBySensorialAcelerometers(packet);
       } else {
         this.moveByJoystick(packet);
       }
@@ -550,7 +550,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         return;
 
       this.doTriggerAction();
-    } else if (!overAnyActionElement && !wordDetected) {
+    } else if (!overAnyActionElement && !wordOrLetterDetected) {
       this.doResetSensorialDetection();
     }
   }

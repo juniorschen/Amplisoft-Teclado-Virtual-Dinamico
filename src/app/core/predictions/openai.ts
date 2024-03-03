@@ -27,7 +27,6 @@ export async function predictNextWord(currentPhrase, currentWord) {
             currentPhrase: "${currentPhrase}",
             currentWord: "${currentWord}"
         }`;
-        console.log(userPrompt)
 
         const response = await GPT_3.chat.completions.create({
             messages: [
@@ -36,7 +35,6 @@ export async function predictNextWord(currentPhrase, currentWord) {
             ],
             model: apiModel,
         });
-        console.info({ response });
         try {
             return [];
         }

@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import Loki from 'lokijs';
 
-import { allWords } from 'src/app/common/words';
+import { allLetters } from 'src/app/common/words-letters';
 import { DasherOnScreenFeedbackModalComponent } from 'src/app/dasher-on-screen/dasher-on-screen-feedback-modal/dasher-on-screen-feedback-modal.component';
 
 @Injectable({
@@ -77,7 +77,7 @@ export class LokiJsPredictionsService {
             wordsArray = wordsArray.filter(l => l);
             wordsArray = wordsArray.filter(l => Number(l.split(',')[1]) >= this.rankTreshHoldWord);
 
-            allWords.forEach((n1) => {
+            allLetters.forEach((n1) => {
                 this.inserOnColletion(wordsArray, n1.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
             });
 
