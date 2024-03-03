@@ -206,7 +206,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       this.canSelectWod = true;
-    }, 100);
+    }, 500);
   }
 
   private synthesizeSpeechFromText(text: string): void {
@@ -223,7 +223,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       const wordsList = this.input.split(" ");
       const lastWord = wordsList[wordsList.length - 1];
       var result = this.predicionsService.getWord(lastWord);
-      if (result.length > 3) {
+      if (result.length > 0) {
         const wordsByPredictions = getTopAndBottomWordsByPredictions(result);
         this.wordsOnScreenTop = wordsByPredictions.topWords;
         this.wordsOnScreenBottom = wordsByPredictions.bottomWords;

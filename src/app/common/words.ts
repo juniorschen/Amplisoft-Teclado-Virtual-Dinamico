@@ -8,7 +8,7 @@ function mostFrequentLetters(stringArray: string[]) {
 
     // Itera sobre cada string no array
     stringArray.forEach(string => {
-        string = string.replace(/\s/g, '').toLowerCase();
+        string = string.replace(/\s/g, '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         for (let i = 0; i < string.length; i++) {
             const letter = string[i];
             letterFrequency[letter] = (letterFrequency[letter] || 0) + 1;
@@ -30,29 +30,39 @@ function isEven(number) {
 }
 
 export function getTopAndBottomWordsByPredictions(predictions: Array<{ word: string }>) {
-    const topWords = [predictions[0].word];
-    const bottomWords = [predictions[1].word];
+    const topWords = [];
+    const bottomWords = [];
+
+    if (predictions.length >= 2) {
+        topWords.push(predictions[0].word);
+        bottomWords.push(predictions[1].word);
+    }
 
     const mostFrenquently = mostFrequentLetters(predictions.map(obj => obj.word));
     mostFrenquently.forEach((f, i) => {
-        isEven(i) ? topWords.push(f) : bottomWords.push(f);
-    });
-
-    topWords.push(predictions[2].word);
-    bottomWords.push(predictions[3].word);
-
-    initialTopWords.forEach(t => {
-        const i = topWords.findIndex(l => l == t);
-        if (i == -1) {
-            topWords.push(t);
+        if (i < 8) {
+            isEven(i) ? topWords.push(f) : bottomWords.push(f);
         }
     });
 
-    initialBottomWords.forEach(b => {
-        const i = bottomWords.findIndex(l => l == b);
-        if (i == -1) {
-            bottomWords.push(b);
+    for (let index = 2; index < 6; index++) {
+        if (predictions.length + 1 >= index) {
+            isEven(index) ? topWords.push(predictions[index].word) : bottomWords.push(predictions[index].word);
         }
+    }
+
+    const initialWords = initialTopWords.concat(initialBottomWords);
+    const initialWordsNotIncluded = [];
+    initialWords.forEach((iw, _) => {
+        const it = topWords.findIndex(l => l == iw);
+        const ib = bottomWords.findIndex(l => l == iw);
+        if (it == -1 && ib == -1) {
+            initialWordsNotIncluded.push(iw);
+        }
+    });
+
+    initialWordsNotIncluded.forEach((iw, index) => {
+        isEven(index) ? topWords.push(iw) : bottomWords.push(iw);
     });
 
     return { topWords, bottomWords };

@@ -112,7 +112,7 @@ export class LokiJsPredictionsService {
         });
         objWordRank.sort((a, b) => a.rank - b.rank);
         const objWordRankOrdened = objWordRank.map((l, index) => {
-            return { word: l.word, rank: index + 1 };
+            return { word: l.word.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), rank: index + 1 };
         });
 
         objWordRankOrdened.forEach(obj => {

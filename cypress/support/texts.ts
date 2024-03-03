@@ -1,8 +1,7 @@
-export const WordsText = `na vastidao do universo somos meros espectadores flutuando sem rumo em meio ao caos cosmico sem razao aparente nossa existencia se desenrola como um filme sem roteiro em um palco improvavel
-a vida e um fenomeno efemero em um planeta remoto a evolucao moldando as formas de vida de maneira imprevisivel e inexoravel o ciclo incessante de nascimento e morte um ballet desordenado
-as emocoes fluem como rios selvagens sem represas a alegria e a tristeza entrelacadas como fios invisiveis conectando os coracoes humanos em uma teia complexa de experiencias compartilhadas
-a linguagem se desenha como arte abstrata sem tramas definidas as palavras dancam no vacuo da comunicacao sem pontos e virgulas para estruturar o significado cada frase uma expressao livre de pensamentos sem amarras
-mesmo na ausencia de acentos e pontuacoes a mensagem persiste como um eco na mente do leitor a compreensao emergindo das entrelinhas em um ato de interpretacao pessoal
+export const WordsText = `Tenho um animal categorizado pelas suas quatro patas o grande focinho e dentes caninos Estou me referindo ao cachorro o melhor amigo do homem por diversas
+geracoes ele vem sendo domesticado para variados propositos Comecando nos tempos antigos eram utilizados para conduzir os rebanhos de ovelhas e carneiros Ainda hoje podemos encontrar
+pastores que utilizam das mesmas tecnicas dessa geracao passada De fato encontramos em sua maioria o uso como companheiro para vida em tempos atuais sendo ate mesmo utilizados como
+substitutos a filhos em determinadas culturas onde o crescimento desenfreado do capitalismo e populacao vem fazendo cada vez mais jovens tomarem a decisao de nao ter filhos
 `
 
 export function VaiPredizer(percentualPredizer: number, palavraAtual, digitado: string) {
