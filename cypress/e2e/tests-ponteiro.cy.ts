@@ -3,17 +3,17 @@ import promisify from 'cypress-promise';
 
 describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
-        const dc = await promisify(cy.document());
-        // espera 30 segundos para que a base seja configurada
-        await promisify(cy.wait(30));
-
         for (let index = 0; index < 10; index++) {
+            await promisify(cy.visit('/'));
+            await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
+
+            // espera 30 segundos para que a base seja configurada
+            await promisify(cy.wait(30));
+            
+            const dc = await promisify(cy.document());
             for (let cenarioTeste of cenariosTestePonteiro) {
                 window["Cypress"]["Tipo"] = "Ponteiro";
                 window["Cypress"]["Dpi"] = cenarioTeste.dpi;
-
-                await promisify(cy.visit('/'));
-                await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
                 const limparEl = dc.getElementById("limparElementRef");
                 const espacoEl = dc.getElementById("espacoElementRef");
@@ -22,21 +22,19 @@ describe('Validar Desempenho do Software', () => {
                 const textoDivididoPorEspacoVazio = cenarioTeste.texto.replace(/\n/g, '').toLowerCase().split(" ");
                 for (let [indexPalavra, palavraAtual] of textoDivididoPorEspacoVazio.entries()) {
                     const letrasPalavra = palavraAtual.split("");
-                    let defaultDelayAcharLetra;
                     let jaInseriuEspaco = false;
 
                     for (let [_, letra] of letrasPalavra.entries()) {
                         let wordElement = dc.getElementById(palavraAtual);
-                        if (wordElement) {
-                            await promisify(cy.wait(defaultDelayAcharLetra));
-                            await promisify(cy.get(`p[id="${letra}"]`).trigger('mouseover'));
+                        if (wordElement && palavraAtual.length > 1) {
+                            await promisify(cy.wait(CalcularDelayRealizarAcao(centerEl, wordElement, cenarioTeste.dpi) * 1000));
+                            await promisify(cy.get(`p[id="${palavraAtual}"]`).trigger('mouseover'));
                             jaInseriuEspaco = true;
                             break;
                         }
 
                         let letraElement = dc.getElementById(letra);
-                        defaultDelayAcharLetra = CalcularDelayRealizarAcao(centerEl, letraElement, cenarioTeste.dpi) * 1000;
-                        await promisify(cy.wait(defaultDelayAcharLetra));
+                        await promisify(cy.wait(CalcularDelayRealizarAcao(centerEl, letraElement, cenarioTeste.dpi) * 1000));
 
                         const vaiErrar = VaiErrar();
                         if (vaiErrar) {
@@ -63,6 +61,5 @@ describe('Validar Desempenho do Software', () => {
                 await promisify(cy.screenshot(window["Cypress"]["Tipo"] + "_Dpi" + window["Cypress"]["Dpi"] + "_Loop" + index));
             }
         }
-
     });
 });

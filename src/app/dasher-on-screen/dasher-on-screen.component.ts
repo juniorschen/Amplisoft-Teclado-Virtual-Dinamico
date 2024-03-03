@@ -206,7 +206,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       this.canSelectWordLetter = true;
-    }, 500);
+    }, 100);
   }
 
   private synthesizeSpeechFromText(text: string): void {

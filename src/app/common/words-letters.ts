@@ -46,7 +46,7 @@ export function getTopAndBottomWordsLettersByPredictions(predictions: Array<{ wo
     });
 
     for (let index = 2; index < 6; index++) {
-        if (predictions.length + 1 >= index) {
+        if (predictions[index]) {
             isEven(index) ? topWords.push(predictions[index].word) : bottomWords.push(predictions[index].word);
         }
     }
