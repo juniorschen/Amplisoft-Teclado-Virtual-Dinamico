@@ -106,6 +106,7 @@ export class PerfomanceIndicatorService {
             }
 
             await setDoc(doc(this.firestore, "Testes", id), {
+                "date": new Date(),
                 "browser": window.navigator.userAgent,
                 "os": deviceInfo.os,
                 "os_version": deviceInfo.os_version,

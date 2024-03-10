@@ -30,12 +30,6 @@ export function CalcularDelayRealizarAcao(origin, target: HTMLElement, dpi: numb
     return distancia / dpi;
 }
 
-export const cenariosTestePonteiro = [
-    { texto: WordsText, dpi: 600 },
-    { texto: WordsText, dpi: 1200 },
-    { texto: WordsText, dpi: 1800 },
-];
-
 export const cenariosTesteSensorial = [
     { texto: WordsText, delayMsEscolha: 500, delayIteracoes: 100 },
     { texto: WordsText, delayMsEscolha: 3000, delayIteracoes: 200 },

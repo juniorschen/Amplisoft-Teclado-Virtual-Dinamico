@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start": "node --max_old_space_size=5096 ./node_modules/@angular/cli/bin/ng serve"
   },
   "private": true,
   "dependencies": {
