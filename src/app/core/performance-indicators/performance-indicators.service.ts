@@ -25,6 +25,7 @@ export class PerfomanceIndicatorService {
         charactersOtimization: number;
     }>();
     private fullInput = "";
+    private sendingFeedback = false;
 
     constructor(private deviceService: DeviceDetectorService, private identifierService: IdentifierService, private controlProviderService: ConfigurationsService,
         public dialog: MatDialog) { }
@@ -34,12 +35,16 @@ export class PerfomanceIndicatorService {
     }
 
     public async end(afkDelay = 0) {
-        this.endDate = new Date();
-        this.endDate.setMilliseconds(this.endDate.getMilliseconds() - afkDelay);
-        if (calcularDiferencaEmSegundos(this.startDate, this.endDate) > this.miniumUsageSeconds) {
-            await this.sendPerfomaceIndicatior();
+        if (!this.sendingFeedback) {
+            this.sendingFeedback = true;
+            this.endDate = new Date();
+            this.endDate.setMilliseconds(this.endDate.getMilliseconds() - afkDelay);
+            if (calcularDiferencaEmSegundos(this.startDate, this.endDate) > this.miniumUsageSeconds) {
+                await this.sendPerfomaceIndicatior();
+            }
+            this.resetCache();
+            this.sendingFeedback = false;
         }
-        this.resetCache();
     }
 
     public backSpace() {

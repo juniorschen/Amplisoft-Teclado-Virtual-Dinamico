@@ -75,8 +75,8 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     await this.predicionsService.ensureHasCreatedDatabases();
     this.initHidControl();
     this.lastActionExecuted = new Date();
-    this.afkInterval = setInterval(() => this.checkDasherAfk(), 1000);
     this.perfomanceIndicatorService.start();
+    this.afkInterval = setInterval(() => this.checkDasherAfk(), 1000);
   }
 
   async ngOnDestroy(): Promise<void> {
@@ -108,9 +108,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   checkDasherAfk() {
+    const isAfkLastvalue = this.isAfk;
     this.isAfk = calcularDiferencaEmMilissegundos(new Date(), this.lastActionExecuted) > this.afkCheckDelayMs;
-    if (this.isAfk) {
+    if (this.isAfk && this.isAfk != isAfkLastvalue) {
       this.perfomanceIndicatorService.end(this.afkCheckDelayMs);
+    } else if (this.isAfk != isAfkLastvalue) {
+      this.perfomanceIndicatorService.start();
     }
   }
 

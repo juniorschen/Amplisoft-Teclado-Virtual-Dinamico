@@ -8,8 +8,8 @@ describe('Validar Desempenho do Software', () => {
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
-        // espera 30 segundos para que a base seja configurada
-         await promisify(cy.wait(15000));
+        // espera 15 segundos para que a base seja configurada
+        await promisify(cy.wait(15000));
 
         const dc = await promisify(cy.document());
 
@@ -59,7 +59,7 @@ describe('Validar Desempenho do Software', () => {
         }
 
         // espera para que o software fique afk para contabilizar os resultados
-          await promisify(cy.wait(30000));
+        await promisify(cy.contains('Resultados dos Testes', { timeout: 1000000 }).should('be.visible'));
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
@@ -68,8 +68,8 @@ describe('Validar Desempenho do Software', () => {
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
-        // espera 30 segundos para que a base seja configurada
-         await promisify(cy.wait(15000));
+        // espera 15 segundos para que a base seja configurada
+        await promisify(cy.wait(15000));
 
         const dc = await promisify(cy.document());
 
@@ -119,7 +119,7 @@ describe('Validar Desempenho do Software', () => {
         }
 
         // espera para que o software fique afk para contabilizar os resultados
-          await promisify(cy.wait(30000));
+        await promisify(cy.contains('Resultados dos Testes', { timeout: 1000000 }).should('be.visible'));
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
@@ -128,8 +128,8 @@ describe('Validar Desempenho do Software', () => {
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
-        // espera 30 segundos para que a base seja configurada
-         await promisify(cy.wait(15000));
+        // espera 15 segundos para que a base seja configurada
+        await promisify(cy.wait(15000));
 
         const dc = await promisify(cy.document());
 
@@ -179,7 +179,7 @@ describe('Validar Desempenho do Software', () => {
         }
 
         // espera para que o software fique afk para contabilizar os resultados
-          await promisify(cy.wait(30000));
+        await promisify(cy.contains('Resultados dos Testes', { timeout: 1000000 }).should('be.visible'));
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
@@ -188,8 +188,8 @@ describe('Validar Desempenho do Software', () => {
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
-        // espera 30 segundos para que a base seja configurada
-         await promisify(cy.wait(15000));
+        // espera 15 segundos para que a base seja configurada
+        await promisify(cy.wait(15000));
 
         const dc = await promisify(cy.document());
 
@@ -239,7 +239,7 @@ describe('Validar Desempenho do Software', () => {
         }
 
         // espera para que o software fique afk para contabilizar os resultados
-          await promisify(cy.wait(30000));
+        await promisify(cy.contains('Resultados dos Testes', { timeout: 1000000 }).should('be.visible'));
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
@@ -248,8 +248,8 @@ describe('Validar Desempenho do Software', () => {
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
-        // espera 30 segundos para que a base seja configurada
-         await promisify(cy.wait(15000));
+        // espera 15 segundos para que a base seja configurada
+        await promisify(cy.wait(15000));
 
         const dc = await promisify(cy.document());
 
@@ -299,6 +299,6 @@ describe('Validar Desempenho do Software', () => {
         }
 
         // espera para que o software fique afk para contabilizar os resultados
-          await promisify(cy.wait(30000));
+        await promisify(cy.contains('Resultados dos Testes', { timeout: 1000000 }).should('be.visible'));
     });
 });
