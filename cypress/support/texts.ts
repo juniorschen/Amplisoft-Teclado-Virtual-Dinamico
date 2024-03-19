@@ -29,8 +29,3 @@ export function CalcularDelayRealizarAcao(origin, target: HTMLElement, dpi: numb
     const distancia = Math.abs(origin.getBoundingClientRect().x - target.getBoundingClientRect().x);
     return distancia / dpi;
 }
-
-export const cenariosTesteSensorial = [
-    { texto: WordsText, delayMsEscolha: 500, delayIteracoes: 100 },
-    { texto: WordsText, delayMsEscolha: 3000, delayIteracoes: 200 },
-];

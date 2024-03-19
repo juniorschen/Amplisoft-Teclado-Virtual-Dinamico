@@ -15,7 +15,7 @@ function getDelaySensorial(delayEscolha, delayIteracao, setor) {
 
 describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
-        const delayMsEscolha = 3000;
+        const delayMsEscolha = 2000;
         const delayIteracoes = 200;
 
         await promisify(cy.visit('/'));
@@ -72,7 +72,7 @@ describe('Validar Desempenho do Software', () => {
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
-        const delayMsEscolha = 3000;
+        const delayMsEscolha = 2000;
         const delayIteracoes = 200;
 
         await promisify(cy.visit('/'));
@@ -129,7 +129,7 @@ describe('Validar Desempenho do Software', () => {
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
-        const delayMsEscolha = 3000;
+        const delayMsEscolha = 2000;
         const delayIteracoes = 200;
 
         await promisify(cy.visit('/'));
@@ -186,7 +186,7 @@ describe('Validar Desempenho do Software', () => {
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
-        const delayMsEscolha = 3000;
+        const delayMsEscolha = 2000;
         const delayIteracoes = 200;
 
         await promisify(cy.visit('/'));
@@ -243,7 +243,7 @@ describe('Validar Desempenho do Software', () => {
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
-        const delayMsEscolha = 3000;
+        const delayMsEscolha = 2000;
         const delayIteracoes = 200;
 
         await promisify(cy.visit('/'));
