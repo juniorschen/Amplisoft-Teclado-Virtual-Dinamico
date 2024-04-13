@@ -12,6 +12,12 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
 
   public formBooleans: FormGroup;
   public formInputs: FormGroup;
+  public dpis = [
+    { value: 300, viewValue: '300' },
+    { value: 600, viewValue: '600' },
+    { value: 1200, viewValue: '1200' },
+    { value: 1800, viewValue: '1800' },
+  ];
 
   constructor(private fbBuilder: FormBuilder, private configurationService: ConfigurationsService) {
   }
@@ -37,6 +43,7 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     });
     this.formInputs = this.fbBuilder.group({
       DelayControleSensorial: [this.configurationService.sensorialSelectionDelayMs, [Validators.required, Validators.min(1)]],
+      Dpi: [300]
     });
   }
 
