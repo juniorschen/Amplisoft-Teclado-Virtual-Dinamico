@@ -1,6 +1,6 @@
-<div fxFill fxLayout="column">
-    <p fxLayoutAlign="center center" class="label-high-font-size">Dispositivos Suportados</p>
-    <div [formGroup]="formBooleans" fxLayoutAlign="center center" fxLayout="column">
+<div class="grid-container">
+    <div [formGroup]="formBooleans" class="grid-controle" fxLayout="column" fxLayoutAlign="none center">
+        <p fxLayoutAlign="center center" class="label-high-font-size">Dispositivos Suportados</p>
         <mat-slide-toggle formControlName="NinetendoJoyconDireitoJoystick" color="accent" class="mat-slide-toggle"
             (change)="toggleChanged($event, 'NinetendoJoyconDireitoJoystick')">
             Joystick Nintendo Joycon Direito
@@ -33,7 +33,8 @@
     </div>
 
 
-    <div [formGroup]="formInputs" fxLayout="column" fxLayoutAlign="center center">
+    <div [formGroup]="formInputs" class="grid-gerais" fxLayout="column" fxLayoutAlign="none center">
+        <p fxLayoutAlign="center center" class="label-high-font-size">Configurações Gerais</p>
         <p fxLayoutAlign="center center" class="label-medium-font-size">Delay controles sensoriais (MS)</p>
         <mat-form-field>
             <input matInput type="number" formControlName="DelayControleSensorial">
@@ -44,6 +45,15 @@
             <mat-select formControlName="Dpi">
                 <mat-option *ngFor="let dpi of dpis" [value]="dpi">
                     {{dpi.viewValue}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <p fxLayoutAlign="center center" class="label-medium-font-size">Tipo Layout</p>
+        <mat-form-field>
+            <mat-select formControlName="LayoutType">
+                <mat-option *ngFor="let layout of layouts" [value]="layout">
+                    {{layout.viewValue}}
                 </mat-option>
             </mat-select>
         </mat-form-field>

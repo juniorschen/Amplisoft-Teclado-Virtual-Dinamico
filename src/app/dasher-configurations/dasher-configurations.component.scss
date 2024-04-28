@@ -2,3 +2,17 @@
     transform: scale(1.4);
     margin-top: 40px;
 }
+
+.grid-controle {
+    grid-area: controle;
+}
+
+.grid-gerais {
+    grid-area: gerais;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-areas:
+        'controle gerais';
+}

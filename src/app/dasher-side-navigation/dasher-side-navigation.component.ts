@@ -20,9 +20,7 @@ export class DasherSideNavigationComponent implements OnInit {
 
   onNavigate(route: string) {
     this.router.navigate([route]);
-    if (route.includes("dasher-on-screen")) {
-      this.drawer.close();
-    }
+    this.drawer.close();
   }
 
 }

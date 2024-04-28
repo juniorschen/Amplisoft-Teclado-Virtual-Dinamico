@@ -39,7 +39,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
       this.wordOrLetterSelected = false;
     });
 
-    if (this.configurationService.isAnyControlConfigured() && !this.configurationService.getActiveControl().includes("Sensorial")) {
+    if (this.configurationService.isAnyControlConfigured() && !this.configurationService.isSensorialDeviceConfigured()) {
       this.constantCheckElementOverAnother();
     }
   }

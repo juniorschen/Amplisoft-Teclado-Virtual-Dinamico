@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ConfigurationsService } from '../core/services/configuration.service';
+import { LayoutType } from '../common/layout-type.num';
 
 @Component({
   selector: 'app-dasher-configurations',
@@ -18,6 +19,10 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     { value: 1200, viewValue: '1200' },
     { value: 1800, viewValue: '1800' },
   ];
+  public layouts = [
+    { value: LayoutType.Vertical, viewValue: 'Layout Vertical' },
+    { value: LayoutType.Horizontal, viewValue: 'Layout Horizontal' },
+  ];
 
   constructor(private fbBuilder: FormBuilder, private configurationService: ConfigurationsService) {
   }
@@ -29,6 +34,17 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.formInputs.get("DelayControleSensorial").value > 0 && this.formInputs.get("DelayControleSensorial").valid) {
       this.configurationService.sensorialSelectionDelayMs = this.formInputs.get("DelayControleSensorial").value;
+      localStorage.setItem('SensorialSelectionDelayMs', this.configurationService.sensorialSelectionDelayMs.toString());
+    }
+
+    if (this.formInputs.get("Dpi").valid) {
+      this.configurationService.dpiSpeed = this.formInputs.get("Dpi").value.value;
+      localStorage.setItem('DpiSpeed', this.configurationService.dpiSpeed.toString());
+    }
+
+    if (this.formInputs.get("LayoutType").valid) {
+      this.configurationService.layoutType = this.formInputs.get("LayoutType").value.value;
+      localStorage.setItem('LayoutType', this.configurationService.layoutType.toString());
     }
   }
 
@@ -43,7 +59,8 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     });
     this.formInputs = this.fbBuilder.group({
       DelayControleSensorial: [this.configurationService.sensorialSelectionDelayMs, [Validators.required, Validators.min(1)]],
-      Dpi: [300]
+      Dpi: [this.dpis[this.dpis.findIndex(l => l.value == this.configurationService.dpiSpeed)]],
+      LayoutType: [this.layouts[this.layouts.findIndex(l => l.value == this.configurationService.layoutType)]]
     });
   }
 

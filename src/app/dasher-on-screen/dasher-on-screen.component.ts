@@ -10,6 +10,7 @@ import { endCalibrateCamera } from '../core/support/camera/camera-support';
 import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions } from '../common/words-letters';
 import { Sector } from '../common/sector.enum';
 import { LokiJsPredictionsService } from '../core/predictions/lokijs-predictions.service';
+import { LayoutType } from '../common/layout-type.num';
 
 @Component({
   selector: 'app-dasher-on-screen',
@@ -60,7 +61,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   public isAfk = false;
   public input = '';
   public wordsOrLetterOnScreenTop: Array<string> = initialTopLetters;
+  public splitIndexHeader = Math.ceil(initialTopLetters.length / 2);
   public wordsOrLetterOnScreenBottom: Array<string> = initialBottomLetters;
+  public splitIndexBottom = Math.ceil(initialBottomLetters.length / 2);
+  public layoutTypes = LayoutType;
+  public layoutType = this.configurationService.layoutType;
 
   // Calibracao
   public clickElementsCount = new Map<string, number>();
@@ -268,7 +273,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.suportDiv.style.height = "20px";
       this.suportDiv.style.zIndex = "1";
       this.suportDiv.style.background = "red";
-      if (!this.configurationService.getActiveControl().includes("Sensorial")) {
+      if (!this.configurationService.isSensorialDeviceConfigured()) {
         this.suportDiv.style.background = "red";
       } else {
         this.suportDiv.style.background = "unset";
@@ -299,7 +304,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   private doResetSensorialDetection() {
-    if (!this.configurationService.getActiveControl().includes("Sensorial"))
+    if (!this.configurationService.isSensorialDeviceConfigured())
       return;
 
     this.lastSensorialDetectionTime = undefined;
@@ -338,9 +343,9 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private moveByJoystick(packet) {
     const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
     const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
-    const joystick = this.configurationService.getActiveControl().includes("Esquerdo") ? packet.analogStickLeft : packet.analogStickRight;
+    const joystick = packet?.analogStickLeft ?? packet?.analogStickRight;
     if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
-      this.suportDiv.style.left = (percentLeft + joystick.horizontal) > 100 ? '100%' : ((percentLeft + joystick.horizontal) < 0 ? '0%' : (percentLeft + joystick.horizontal) + "%");
+      this.suportDiv.style.left = (percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) > 100 ? '100%' : ((percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) < 0 ? '0%' : (percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) + "%");
       this.mouseMovedEvent.next({
         clientX: this.suportDiv.getBoundingClientRect().x,
         clientY: this.suportDiv.getBoundingClientRect().y,
@@ -349,7 +354,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
 
     if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
-      this.suportDiv.style.top = (percentTop + joystick.vertical) > 100 ? '100%' : ((percentTop + joystick.vertical) < 0 ? '0%' : (percentTop + joystick.vertical) + "%");
+      this.suportDiv.style.top = (percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) > 100 ? '100%' : ((percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) < 0 ? '0%' : (percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) + "%");
     }
   }
 
@@ -529,18 +534,14 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
 
     let wordOrLetterDetected = false;
-    if (this.configurationService.getActiveControl().includes("Ocular")) {
+    if (this.configurationService.isOcularDeviceConfigured()) {
       wordOrLetterDetected = this.moveByCamera(packet);
-    } else if (this.configurationService.getActiveControl().includes("Joycon")) {
-      if (this.configurationService.getActiveControl().includes("Sensorial")) {
+    } else {
+      if (this.configurationService.isSensorialDeviceConfigured()) {
         wordOrLetterDetected = this.moveBySensorialAcelerometers(packet);
       } else {
         this.moveByJoystick(packet);
       }
-    } else if (this.configurationService.getActiveControl().includes("JoystickDualShock")) {
-      this.moveByJoystick(packet);
-    } else {
-      this.moveByJoystick(packet);
     }
 
     const overAnyActionElement = elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement) ||
@@ -548,11 +549,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
     this.setBackGroundColorActions();
     if (overAnyActionElement) {
-      if (this.configurationService.getActiveControl().includes("Sensorial") && !this.lastSensorialDetectionTime) {
+      if (this.configurationService.isSensorialDeviceConfigured() && !this.lastSensorialDetectionTime) {
         this.lastSensorialDetectionTime = new Date();
       }
 
-      if (this.configurationService.getActiveControl().includes("Sensorial") && calcularDiferencaEmMilissegundos(new Date(), this.lastSensorialDetectionTime) < this.configurationService.sensorialSelectionDelayMs)
+      if (this.configurationService.isSensorialDeviceConfigured() && calcularDiferencaEmMilissegundos(new Date(), this.lastSensorialDetectionTime) < this.configurationService.sensorialSelectionDelayMs)
         return;
 
       this.doTriggerAction();

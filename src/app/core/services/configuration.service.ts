@@ -6,6 +6,8 @@ import { Subject } from 'rxjs';
 import { enableJoyconFunctions, _onInputReportJoycon } from 'src/app/core/support/joycon-support/joycon-support';
 import { _onInputReportDualShock } from '../support/dualshock/dualshock-support';
 import { calibrateCamera, connectControlCamera, stopCameraControl } from '../support/camera/camera-support';
+import { LayoutType } from 'src/app/common/layout-type.num';
+import { isTestEnv } from 'src/app/common/document-helper';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +17,9 @@ export class ConfigurationsService {
     private currentHidDevice: HIDDevice;
     private onPacketSended = new Subject<any>();
     private activeControl: string;
-    public sensorialSelectionDelayMs = 1000 * 4;
+    public sensorialSelectionDelayMs = localStorage.getItem('SensorialSelectionDelayMs') ? Number(localStorage.getItem('SensorialSelectionDelayMs')) : 1000 * 4;
+    public dpiSpeed = localStorage.getItem('DpiSpeed') ? Number(localStorage.getItem('DpiSpeed')) : 1200;
+    public layoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LayoutType') ? Number(localStorage.getItem('LayoutType')) : LayoutType.Vertical;
 
     constructor() { }
 
@@ -45,6 +49,10 @@ export class ConfigurationsService {
 
     public isOcularDeviceConfigured() {
         return this.getActiveControl().includes("Ocular");
+    }
+
+    public isSensorialDeviceConfigured() {
+        return this.getActiveControl().includes("Sensorial");
     }
 
     public isHidDeviceConfigured() {

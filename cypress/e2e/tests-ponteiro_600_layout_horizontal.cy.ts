@@ -5,6 +5,7 @@ describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
         const dpi = 600;
 
+        window["Cypress"]["TipoLayout"] = 1;
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
@@ -65,6 +66,7 @@ describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
         const dpi = 600;
 
+        window["Cypress"]["TipoLayout"] = 1;
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
@@ -125,6 +127,7 @@ describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
         const dpi = 600;
 
+        window["Cypress"]["TipoLayout"] = 1;
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
@@ -185,6 +188,7 @@ describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
         const dpi = 600;
 
+        window["Cypress"]["TipoLayout"] = 1;
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 
@@ -245,6 +249,7 @@ describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
         const dpi = 600;
 
+        window["Cypress"]["TipoLayout"] = 1;
         await promisify(cy.visit('/'));
         await promisify(cy.get('div[id="playerDivElementRef"]', { timeout: 10000 }).should('be.visible'));
 

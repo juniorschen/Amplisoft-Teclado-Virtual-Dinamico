@@ -61,8 +61,17 @@
     }
 }
 
-.grid-header {
-    grid-area: header;
+.grid-header1 {
+    grid-area: header1;
+}
+
+.grid-mainh {
+    grid-area: mainh;
+    background-color: lightgoldenrodyellow;
+}
+
+.grid-header2 {
+    grid-area: header2;
 }
 
 .grid-main {
@@ -70,18 +79,36 @@
     background-color: lightgoldenrodyellow;
 }
 
-.grid-bottom {
-    grid-area: bottom;
+.grid-bottom1 {
+    grid-area: bottom1;
 }
 
-.grid-right {
-    grid-area: right;
+.grid-mainb {
+    grid-area: mainb;
+    background-color: lightgoldenrodyellow;
 }
 
-.grid-container {
+.grid-bottom2 {
+    grid-area: bottom2;
+}
+
+
+.grid-container-horizontal {
     display: grid;
     grid-template-areas:
-        'header'
+        'header1'
+        'mainh'
+        'header2'
         'main'
-        'bottom';
+        'bottom1'
+        'mainb'
+        'bottom2';
+}
+
+.grid-container-vertical {
+    display: grid;
+    grid-template-areas:
+        'header1'
+        'main'
+        'bottom1';
 }
