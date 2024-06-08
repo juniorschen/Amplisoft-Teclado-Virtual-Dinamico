@@ -1,7 +1,8 @@
 import { AnimationBuilder } from '@angular/animations';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
-import { elementOverAnother, isTestEnv } from 'src/app/common/document-helper';
+import { calcularDiferencaEmMilissegundos } from 'src/app/common/date';
+import { elementOverAnother } from 'src/app/common/document-helper';
 import { ConfigurationsService } from 'src/app/core/services/configuration.service';
 
 @Component({
@@ -12,7 +13,9 @@ import { ConfigurationsService } from 'src/app/core/services/configuration.servi
 export class DasherOnScreenPlayerComponent implements OnInit {
 
   private elementOverCheckSub: Subject<void> = new Subject();
-  private wordOrLetterSelected = false;
+  private bufferDoDetectSensorial = 100;
+  private lastSensorialDetectionTime: Date;
+  private intervalSensorialDetection;
 
   @Input('wordOrLetter')
   public wordOrLetter: string;
@@ -30,7 +33,10 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   @ViewChild('pElementRef')
   public pElementRef: ElementRef<HTMLParagraphElement>;
 
-  constructor(public animationBuilder: AnimationBuilder, private configurationService: ConfigurationsService) { }
+  public animateDivSelection = false;
+  public wordOrLetterSelected = false;
+
+  constructor(public animationBuilder: AnimationBuilder, private configurationService: ConfigurationsService, private hostEl: ElementRef) { }
 
   ngOnInit(): void {
     this.mouseMovedEvent.subscribe((event) => { });
@@ -39,27 +45,73 @@ export class DasherOnScreenPlayerComponent implements OnInit {
       this.wordOrLetterSelected = false;
     });
 
-    if (this.configurationService.isAnyControlConfigured() && !this.configurationService.isSensorialDeviceConfigured()) {
+    if (this.configurationService.isAnyControlConfigured()) {
       this.constantCheckElementOverAnother();
     }
   }
 
   mouseOverWordOrLetterEvent() {
-    if ((this.configurationService.isAnyControlConfigured()) && !isTestEnv)
+    if (this.configurationService.isAnyControlConfigured())
       return;
 
-    this.wordOrLetterSelectedEvent.next(this.wordOrLetter);
+    let detect = () => {
+      this.clearSensorialBufers();
+      this.wordOrLetterSelectedEvent.next(this.wordOrLetter);
+    };
+
+    if (this.doDetect()) {
+      detect();
+    } else if (!this.intervalSensorialDetection) {
+      this.intervalSensorialDetection = setInterval(() => { detect(); }, this.configurationService.sensorialSelectionDelayMs - this.bufferDoDetectSensorial);
+    }
+  }
+
+  mouseOutWordOrLetterEvent() {
+    if (this.configurationService.isAnyControlConfigured())
+      return;
+
+    this.clearSensorialBufers();
   }
 
   private constantCheckElementOverAnother() {
     this.elementOverCheckSub.pipe(debounceTime(10)).subscribe(() => {
-      if (elementOverAnother(document.getElementById("suportDiv"), this.pElementRef.nativeElement) && !this.wordOrLetterSelected) {
+      if (elementOverAnother(document.getElementById("suportDiv"), this.pElementRef.nativeElement)) {
         this.wordOrLetterSelected = true;
-        this.wordOrLetterSelectedEvent.next(this.wordOrLetter);
+        if (this.doDetect()) {
+          this.wordOrLetterSelectedEvent.next(this.wordOrLetter);
+        }
+      } else {
+        this.wordOrLetterSelected = false;
+        this.clearSensorialBufers();
       }
       this.elementOverCheckSub.next();
     });
 
     this.elementOverCheckSub.next();
+  }
+
+  private clearSensorialBufers() {
+    this.animateDivSelection = false;
+    this.lastSensorialDetectionTime = undefined;
+    if (this.intervalSensorialDetection) {
+      clearInterval(this.intervalSensorialDetection);
+      this.intervalSensorialDetection = undefined;
+    }
+  }
+
+  private doDetect() {
+    if (this.configurationService.isDelayedDetectionAction()) {
+      if (!this.animateDivSelection) {
+        this.hostEl.nativeElement.style.setProperty('--animation-duration', `${this.configurationService.sensorialSelectionDelayMs / 1000}s`);
+        this.animateDivSelection = true;
+      }
+
+      if (!this.lastSensorialDetectionTime)
+        this.lastSensorialDetectionTime = new Date();
+
+      return calcularDiferencaEmMilissegundos(this.lastSensorialDetectionTime, new Date()) >= this.configurationService.sensorialSelectionDelayMs;
+    }
+
+    return true;
   }
 }

@@ -1,6 +1,7 @@
 <div class="grid-container">
-    <div [formGroup]="formBooleans" class="grid-controle" fxLayout="column" fxLayoutAlign="none center">
-        <p fxLayoutAlign="center center" class="label-high-font-size">Dispositivos Suportados</p>
+
+    <div [formGroup]="formBooleans" class="grid-controle" fxLayout="column">
+        <p class="label-medium-font-size">Dispositivos Suportados</p>
         <mat-slide-toggle formControlName="NinetendoJoyconDireitoJoystick" color="accent" class="mat-slide-toggle"
             (change)="toggleChanged($event, 'NinetendoJoyconDireitoJoystick')">
             Joystick Nintendo Joycon Direito
@@ -33,27 +34,37 @@
     </div>
 
 
-    <div [formGroup]="formInputs" class="grid-gerais" fxLayout="column" fxLayoutAlign="none center">
-        <p fxLayoutAlign="center center" class="label-high-font-size">Configurações Gerais</p>
-        <p fxLayoutAlign="center center" class="label-medium-font-size">Delay controles sensoriais (MS)</p>
-        <mat-form-field>
-            <input matInput type="number" formControlName="DelayControleSensorial">
-        </mat-form-field>
+    <div [formGroup]="formInputs" class="grid-gerais" fxLayout="column" fxLayoutAlign="none">
+        <p class="label-medium-font-size">Configurações Gerais</p>
 
-        <p fxLayoutAlign="center center" class="label-medium-font-size">Velocidade controles joystick (DPI)</p>
         <mat-form-field>
-            <mat-select formControlName="Dpi">
-                <mat-option *ngFor="let dpi of dpis" [value]="dpi">
-                    {{dpi.viewValue}}
+            <mat-label>Tipo Layout</mat-label>
+            <mat-select formControlName="LayoutType">
+                <mat-option *ngFor="let layout of layouts" [value]="layout">
+                    {{layout.viewValue}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
-        <p fxLayoutAlign="center center" class="label-medium-font-size">Tipo Layout</p>
-        <mat-form-field>
-            <mat-select formControlName="LayoutType">
-                <mat-option *ngFor="let layout of layouts" [value]="layout">
-                    {{layout.viewValue}}
+        <mat-form-field *ngIf="!isSensorialConfigured()">
+            <mat-label>Detecção Ação</mat-label>
+            <mat-select formControlName="ActionDetection">
+                <mat-option *ngFor="let actionDetection of actionDetections" [value]="actionDetection">
+                    {{actionDetection.viewValue}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="formInputs.get('ActionDetection').value.value != dectionType.Contato">
+            <mat-label>Delay detecção ação (MS)</mat-label>
+            <input matInput type="number" formControlName="DelayDeteccaoSensorial">
+        </mat-form-field>
+
+        <mat-form-field *ngIf="!isSensorialConfigured() && isAnyControlConfigured()">
+            <mat-label>Velocidade controles joystick (DPI)</mat-label>
+            <mat-select formControlName="Dpi">
+                <mat-option *ngFor="let dpi of dpis" [value]="dpi">
+                    {{dpi.viewValue}}
                 </mat-option>
             </mat-select>
         </mat-form-field>

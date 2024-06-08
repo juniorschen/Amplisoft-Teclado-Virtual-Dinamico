@@ -1,18 +1,20 @@
 .mat-slide-toggle {
-    transform: scale(1.4);
     margin-top: 40px;
 }
 
 .grid-controle {
     grid-area: controle;
+    margin-left: 10px;
 }
 
 .grid-gerais {
     grid-area: gerais;
+    margin-left: 10px;
 }
 
 .grid-container {
     display: grid;
     grid-template-areas:
-        'controle gerais';
+        'gerais'
+        'controle';
 }

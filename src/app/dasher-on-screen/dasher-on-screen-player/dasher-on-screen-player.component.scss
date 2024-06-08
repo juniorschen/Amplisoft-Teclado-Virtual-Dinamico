@@ -1,3 +1,7 @@
+:host {
+    --animation-duration: 5s;
+}
+
 .action-border {
     border-width: 2px;
     border-style: groove;
@@ -15,4 +19,17 @@
     display: flex;
     height: 100%;
     width: 100%;
+    background: linear-gradient(to right, rgb(230, 255, 230) 50%, transparent 0);
+    background-size: 200% 100%;
+    background-position: right;
+}
+
+@keyframes makeItfadeIn {
+    100% {
+        background-position: left;
+    }
+}
+
+.fill-animation {
+    animation: makeItfadeIn var(--animation-duration) 0s forwards;
 }

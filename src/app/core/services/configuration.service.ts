@@ -6,8 +6,9 @@ import { Subject } from 'rxjs';
 import { enableJoyconFunctions, _onInputReportJoycon } from 'src/app/core/support/joycon-support/joycon-support';
 import { _onInputReportDualShock } from '../support/dualshock/dualshock-support';
 import { calibrateCamera, connectControlCamera, stopCameraControl } from '../support/camera/camera-support';
-import { LayoutType } from 'src/app/common/layout-type.num';
+import { LayoutType } from 'src/app/common/layout-type.enum';
 import { isTestEnv } from 'src/app/common/document-helper';
+import { DectionType } from 'src/app/common/detection-type.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +21,7 @@ export class ConfigurationsService {
     public sensorialSelectionDelayMs = localStorage.getItem('SensorialSelectionDelayMs') ? Number(localStorage.getItem('SensorialSelectionDelayMs')) : 1000 * 4;
     public dpiSpeed = localStorage.getItem('DpiSpeed') ? Number(localStorage.getItem('DpiSpeed')) : 1200;
     public layoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LayoutType') ? Number(localStorage.getItem('LayoutType')) : LayoutType.Vertical;
+    public detectionType: DectionType = localStorage.getItem('DectionType') ? Number(localStorage.getItem('DectionType')) : DectionType.Contato;
 
     constructor() { }
 
@@ -57,6 +59,10 @@ export class ConfigurationsService {
 
     public isHidDeviceConfigured() {
         return localStorage.getItem('currentDeviceHidId') != null;
+    }
+
+    public isDelayedDetectionAction() {
+        return this.detectionType == DectionType.Delay;
     }
 
     public async forgetDevices() {

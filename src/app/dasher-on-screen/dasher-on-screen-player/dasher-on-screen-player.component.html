@@ -1,4 +1,4 @@
-<div #wordOrLetterElementRef class="full-div">
-    <p [id]="wordOrLetter" class="label-default-font-size action-border action-sized" #pElementRef (mouseover)="mouseOverWordOrLetterEvent()"
+<div #wordOrLetterElementRef [class.fill-animation]="animateDivSelection" class="full-div">
+    <p [id]="wordOrLetter" class="label-default-font-size action-border action-sized" #pElementRef (mouseover)="mouseOverWordOrLetterEvent()" (mouseout)="mouseOutWordOrLetterEvent()"
         fxLayoutAlign="center center">{{ wordOrLetter }}</p>
 </div>

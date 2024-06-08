@@ -1,3 +1,7 @@
+:host {
+    --animation-duration: 5s;
+}
+
 .icon-display {
     margin-top: 20px;
     transform: scale(1.5);
@@ -19,6 +23,9 @@
     border-width: 2px;
     border-style: groove;
     border-color: lightgoldenrodyellow;
+    background: linear-gradient(to right, rgb(230, 255, 230) 50%, transparent 0);
+    background-size: 200% 100%;
+    background-position: right;
 }
 
 .action-div-border-color {
@@ -111,4 +118,14 @@
         'header1'
         'main'
         'bottom1';
+}
+
+@keyframes makeItfadeIn {
+    100% {
+        background-position: left;
+    }
+}
+
+.fill-animation {
+    animation: makeItfadeIn var(--animation-duration) 0s forwards;
 }

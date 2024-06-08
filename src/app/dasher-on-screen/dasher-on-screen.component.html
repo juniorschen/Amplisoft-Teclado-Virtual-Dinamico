@@ -17,13 +17,14 @@
 
         <div fxLayout="column">
             <div (click)="onClickElementCalibration(0, 'limparTudoElementRef')"
+                [class.fill-animation]="animateDivSelectionClearAll"
                 [ngClass]="clickElementsCount.get('limparTudoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
                     fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
 
-            <div (click)="onClickElementCalibration(0, 'falarElementRef')"
+            <div (click)="onClickElementCalibration(0, 'falarElementRef')" [class.fill-animation]="animateDivSelectionSpeak"
                 [ngClass]="clickElementsCount.get('falarElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()"
@@ -32,7 +33,7 @@
         </div>
 
         <div fxLayoutAlign="center center" fxLayout="column">
-            <div (click)="onClickElementCalibration(0, 'espacoElementRef')"
+            <div (click)="onClickElementCalibration(0, 'espacoElementRef')" [class.fill-animation]="animateDivSelectionSpace"
                 [ngClass]="clickElementsCount.get('espacoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p id="espacoElementRef" class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
@@ -43,7 +44,7 @@
             <div id="centerDivElementRef" style="background-color: lightgoldenrodyellow" #centerDivElementRef fxFill
                 fxFlex></div>
 
-            <div (click)="onClickElementCalibration(0, 'limparElementRef')"
+            <div (click)="onClickElementCalibration(0, 'limparElementRef')" [class.fill-animation]="animateDivSelectionClear"
                 [ngClass]="clickElementsCount.get('limparElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p id="limparElementRef" class="label-default-font-size" #limparElementRef

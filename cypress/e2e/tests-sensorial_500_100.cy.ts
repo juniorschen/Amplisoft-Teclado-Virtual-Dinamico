@@ -15,6 +15,7 @@ function getDelaySensorial(delayEscolha, delayIteracao, setor) {
 
 describe('Validar Desempenho do Software', () => {
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
+        window["Cypress"]["TipoLayout"] = 1;
         const delayMsEscolha = 500;
         const delayIteracoes = 100;
 
@@ -72,6 +73,7 @@ describe('Validar Desempenho do Software', () => {
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
+        window["Cypress"]["TipoLayout"] = 1;
         const delayMsEscolha = 500;
         const delayIteracoes = 100;
 
@@ -129,6 +131,7 @@ describe('Validar Desempenho do Software', () => {
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
+        window["Cypress"]["TipoLayout"] = 1;
         const delayMsEscolha = 500;
         const delayIteracoes = 100;
 
@@ -186,6 +189,7 @@ describe('Validar Desempenho do Software', () => {
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
+        window["Cypress"]["TipoLayout"] = 1;
         const delayMsEscolha = 500;
         const delayIteracoes = 100;
 
@@ -243,6 +247,7 @@ describe('Validar Desempenho do Software', () => {
     });
 
     it('y dpi, 1~~3 erros a cada 100 palavras', async () => {
+        window["Cypress"]["TipoLayout"] = 1;
         const delayMsEscolha = 500;
         const delayIteracoes = 100;
 

@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ConfigurationsService } from '../core/services/configuration.service';
-import { LayoutType } from '../common/layout-type.num';
+import { LayoutType } from '../common/layout-type.enum';
+import { DectionType } from '../common/detection-type.enum';
 
 @Component({
   selector: 'app-dasher-configurations',
@@ -24,6 +25,12 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     { value: LayoutType.Horizontal, viewValue: 'Layout Horizontal' },
   ];
 
+  public actionDetections = [
+    { value: DectionType.Contato, viewValue: 'Ao contato' },
+    { value: DectionType.Delay, viewValue: 'Contagem Tempo' },
+  ];
+  public dectionType = DectionType;
+
   constructor(private fbBuilder: FormBuilder, private configurationService: ConfigurationsService) {
   }
 
@@ -32,8 +39,8 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.formInputs.get("DelayControleSensorial").value > 0 && this.formInputs.get("DelayControleSensorial").valid) {
-      this.configurationService.sensorialSelectionDelayMs = this.formInputs.get("DelayControleSensorial").value;
+    if (this.formInputs.get("DelayDeteccaoSensorial").value > 0 && this.formInputs.get("DelayDeteccaoSensorial").valid) {
+      this.configurationService.sensorialSelectionDelayMs = this.formInputs.get("DelayDeteccaoSensorial").value;
       localStorage.setItem('SensorialSelectionDelayMs', this.configurationService.sensorialSelectionDelayMs.toString());
     }
 
@@ -45,6 +52,11 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     if (this.formInputs.get("LayoutType").valid) {
       this.configurationService.layoutType = this.formInputs.get("LayoutType").value.value;
       localStorage.setItem('LayoutType', this.configurationService.layoutType.toString());
+    }
+
+    if (this.formInputs.get("ActionDetection").valid) {
+      this.configurationService.detectionType = this.formInputs.get("ActionDetection").value.value;
+      localStorage.setItem('DectionType', this.configurationService.detectionType.toString());
     }
   }
 
@@ -58,10 +70,19 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
       ControleFocoOcularSensorial: [this.configurationService.getActiveControl() == 'ControleFocoOcularSensorial']
     });
     this.formInputs = this.fbBuilder.group({
-      DelayControleSensorial: [this.configurationService.sensorialSelectionDelayMs, [Validators.required, Validators.min(1)]],
+      DelayDeteccaoSensorial: [this.configurationService.sensorialSelectionDelayMs, [Validators.required, Validators.min(1)]],
       Dpi: [this.dpis[this.dpis.findIndex(l => l.value == this.configurationService.dpiSpeed)]],
-      LayoutType: [this.layouts[this.layouts.findIndex(l => l.value == this.configurationService.layoutType)]]
+      LayoutType: [this.layouts[this.layouts.findIndex(l => l.value == this.configurationService.layoutType)]],
+      ActionDetection: [this.actionDetections[this.actionDetections.findIndex(l => l.value == this.configurationService.detectionType)]]
     });
+  }
+
+  public isSensorialConfigured() {
+    return this.configurationService.isSensorialDeviceConfigured();
+  }
+
+  public isAnyControlConfigured() {
+    return this.configurationService.isAnyControlConfigured();
   }
 
   public async toggleChanged(event, name: string) {
@@ -117,6 +138,8 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
               { vendorId: 0x0C12, productId: 0x0E16 },
               { vendorId: 0x0F0D, productId: 0x0084 }
             ];
+          } else if (name.includes("Sensorial")) {
+            this.formInputs.get("ActionDetection").setValue(this.actionDetections[1]);
           }
 
           if (hid.length > 0) {
