@@ -20,14 +20,14 @@
                 [class.fill-animation]="animateDivSelectionClearAll"
                 [ngClass]="clickElementsCount.get('limparTudoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
+                <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)" (mouseout)="mouseOutReset()"
                     fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
 
             <div (click)="onClickElementCalibration(0, 'falarElementRef')" [class.fill-animation]="animateDivSelectionSpeak"
                 [ngClass]="clickElementsCount.get('falarElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()"
+                <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()" (mouseout)="mouseOutSpeak()"
                     fxLayoutAlign="center center">Falar Texto Completo</p>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 [ngClass]="clickElementsCount.get('espacoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p id="espacoElementRef" class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
-                    (mouseover)="mouseOverBlankSpace()">
+                    (mouseover)="mouseOverBlankSpace()" (mouseout)="mouseOutBlankSpace()">
                     Inserir Espaço</p>
             </div>
 
@@ -48,7 +48,7 @@
                 [ngClass]="clickElementsCount.get('limparElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" fxFill fxFlex>
                 <p id="limparElementRef" class="label-default-font-size" #limparElementRef
-                    (mouseover)="mouseOverReset(false)" fxLayoutAlign="center center">Limpar Último
+                    (mouseover)="mouseOverReset(false)" (mouseout)="mouseOutReset()" fxLayoutAlign="center center">Limpar Último
                 </p>
             </div>
         </div>
@@ -56,7 +56,7 @@
         <div style="width: 100px; background-color: lightgoldenrodyellow">
         </div>
 
-        <div *ngIf="layoutType == layoutTypes.Horizontal" fxFlex fxLayout="column" fxFill>
+        <div *ngIf="layoutType == layoutTypes.TypeFourLines" fxFlex fxLayout="column" fxFill>
             <div class="grid-container-horizontal" fxFill>
 
                 <div class="grid-header1" fxFill>
@@ -123,7 +123,7 @@
             </div>
         </div>
 
-        <div *ngIf="layoutType == layoutTypes.Vertical" fxFlex fxLayout="column" fxFill>
+        <div *ngIf="layoutType == layoutTypes.TypeTwoLines" fxFlex fxLayout="column" fxFill>
             <div class="grid-container-vertical" fxFill>
                 <div class="grid-header1" fxFill>
                     <div fxLayout="row" fxFill>

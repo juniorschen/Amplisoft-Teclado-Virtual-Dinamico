@@ -1,4 +1,4 @@
 export enum LayoutType {
-    Vertical = 0,
-    Horizontal = 1
+    TypeTwoLines = 0,
+    TypeFourLines = 1
 }

@@ -21,8 +21,8 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     { value: 1800, viewValue: '1800' },
   ];
   public layouts = [
-    { value: LayoutType.Vertical, viewValue: 'Layout Vertical' },
-    { value: LayoutType.Horizontal, viewValue: 'Layout Horizontal' },
+    { value: LayoutType.TypeTwoLines, viewValue: 'Layout Duas Linhas' },
+    { value: LayoutType.TypeFourLines, viewValue: 'Layout Quatro Linhas' },
   ];
 
   public actionDetections = [

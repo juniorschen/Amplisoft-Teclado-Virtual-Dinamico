@@ -20,7 +20,7 @@ export class ConfigurationsService {
     private activeControl: string;
     public sensorialSelectionDelayMs = localStorage.getItem('SensorialSelectionDelayMs') ? Number(localStorage.getItem('SensorialSelectionDelayMs')) : 1000 * 4;
     public dpiSpeed = localStorage.getItem('DpiSpeed') ? Number(localStorage.getItem('DpiSpeed')) : 1200;
-    public layoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LayoutType') ? Number(localStorage.getItem('LayoutType')) : LayoutType.Vertical;
+    public layoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LayoutType') ? Number(localStorage.getItem('LayoutType')) : LayoutType.TypeTwoLines;
     public detectionType: DectionType = localStorage.getItem('DectionType') ? Number(localStorage.getItem('DectionType')) : DectionType.Contato;
 
     constructor() { }

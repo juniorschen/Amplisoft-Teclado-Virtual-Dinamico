@@ -147,6 +147,13 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  mouseOutBlankSpace() {
+    if (this.configurationService.isAnyControlConfigured())
+      return;
+
+    this.doResetSensorialDetection();
+  }
+
   private insertBlankSpace(shouldRedefinedWords = true) {
     if (this.input) {
       const wordsList = this.input.split(" ");
@@ -181,6 +188,13 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  mouseOutReset() {
+    if (this.configurationService.isAnyControlConfigured())
+      return;
+
+    this.doResetSensorialDetection();
+  }
+
   private reset(fullReset = false) {
     if (fullReset) {
       this.input = "";
@@ -207,6 +221,13 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       }
 
     }
+  }
+
+  mouseOutSpeak() {
+    if (this.configurationService.isAnyControlConfigured())
+      return;
+
+    this.doResetSensorialDetection();
   }
 
   private speak() {
@@ -375,13 +396,13 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   private identifyJoystickSide(packet) {
     if (!this.joystickSide) {
-      if(packet?.analogStickLeft) {
+      if (packet?.analogStickLeft) {
         if (Math.abs(packet.analogStickLeft.horizontal) != Math.abs(packet.analogStickLeft.vertical)) {
           this.joystickSide = 'left';
         }
       }
 
-      if(packet?.analogStickRight) {
+      if (packet?.analogStickRight) {
         if (Math.abs(packet.analogStickRight.horizontal) != Math.abs(packet.analogStickRight.vertical)) {
           this.joystickSide = 'right';
         }
