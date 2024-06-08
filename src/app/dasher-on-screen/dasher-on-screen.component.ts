@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
-import { elementOverAnother, isTestEnv } from '../common/document-helper';
+import { elementOverAnother, findClosestElement, findElementsAround, isTestEnv } from '../common/document-helper';
 
 import { ConfigurationsService } from '../core/services/configuration.service';
 import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
@@ -8,7 +8,6 @@ import { calcularDiferencaEmMilissegundos } from '../common/date';
 import { PerfomanceIndicatorService } from '../core/performance-indicators/performance-indicators.service';
 import { endCalibrateCamera } from '../core/support/camera/camera-support';
 import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions } from '../common/words-letters';
-import { Sector } from '../common/sector.enum';
 import { LokiJsPredictionsService } from '../core/predictions/lokijs-predictions.service';
 import { LayoutType } from '../common/layout-type.enum';
 
@@ -24,12 +23,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private afkCheckDelayMs = 1000 * (isTestEnv ? 10 : 45);
   private afkInterval;
   private suportDiv: HTMLDivElement;
+  private joystickSide: "left" | "right";
 
   // Detecção sensorial
   private intervalSensorialDetection;
   private canSelectWordLetter: boolean = true;
-  private suportDivOnDirection: 'top' | 'bottom';
-  private suportDivOnSector: Sector;
   private lastSensorialDetectionTime: Date;
   private actionSensorialDetectionBuffer = { top: undefined, right: undefined, bottom: undefined, left: undefined };
   private bufferDoDetectSensorial = 100;
@@ -155,7 +153,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.input = this.input + " ";
       this.perfomanceIndicatorService.blankSpace();
 
-      if (wordsList.length > 0) {
+      if (wordsList[wordsList.length - 1].trim().length > 0) {
         this.predicionsService.doAddWordOnDb(wordsList[wordsList.length - 1]);
       }
 
@@ -237,7 +235,6 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
 
     this.redefinedWords();
-    this.doResetSensorialPosition();
     this.doResetSensorialDetection();
     this.onResetDasherEvent.next();
     this.lastActionExecuted = new Date();
@@ -290,6 +287,39 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
     return true;
   }
+
+  private doTriggerAction() {
+    if (elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement)) {
+      this.reset();
+      this.resetAuxDisplay();
+    } else if (elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement)) {
+      this.speak();
+      this.resetAuxDisplay();
+    } else if (elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement)) {
+      this.reset(true);
+      this.resetAuxDisplay();
+    } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
+      this.insertBlankSpace();
+      this.resetAuxDisplay();
+    }
+
+    this.doResetSensorialDetection();
+  }
+
+  private doResetSensorialDetection() {
+    if (!this.configurationService.isDelayedDetectionAction())
+      return;
+
+    this.animateDivSelectionSpace = false;
+    this.animateDivSelectionClearAll = false;
+    this.animateDivSelectionClear = false;
+    this.animateDivSelectionSpeak = false;
+    this.lastSensorialDetectionTime = undefined;
+    if (this.intervalSensorialDetection) {
+      clearInterval(this.intervalSensorialDetection);
+      this.intervalSensorialDetection = undefined;
+    }
+  }
   //#region Suporte Controles HID
   private initHidControl() {
     if (this.configurationService.isAnyControlConfigured()) {
@@ -334,152 +364,51 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private setAuxDisplayPositionCenterOn(onElementRef) {
-    const leftPx = (onElementRef.nativeElement.offsetLeft + onElementRef.nativeElement.offsetWidth / 2);
+  private setAuxDisplayPositionCenterOn(onElement) {
+    const leftPx = (onElement.offsetLeft + onElement.offsetWidth / 2);
     const totalWidth = this.playerDivElementRef.nativeElement.clientWidth;
-    const topPx = (onElementRef.nativeElement.offsetTop + onElementRef.nativeElement.offsetHeight / 2);
+    const topPx = (onElement.offsetTop + onElement.offsetHeight / 2);
     const totalHeight = this.playerDivElementRef.nativeElement.clientHeight;
     this.suportDiv.style.left = (leftPx * 100 / totalWidth) + "%";
     this.suportDiv.style.top = (topPx * 100 / totalHeight) + "%";
   }
 
-  private doResetSensorialPosition() {
-    this.suportDivOnSector = undefined;
-    this.suportDivOnDirection = undefined;
-  }
+  private identifyJoystickSide(packet) {
+    if (!this.joystickSide) {
+      if(packet?.analogStickLeft) {
+        if (Math.abs(packet.analogStickLeft.horizontal) != Math.abs(packet.analogStickLeft.vertical)) {
+          this.joystickSide = 'left';
+        }
+      }
 
-  private doResetSensorialDetection() {
-    if (!this.configurationService.isDelayedDetectionAction())
-      return;
-
-    this.animateDivSelectionSpace = false;
-    this.animateDivSelectionClearAll = false;
-    this.animateDivSelectionClear = false;
-    this.animateDivSelectionSpeak = false;
-    this.lastSensorialDetectionTime = undefined;
-    if (this.intervalSensorialDetection) {
-      clearInterval(this.intervalSensorialDetection);
-      this.intervalSensorialDetection = undefined;
+      if(packet?.analogStickRight) {
+        if (Math.abs(packet.analogStickRight.horizontal) != Math.abs(packet.analogStickRight.vertical)) {
+          this.joystickSide = 'right';
+        }
+      }
     }
   }
 
   private moveByJoystick(packet) {
     const percentLeft = Number(this.suportDiv.style.left.substring(0, this.suportDiv.style.left.indexOf('%')));
     const percentTop = Number(this.suportDiv.style.top.substring(0, this.suportDiv.style.top.indexOf('%')));
-    const joystick = packet?.analogStickLeft?.horizontal != packet?.analogStickLeft?.vertical ? packet?.analogStickLeft : packet?.analogStickRight;
-    if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
-      this.suportDiv.style.left = (percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) > 100 ? '100%' : ((percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) < 0 ? '0%' : (percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) + "%");
-      this.mouseMovedEvent.next({
-        clientX: this.suportDiv.getBoundingClientRect().x,
-        clientY: this.suportDiv.getBoundingClientRect().y,
-        HTMLDivElement: this.suportDiv
-      } as any);
+
+    this.identifyJoystickSide(packet);
+    if (this.joystickSide) {
+      const joystick = this.joystickSide == 'left' ? packet?.analogStickLeft : packet?.analogStickRight;
+      if (joystick.horizontal > 0.1 || joystick.horizontal < -0.1) {
+        this.suportDiv.style.left = (percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) > 100 ? '100%' : ((percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) < 0 ? '0%' : (percentLeft + joystick.horizontal * (this.configurationService.dpiSpeed / 1000)) + "%");
+        this.mouseMovedEvent.next({
+          clientX: this.suportDiv.getBoundingClientRect().x,
+          clientY: this.suportDiv.getBoundingClientRect().y,
+          HTMLDivElement: this.suportDiv
+        } as any);
+      }
+
+      if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
+        this.suportDiv.style.top = (percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) > 100 ? '100%' : ((percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) < 0 ? '0%' : (percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) + "%");
+      }
     }
-
-    if (joystick.vertical > 0.1 || joystick.vertical < -0.1) {
-      this.suportDiv.style.top = (percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) > 100 ? '100%' : ((percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) < 0 ? '0%' : (percentTop + joystick.vertical * (this.configurationService.dpiSpeed / 1000)) + "%");
-    }
-  }
-
-  private detectSensorialSectorPosition(goToRight, goToLeft, goToTop, goToBottom) {
-    let currentWordLetterComponent;
-    let currentWords;
-
-    const getLastWordDetected = () => {
-      return this.wordsOrLettersElements.find(l => l.wordOrLetterSelected)?.wordOrLetter;
-    }
-
-    const defineWordSectorPosition = (reverse = false) => {
-      for (let index = 0; index < currentWords.length; index++) {
-        if (!getLastWordDetected() || getLastWordDetected() == currentWords[index]) {
-          const indexToNavigate = index + (!getLastWordDetected() ? 0 : (reverse ? -1 : 1));
-          const currentWordOrLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == currentWords[indexToNavigate]);
-          if (currentWordOrLetterComponent)
-            this.setAuxDisplayPositionCenterOn(currentWordOrLetterComponent.wordOrLetterElementRef);
-          break;
-        }
-      }
-    };
-
-    if (this.suportDivOnSector == Sector.SectorOne && goToRight) {
-      this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.espacoElementRef : this.limparElementRef);
-      this.suportDivOnSector = Sector.SectorTwo;
-    } else if (this.suportDivOnSector == Sector.SectorOne && goToLeft) {
-      currentWordLetterComponent = this.suportDivOnDirection == 'top' ? this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenTop[this.wordsOrLetterOnScreenTop.length - 1]) : this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenBottom[this.wordsOrLetterOnScreenBottom.length - 1]);
-      this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
-      this.suportDivOnSector = Sector.SectorTree;
-    } else if (this.suportDivOnSector == Sector.SectorOne && goToTop) {
-      this.setAuxDisplayPositionCenterOn(this.limparTudoElementRef);
-      if (this.suportDivOnDirection == 'top') {
-        this.doTriggerAction();
-      }
-    } else if (this.suportDivOnSector == Sector.SectorOne && goToBottom) {
-      this.setAuxDisplayPositionCenterOn(this.falarElementRef);
-      if (this.suportDivOnDirection == 'bottom') {
-        this.doTriggerAction();
-      }
-    } else if (this.suportDivOnSector == Sector.SectorTwo && goToRight) {
-      currentWordLetterComponent = this.suportDivOnDirection == 'top' ? this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenTop[0]) : this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenBottom[0]);
-      this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
-      this.suportDivOnSector = Sector.SectorTree;
-    } else if (this.suportDivOnSector == Sector.SectorTwo && goToLeft) {
-      this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.limparTudoElementRef : this.falarElementRef);
-      this.suportDivOnSector = Sector.SectorOne;
-    } else if (this.suportDivOnSector == Sector.SectorTwo && goToTop) {
-      this.setAuxDisplayPositionCenterOn(this.espacoElementRef);
-      if (this.suportDivOnDirection == 'top') {
-        this.doTriggerAction();
-      }
-    } else if (this.suportDivOnSector == Sector.SectorTwo && goToBottom) {
-      this.setAuxDisplayPositionCenterOn(this.limparElementRef);
-      if (this.suportDivOnDirection == 'bottom') {
-        this.doTriggerAction();
-      }
-    } else if (this.suportDivOnSector == Sector.SectorTree && goToRight) {
-      currentWords = this.suportDivOnDirection == 'top' ? this.wordsOrLetterOnScreenTop : this.wordsOrLetterOnScreenBottom;
-      const lastIndex = currentWords.findIndex(l => l == getLastWordDetected());
-      if (lastIndex + 1 == (this.suportDivOnDirection == 'top' ? this.wordsOrLetterOnScreenTop.length : this.wordsOrLetterOnScreenBottom.length)) {
-        this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.limparTudoElementRef : this.falarElementRef);
-        this.suportDivOnSector = Sector.SectorOne;
-      } else {
-        defineWordSectorPosition();
-      }
-    } else if (this.suportDivOnSector == Sector.SectorTree && goToLeft) {
-      currentWords = this.suportDivOnDirection == 'top' ? this.wordsOrLetterOnScreenTop : this.wordsOrLetterOnScreenBottom;
-      if (getLastWordDetected() == currentWords[0]) {
-        this.setAuxDisplayPositionCenterOn(this.suportDivOnDirection == 'top' ? this.espacoElementRef : this.limparElementRef);
-        this.suportDivOnSector = Sector.SectorTwo;
-      } else {
-        const currentIndex = currentWords.findIndex(l => l == getLastWordDetected());
-        currentWordLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == currentWords[currentIndex - 1]);
-        this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
-      }
-    } else if (this.suportDivOnSector == Sector.SectorTree && goToTop) {
-      if (getLastWordDetected() && this.suportDivOnDirection == 'bottom') {
-        const currentIndex = this.wordsOrLetterOnScreenBottom.findIndex(l => l == getLastWordDetected());
-        currentWords = this.wordsOrLetterOnScreenTop;
-        currentWordLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == currentWords[currentIndex]);
-        this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
-      } else if (this.suportDivOnDirection == 'top') {
-        this.doTriggerAction(getLastWordDetected());
-      }
-    } else if (this.suportDivOnSector == Sector.SectorTree && goToBottom) {
-      if (getLastWordDetected() && this.suportDivOnDirection == 'top') {
-        const currentIndex = this.wordsOrLetterOnScreenTop.findIndex(l => l == getLastWordDetected());
-        currentWords = this.wordsOrLetterOnScreenBottom;
-        currentWordLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == currentWords[currentIndex]);
-        this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
-      } else if (this.suportDivOnDirection == 'bottom') {
-        this.doTriggerAction(getLastWordDetected());
-      }
-    } else if (this.suportDivOnSector == undefined) {
-      currentWordLetterComponent = this.wordsOrLettersElements.find(l => l.wordOrLetter == this.wordsOrLetterOnScreenTop[0]);
-      this.setAuxDisplayPositionCenterOn(currentWordLetterComponent.wordOrLetterElementRef);
-      this.suportDivOnSector = Sector.SectorTree;
-      this.suportDivOnDirection = 'top';
-    }
-
-    this.doResetSensorialDetection();
   }
 
   private moveBySensorial(packet) {
@@ -497,39 +426,31 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       || (this.actionSensorialDetectionBuffer.top != goToTop) || (this.actionSensorialDetectionBuffer.bottom != goToBottom);
 
     if (positionVariated) {
-      this.detectSensorialSectorPosition(goToRight, goToLeft, goToTop, goToBottom);
+      const elements = [this.limparElementRef.nativeElement, this.falarElementRef.nativeElement, this.limparTudoElementRef.nativeElement, this.espacoElementRef.nativeElement, ...this.wordsOrLettersElements.map(l => l.wordOrLetterElementRef.nativeElement)];
+      const around = findElementsAround(this.suportDiv, elements);
+
+      let closestElement;
+      if (goToRight) {
+        closestElement = findClosestElement(this.suportDiv, around.right);
+      } else if (goToLeft) {
+        closestElement = findClosestElement(this.suportDiv, around.left);
+      } else if (goToTop) {
+        closestElement = findClosestElement(this.suportDiv, around.above);
+      } else if (goToBottom) {
+        closestElement = findClosestElement(this.suportDiv, around.below);
+      }
+
+      if (closestElement) {
+        this.setAuxDisplayPositionCenterOn(closestElement);
+      }
     }
 
-    this.suportDivOnDirection = goToTop ? 'top' : (goToBottom ? 'bottom' : this.suportDivOnDirection);
     this.actionSensorialDetectionBuffer = { top: goToTop, right: goToRight, bottom: goToBottom, left: goToLeft };
   }
 
   private moveByCamera(packet) {
     this.suportDiv.style.top = packet.y + "px";
     this.suportDiv.style.left = packet.x + "px";
-  }
-
-  private doTriggerAction(wordDetected: string = null) {
-    if (wordDetected) {
-      this.wordOrLetterSelectedEvent(wordDetected);
-    } else {
-      if (elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement)) {
-        this.reset();
-        this.resetAuxDisplay();
-      } else if (elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement)) {
-        this.speak();
-        this.resetAuxDisplay();
-      } else if (elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement)) {
-        this.reset(true);
-        this.resetAuxDisplay();
-      } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
-        this.insertBlankSpace();
-        this.resetAuxDisplay();
-      }
-    }
-
-    this.doResetSensorialPosition();
-    this.doResetSensorialDetection();
   }
 
   private reciveControlMovedEvent(packet) {
@@ -547,6 +468,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       }
     }
 
+    // TODO \/ ESSE CODIGO AQUI FICARIA MELHOR EM OUTRO CANTO, TENDO UMA CHECAGEM AUTOMATICA DE X EM X TEMPO, MAS É CONVENIENTE DEIXAR ELE AQUI POIS SEM CRIAR NOVAS THREADS EU RECEBE EVENTOS DOS CONTROLES ALTERNATIVOS
     const overAnyActionElement = elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement);
     if (overAnyActionElement) {
       let divName = "";

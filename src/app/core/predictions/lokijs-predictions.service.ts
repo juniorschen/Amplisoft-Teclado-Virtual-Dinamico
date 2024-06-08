@@ -32,6 +32,7 @@ export class LokiJsPredictionsService {
     }
 
     async doAddWordOnDb(word: string) {
+        word.trim().length > 0
         const collection = this.dbLoki.getCollection(word.charAt(0));
 
         const topRegistersOnCollection = collection.chain()

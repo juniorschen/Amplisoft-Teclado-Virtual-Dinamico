@@ -12,10 +12,10 @@ import { ConfigurationsService } from 'src/app/core/services/configuration.servi
 })
 export class DasherOnScreenPlayerComponent implements OnInit {
 
-  private elementOverCheckSub: Subject<void> = new Subject();
   private bufferDoDetectSensorial = 100;
   private lastSensorialDetectionTime: Date;
   private intervalSensorialDetection;
+  private intervalCheckColision;
 
   @Input('wordOrLetter')
   public wordOrLetter: string;
@@ -74,7 +74,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   }
 
   private constantCheckElementOverAnother() {
-    this.elementOverCheckSub.pipe(debounceTime(10)).subscribe(() => {
+    this.intervalCheckColision = setInterval(() => {
       if (elementOverAnother(document.getElementById("suportDiv"), this.pElementRef.nativeElement)) {
         this.wordOrLetterSelected = true;
         if (this.doDetect()) {
@@ -84,10 +84,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
         this.wordOrLetterSelected = false;
         this.clearSensorialBufers();
       }
-      this.elementOverCheckSub.next();
-    });
-
-    this.elementOverCheckSub.next();
+    }, 50);
   }
 
   private clearSensorialBufers() {
