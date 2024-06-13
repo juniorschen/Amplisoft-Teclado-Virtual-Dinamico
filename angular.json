@@ -31,7 +31,8 @@
             ],
             "styles": [
               "src/theme.scss",
-              "src/styles.scss"
+              "src/styles.scss",
+               "node_modules/angular-resize-element/bundles/style.scss"
             ],
             "scripts": [
               "node_modules/webgazer/dist/webgazer.js"

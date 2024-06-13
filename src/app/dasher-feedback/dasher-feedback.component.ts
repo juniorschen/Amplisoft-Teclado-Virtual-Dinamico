@@ -6,6 +6,8 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { take } from 'rxjs';
 import { IdentifierService } from '../core/services/identifier.service';
 import { ConfigurationsService } from '../core/services/configuration.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dasher-feedback',
@@ -19,7 +21,8 @@ export class DasherFeedbackComponent implements OnInit, OnDestroy {
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
   constructor(private _ngZone: NgZone, private deviceService: DeviceDetectorService, private identifierService: IdentifierService,
-    private controlProviderService: ConfigurationsService) { }
+    private controlProviderService: ConfigurationsService, private _snackBar: MatSnackBar,
+    private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -43,5 +46,7 @@ export class DasherFeedbackComponent implements OnInit, OnDestroy {
       "control": this.controlProviderService.getActiveControl(),
       "data": this.input
     });
+    this._snackBar.open('Feedback Enviado');
+    this.router.navigate(['dasher-side-navigation/dasher-on-screen']);
   }
 }

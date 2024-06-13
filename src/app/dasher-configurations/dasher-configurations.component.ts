@@ -35,6 +35,7 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.setConditionalLayoutTypes();
     this.initForm();
   }
 
@@ -57,6 +58,15 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     if (this.formInputs.get("ActionDetection").valid) {
       this.configurationService.detectionType = this.formInputs.get("ActionDetection").value.value;
       localStorage.setItem('DectionType', this.configurationService.detectionType.toString());
+    }
+  }
+
+  private setConditionalLayoutTypes() {
+    if(this.configurationService.hasDynamicLayout()) {
+      this.layouts.push({
+        value: LayoutType.Customized,
+        viewValue: "Layout Customizado"
+      })
     }
   }
 

@@ -22,8 +22,23 @@ export class ConfigurationsService {
     public dpiSpeed = localStorage.getItem('DpiSpeed') ? Number(localStorage.getItem('DpiSpeed')) : 1200;
     public layoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LayoutType') ? Number(localStorage.getItem('LayoutType')) : LayoutType.TypeTwoLines;
     public detectionType: DectionType = localStorage.getItem('DectionType') ? Number(localStorage.getItem('DectionType')) : DectionType.Contato;
+    public enablePageEdition = new Subject<boolean>();
 
     constructor() { }
+
+    public setDynamicLayout(data) {
+        localStorage.setItem("DynamicLayout", JSON.stringify(data));
+        localStorage.setItem('LayoutType', LayoutType.Customized.toString());
+        this.layoutType = LayoutType.Customized;
+    }
+
+    public getDynamicLayout() {
+        return JSON.parse(localStorage.getItem("DynamicLayout"));
+    }
+
+    public hasDynamicLayout() {
+        return localStorage.getItem("DynamicLayout") != null && localStorage.getItem("DynamicLayout") != undefined && localStorage.getItem("DynamicLayout") != "";
+    }
 
     public getActiveControl() {
         return localStorage.getItem('ActiveControl') ?? "";

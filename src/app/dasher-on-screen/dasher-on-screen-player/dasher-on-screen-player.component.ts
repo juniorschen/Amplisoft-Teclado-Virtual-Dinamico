@@ -1,6 +1,7 @@
 import { AnimationBuilder } from '@angular/animations';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { debounceTime, Subject } from 'rxjs';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AngularResizeElementDirection, AngularResizeElementEvent } from 'angular-resize-element';
+import { Subject } from 'rxjs';
 import { calcularDiferencaEmMilissegundos } from 'src/app/common/date';
 import { elementOverAnother } from 'src/app/common/document-helper';
 import { ConfigurationsService } from 'src/app/core/services/configuration.service';
@@ -10,7 +11,7 @@ import { ConfigurationsService } from 'src/app/core/services/configuration.servi
   templateUrl: './dasher-on-screen-player.component.html',
   styleUrls: ['./dasher-on-screen-player.component.scss']
 })
-export class DasherOnScreenPlayerComponent implements OnInit {
+export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
 
   private bufferDoDetectSensorial = 100;
   private lastSensorialDetectionTime: Date;
@@ -23,6 +24,10 @@ export class DasherOnScreenPlayerComponent implements OnInit {
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   @Input('onResetDasherEvent')
   public onResetDasherEvent: Subject<void> = new Subject();
+  @Input('sugestao')
+  public sugestao: boolean;
+  @Input('enableLayoutEdition')
+  public enableLayoutEdition: boolean;
 
   @Output('wordOrLetterSelectedEvent')
   public wordOrLetterSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
@@ -35,6 +40,7 @@ export class DasherOnScreenPlayerComponent implements OnInit {
 
   public animateDivSelection = false;
   public wordOrLetterSelected = false;
+  public readonly AngularResizeElementDirection = AngularResizeElementDirection;
 
   constructor(public animationBuilder: AnimationBuilder, private configurationService: ConfigurationsService, private hostEl: ElementRef) { }
 
@@ -47,6 +53,16 @@ export class DasherOnScreenPlayerComponent implements OnInit {
 
     if (this.configurationService.isAnyControlConfigured()) {
       this.constantCheckElementOverAnother();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalCheckColision) {
+      clearInterval(this.intervalCheckColision);
+    }
+
+    if (this.intervalSensorialDetection) {
+      clearInterval(this.intervalSensorialDetection);
     }
   }
 
@@ -71,6 +87,18 @@ export class DasherOnScreenPlayerComponent implements OnInit {
       return;
 
     this.clearSensorialBufers();
+  }
+
+  public onResize(evt: AngularResizeElementEvent): void {
+    const div = this.wordOrLetterElementRef.nativeElement;
+    const parentWidh = div.parentElement.getBoundingClientRect().width;
+    const parentHeight = div.parentElement.getBoundingClientRect().height;
+    div.style.position = "absolute";
+    div.style.flex = "none"
+    div.style.width = evt.currentWidthValue + "px";
+    div.style.height = evt.currentHeightValue + "px";
+    div.parentElement.style.width = parentWidh + "px";
+    div.parentElement.style.height = parentHeight + "px";
   }
 
   private constantCheckElementOverAnother() {

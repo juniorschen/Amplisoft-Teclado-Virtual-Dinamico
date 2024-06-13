@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
+import { ConfigurationsService } from '../core/services/configuration.service';
 
 @Component({
   selector: 'app-dasher-side-navigation',
@@ -10,8 +11,9 @@ import { Router } from '@angular/router';
 export class DasherSideNavigationComponent implements OnInit {
 
   @ViewChild('drawer') drawer: MatDrawer;
+  public isEditing = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private configurationsService: ConfigurationsService) {
   }
 
   ngOnInit() {
@@ -19,8 +21,19 @@ export class DasherSideNavigationComponent implements OnInit {
   }
 
   onNavigate(route: string) {
+    this.isEditing = false;
     this.router.navigate([route]);
     this.drawer.close();
+  }
+
+  edit() {
+    this.isEditing = true;
+    this.configurationsService.enablePageEdition.next(this.isEditing);
+  }
+
+  save() {
+    this.isEditing = false;
+    this.configurationsService.enablePageEdition.next(this.isEditing);
   }
 
 }

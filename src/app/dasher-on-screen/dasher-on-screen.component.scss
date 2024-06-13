@@ -26,13 +26,16 @@
     background: linear-gradient(to right, rgb(230, 255, 230) 50%, transparent 0);
     background-size: 200% 100%;
     background-position: right;
+    position: relative;
+    background-color: white;
 }
 
 .action-div-border-color {
     border-width: 2px;
     border-style: groove;
     border-color: lightgoldenrodyellow;
-    background-color: lightgoldenrodyellow;
+    position: relative;
+    background-color: white;
 }
 
 .selection-background-color {
@@ -74,7 +77,6 @@
 
 .grid-mainh {
     grid-area: mainh;
-    background-color: lightgoldenrodyellow;
 }
 
 .grid-header2 {
@@ -83,7 +85,6 @@
 
 .grid-main {
     grid-area: main;
-    background-color: lightgoldenrodyellow;
 }
 
 .grid-bottom1 {
@@ -92,7 +93,6 @@
 
 .grid-mainb {
     grid-area: mainb;
-    background-color: lightgoldenrodyellow;
 }
 
 .grid-bottom2 {
@@ -110,6 +110,7 @@
         'bottom1'
         'mainb'
         'bottom2';
+    grid-template-rows: repeat(7, 1fr);
 }
 
 .grid-container-vertical {
@@ -118,6 +119,36 @@
         'header1'
         'main'
         'bottom1';
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.mid-start-header {
+    grid-area: mid-start-header;
+}
+
+.mid-start-bottom {
+    grid-area: mid-start-bottom;
+}
+
+.mid-start-header2 {
+    grid-area: mid-start-header2;
+}
+
+.mid-start-bottom2 {
+    grid-area: mid-start-bottom2;
+}
+
+.grid-start-actions {
+    display: grid;
+    grid-template-areas:
+        'mid-start-header mid-start-header2'
+        'mid-start-header mid-start-header2'
+        'mid-start-header 666'
+        'mid-start-bottom 666'
+        'mid-start-bottom mid-start-bottom2'
+        'mid-start-bottom mid-start-bottom2';
+    grid-template-rows: repeat(6, 1fr);
+    position: relative;
 }
 
 @keyframes makeItfadeIn {

@@ -1,4 +1,18 @@
-<div #wordOrLetterElementRef [class.fill-animation]="animateDivSelection" class="full-div">
-    <p [id]="wordOrLetter" class="label-default-font-size action-border action-sized" #pElementRef (mouseover)="mouseOverWordOrLetterEvent()" (mouseout)="mouseOutWordOrLetterEvent()"
-        fxLayoutAlign="center center">{{ wordOrLetter }}</p>
+<div [id]="wordOrLetter + 'div'" #wordOrLetterElementRef [class.fill-animation]="animateDivSelection" class="full-div">
+    <div class="resize resize__right" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
+        [direction]="AngularResizeElementDirection.RIGHT"></div>
+
+    <div class="resize resize__bottom" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
+        [direction]="AngularResizeElementDirection.BOTTOM"></div>
+
+    <div class="resize resize__top" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
+        [direction]="AngularResizeElementDirection.TOP"></div>
+
+    <div class="resize resize__left" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
+        [direction]="AngularResizeElementDirection.LEFT"></div>
+
+    <p [id]="wordOrLetter" class="label-default-font-size action-border action-sized" #pElementRef
+        (mouseover)="mouseOverWordOrLetterEvent()" (mouseout)="mouseOutWordOrLetterEvent()"
+        fxLayoutAlign="center center">{{ sugestao && enableLayoutEdition ? 'Caixa Sugestão' : enableLayoutEdition ?
+        'Letra' : wordOrLetter }}</p>
 </div>

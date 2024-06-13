@@ -6,7 +6,7 @@
         </mat-form-field>
     </div>
 
-    <div id="playerDivElementRef" #playerDivElementRef fxFlex>
+    <div id="playerDivElementRef" #playerDivElementRef fxFlex style="background-color: lightgoldenrodyellow;">
 
         <div fxLayoutAlign="center start" [ngClass]="!isAfk ? 'stop-div' : 'start-div'">
             <div>
@@ -15,59 +15,134 @@
             </div>
         </div>
 
-        <div fxLayout="column">
-            <div (click)="onClickElementCalibration(0, 'limparTudoElementRef')"
+        <div class="grid-start-actions">
+            <div id="limparTudoBoxRef" class="mid-start-header" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                (click)="onClickElementCalibration(0, 'limparTudoElementRef')"
                 [class.fill-animation]="animateDivSelectionClearAll"
                 [ngClass]="clickElementsCount.get('limparTudoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)" (mouseout)="mouseOutReset()"
-                    fxLayoutAlign="center center">Limpar Toda Digitação</p>
+                fxLayoutAlign="center none" #limparTudoBoxRef>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__right"
+                    (resize)="onResize($event, 'limparTudoElementRef')" [targetElement]="limparTudoBoxRef"
+                    [direction]="AngularResizeElementDirection.RIGHT"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__bottom"
+                    (resize)="onResize($event, 'limparTudoElementRef')" [targetElement]="limparTudoBoxRef"
+                    [direction]="AngularResizeElementDirection.BOTTOM"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__top"
+                    (resize)="onResize($event, 'limparTudoElementRef')" [targetElement]="limparTudoBoxRef"
+                    [direction]="AngularResizeElementDirection.TOP"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__left"
+                    (resize)="onResize($event, 'limparTudoElementRef')" [targetElement]="limparTudoBoxRef"
+                    [direction]="AngularResizeElementDirection.LEFT"></div>
+
+                <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
+                    (mouseout)="mouseOutReset()" fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
 
-            <div (click)="onClickElementCalibration(0, 'falarElementRef')" [class.fill-animation]="animateDivSelectionSpeak"
+            <div id="falarBoxRef" class="mid-start-bottom" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                (click)="onClickElementCalibration(0, 'falarElementRef')"
+                [class.fill-animation]="animateDivSelectionSpeak"
                 [ngClass]="clickElementsCount.get('falarElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" fxFill fxFlex>
-                <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()" (mouseout)="mouseOutSpeak()"
-                    fxLayoutAlign="center center">Falar Texto Completo</p>
-            </div>
-        </div>
+                fxLayoutAlign="center none" #falarBoxRef>
 
-        <div fxLayoutAlign="center center" fxLayout="column">
-            <div (click)="onClickElementCalibration(0, 'espacoElementRef')" [class.fill-animation]="animateDivSelectionSpace"
+                <div *ngIf="enableLayoutEdition" class="resize resize__right"
+                    (resize)="onResize($event, 'falarElementRef')" [targetElement]="falarBoxRef"
+                    [direction]="AngularResizeElementDirection.RIGHT"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__bottom"
+                    (resize)="onResize($event, 'falarElementRef')" [targetElement]="falarBoxRef"
+                    [direction]="AngularResizeElementDirection.BOTTOM"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__top"
+                    (resize)="onResize($event, 'falarElementRef')" [targetElement]="falarBoxRef"
+                    [direction]="AngularResizeElementDirection.TOP"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__left"
+                    (resize)="onResize($event, 'falarElementRef')" [targetElement]="falarBoxRef"
+                    [direction]="AngularResizeElementDirection.LEFT"></div>
+
+                <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()"
+                    (mouseout)="mouseOutSpeak()" fxLayoutAlign="center center">Falar Texto Completo</p>
+            </div>
+
+            <div id="espacoBoxRef" class="mid-start-header2" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                (click)="onClickElementCalibration(0, 'espacoElementRef')"
+                [class.fill-animation]="animateDivSelectionSpace"
                 [ngClass]="clickElementsCount.get('espacoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" fxFill fxFlex>
+                #espacoBoxRef fxLayoutAlign="center none">
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__right"
+                    (resize)="onResize($event, 'espacoElementRef')" [targetElement]="espacoBoxRef"
+                    [direction]="AngularResizeElementDirection.RIGHT"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__bottom"
+                    (resize)="onResize($event, 'espacoElementRef')" [targetElement]="espacoBoxRef"
+                    [direction]="AngularResizeElementDirection.BOTTOM"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__top"
+                    (resize)="onResize($event, 'espacoElementRef')" [targetElement]="espacoBoxRef"
+                    [direction]="AngularResizeElementDirection.TOP"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__left"
+                    (resize)="onResize($event, 'espacoElementRef')" [targetElement]="espacoBoxRef"
+                    [direction]="AngularResizeElementDirection.LEFT"></div>
+
                 <p id="espacoElementRef" class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
                     (mouseover)="mouseOverBlankSpace()" (mouseout)="mouseOutBlankSpace()">
                     Inserir Espaço</p>
             </div>
 
-            <div id="centerDivElementRef" style="background-color: lightgoldenrodyellow" #centerDivElementRef fxFill
-                fxFlex></div>
+            <div id="centerDivElementRef" #centerDivElementRef></div>
 
-            <div (click)="onClickElementCalibration(0, 'limparElementRef')" [class.fill-animation]="animateDivSelectionClear"
+            <div id="limparBoxRef" class="mid-start-bottom2" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                (click)="onClickElementCalibration(0, 'limparElementRef')"
+                [class.fill-animation]="animateDivSelectionClear"
                 [ngClass]="clickElementsCount.get('limparElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" fxFill fxFlex>
+                #limparBoxRef fxLayoutAlign="center none">
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__right"
+                    (resize)="onResize($event, 'limparElementRef')" [targetElement]="limparBoxRef"
+                    [direction]="AngularResizeElementDirection.RIGHT"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__bottom"
+                    (resize)="onResize($event, 'limparElementRef')" [targetElement]="limparBoxRef"
+                    [direction]="AngularResizeElementDirection.BOTTOM"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__top"
+                    (resize)="onResize($event, 'limparElementRef')" [targetElement]="limparBoxRef"
+                    [direction]="AngularResizeElementDirection.TOP"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__left"
+                    (resize)="onResize($event, 'limparElementRef')" [targetElement]="limparBoxRef"
+                    [direction]="AngularResizeElementDirection.LEFT"></div>
+
                 <p id="limparElementRef" class="label-default-font-size" #limparElementRef
-                    (mouseover)="mouseOverReset(false)" (mouseout)="mouseOutReset()" fxLayoutAlign="center center">Limpar Último
+                    (mouseover)="mouseOverReset(false)" (mouseout)="mouseOutReset()" fxLayoutAlign="center center">
+                    Limpar Último
                 </p>
             </div>
         </div>
 
-        <div style="width: 100px; background-color: lightgoldenrodyellow">
+        <div style="width: 100px;">
         </div>
 
-        <div *ngIf="layoutType == layoutTypes.TypeFourLines" fxFlex fxLayout="column" fxFill>
+        <div *ngIf="layoutType == layoutTypes.TypeFourLines || layoutType == layoutTypes.Customized" fxFlex
+            fxLayout="column" fxFill>
             <div class="grid-container-horizontal" fxFill>
 
                 <div class="grid-header1" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenTop" let-i="index">
-                            <app-dasher-on-screen-player *ngIf="i > splitIndexHeader"
-                                (click)="onClickElementCalibration(i, 'top')"
+                            <app-dasher-on-screen-player cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                                *ngIf="i > splitIndexHeader" (click)="onClickElementCalibration(i, 'top')"
                                 [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                                 [wordOrLetter]="wordsOrLetterOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
-                                (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)"></app-dasher-on-screen-player>
+                                [onResetDasherEvent]="onResetDasherEvent" [enableLayoutEdition]="enableLayoutEdition"
+                                fxFlex fxFill (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
+                            </app-dasher-on-screen-player>
                         </ng-template>
                     </div>
                 </div>
@@ -77,12 +152,13 @@
                 <div class="grid-header2" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenTop" let-i="index">
-                            <div *ngIf="i == 3" style="width: 100px; background-color: lightgoldenrodyellow"></div>
-                            <app-dasher-on-screen-player *ngIf="i <= splitIndexHeader"
-                                (click)="onClickElementCalibration(i, 'top')"
+                            <div *ngIf="i == 3" style="width: 100px;"></div>
+                            <app-dasher-on-screen-player cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                                *ngIf="i <= splitIndexHeader" (click)="onClickElementCalibration(i, 'top')"
                                 [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                                 [wordOrLetter]="wordsOrLetterOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
+                                [onResetDasherEvent]="onResetDasherEvent" [sugestao]="i == 0 || i == 5 || i == 6"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)"></app-dasher-on-screen-player>
                         </ng-template>
                     </div>
@@ -93,12 +169,13 @@
                 <div class="grid-bottom1" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenBottom" let-i="index">
-                            <div *ngIf="i == 3" style="width: 100px; background-color: lightgoldenrodyellow"></div>
-                            <app-dasher-on-screen-player *ngIf="i <= splitIndexBottom"
-                                (click)="onClickElementCalibration(i, 'bottom')"
+                            <div *ngIf="i == 3" style="width: 100px;"></div>
+                            <app-dasher-on-screen-player cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                                *ngIf="i <= splitIndexBottom" (click)="onClickElementCalibration(i, 'bottom')"
                                 [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                                 [wordOrLetter]="wordsOrLetterOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
+                                [onResetDasherEvent]="onResetDasherEvent" [sugestao]="i == 0 || i == 5 || i == 6"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
                             </app-dasher-on-screen-player>
                         </ng-template>
@@ -110,12 +187,12 @@
                 <div class="grid-bottom2" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenBottom" let-i="index">
-                            <app-dasher-on-screen-player *ngIf="i > splitIndexBottom"
-                                (click)="onClickElementCalibration(i, 'bottom')"
+                            <app-dasher-on-screen-player cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                                *ngIf="i > splitIndexBottom" (click)="onClickElementCalibration(i, 'bottom')"
                                 [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                                 [wordOrLetter]="wordsOrLetterOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
-                                (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
+                                [onResetDasherEvent]="onResetDasherEvent" [enableLayoutEdition]="enableLayoutEdition"
+                                fxFlex fxFill (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
                             </app-dasher-on-screen-player>
                         </ng-template>
                     </div>
@@ -128,10 +205,12 @@
                 <div class="grid-header1" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenTop" let-i="index">
-                            <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'top')"
+                            <app-dasher-on-screen-player cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                                (click)="onClickElementCalibration(i, 'top')"
                                 [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                                 [wordOrLetter]="wordsOrLetterOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
+                                [onResetDasherEvent]="onResetDasherEvent" [sugestao]="i == 0 || i == 5 || i == 6"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)"></app-dasher-on-screen-player>
                         </ng-template>
                     </div>
@@ -142,10 +221,12 @@
                 <div class="grid-bottom1" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenBottom" let-i="index">
-                            <app-dasher-on-screen-player (click)="onClickElementCalibration(i, 'bottom')"
+                            <app-dasher-on-screen-player cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                                (click)="onClickElementCalibration(i, 'bottom')"
                                 [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
                                 [wordOrLetter]="wordsOrLetterOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" fxFlex fxFill
+                                [onResetDasherEvent]="onResetDasherEvent" [sugestao]="i == 0 || i == 5 || i == 6"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
                             </app-dasher-on-screen-player>
                         </ng-template>

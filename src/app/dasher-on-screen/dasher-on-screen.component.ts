@@ -10,6 +10,7 @@ import { endCalibrateCamera } from '../core/support/camera/camera-support';
 import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions } from '../common/words-letters';
 import { LokiJsPredictionsService } from '../core/predictions/lokijs-predictions.service';
 import { LayoutType } from '../common/layout-type.enum';
+import { AngularResizeElementDirection, AngularResizeElementEvent } from 'angular-resize-element';
 
 @Component({
   selector: 'app-dasher-on-screen',
@@ -68,6 +69,8 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   public animateDivSelectionClear = false;
   public animateDivSelectionClearAll = false;
   public animateDivSelectionSpeak = false;
+  public readonly AngularResizeElementDirection = AngularResizeElementDirection;
+  public enableLayoutEdition = false;
 
   // Calibracao
   public clickElementsCount = new Map<string, number>();
@@ -76,6 +79,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   constructor(private configurationService: ConfigurationsService, private perfomanceIndicatorService: PerfomanceIndicatorService,
     private predicionsService: LokiJsPredictionsService, private hostEl: ElementRef) {
     speechSynthesis.addEventListener("voiceschanged", () => { });
+    this.listenEditLayout();
   }
 
   async ngAfterViewInit() {
@@ -84,6 +88,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.lastActionExecuted = new Date();
     this.perfomanceIndicatorService.start();
     this.afkInterval = setInterval(() => this.checkDasherAfk(), 1000);
+    this.doSetDynamicLayout();
   }
 
   async ngOnDestroy(): Promise<void> {
@@ -92,25 +97,27 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   onClickElementCalibration(elementId, prefix) {
-    const defaultActionElementsCount = 4 + this.wordsOrLetterOnScreenTop.length + this.wordsOrLetterOnScreenBottom.length;
+    if (this.configurationService.isOcularDeviceConfigured() && localStorage.getItem('CalibratedEyeControl') != "true") {
+      const defaultActionElementsCount = 4 + this.wordsOrLetterOnScreenTop.length + this.wordsOrLetterOnScreenBottom.length;
 
-    const clickElementCount = this.clickElementsCount.get(prefix + "_" + elementId);
-    if (clickElementCount && clickElementCount < this.defaultCalibrationCount) {
-      this.clickElementsCount.set(prefix + "_" + elementId, clickElementCount + 1);
-    } else if (!clickElementCount) {
-      this.clickElementsCount.set(prefix + "_" + elementId, 1);
-    }
+      const clickElementCount = this.clickElementsCount.get(prefix + "_" + elementId);
+      if (clickElementCount && clickElementCount < this.defaultCalibrationCount) {
+        this.clickElementsCount.set(prefix + "_" + elementId, clickElementCount + 1);
+      } else if (!clickElementCount) {
+        this.clickElementsCount.set(prefix + "_" + elementId, 1);
+      }
 
-    let totalElementsClicksCount = 0;
-    for (let value of this.clickElementsCount.values()) {
-      totalElementsClicksCount += value;
-    }
+      let totalElementsClicksCount = 0;
+      for (let value of this.clickElementsCount.values()) {
+        totalElementsClicksCount += value;
+      }
 
-    if (totalElementsClicksCount == (defaultActionElementsCount * this.defaultCalibrationCount)) {
-      this.clickElementsCount = new Map<string, number>();
-      // deixei bem especifico para camera por enquanto mas esse é o unico controlador que é calibrado se precisar no futuro melhorar este código para ser mais genérico
-      endCalibrateCamera();
-      this.configurationService.initializeControl();
+      if (totalElementsClicksCount == (defaultActionElementsCount * this.defaultCalibrationCount)) {
+        this.clickElementsCount = new Map<string, number>();
+        // deixei bem especifico para camera por enquanto mas esse é o unico controlador que é calibrado se precisar no futuro melhorar este código para ser mais genérico
+        endCalibrateCamera();
+        this.configurationService.initializeControl();
+      }
     }
   }
 
@@ -341,6 +348,87 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.intervalSensorialDetection = undefined;
     }
   }
+
+  //#region Dynamic Layout
+  private listenEditLayout() {
+    this.configurationService.enablePageEdition.subscribe((v) => {
+      this.enableLayoutEdition = v;
+      if (!v) {
+        this.saveLayout();
+      }
+    });
+  }
+
+  private doSetDynamicLayout() {
+    if (this.configurationService.layoutType == LayoutType.Customized) {
+      const data = this.configurationService.getDynamicLayout();
+      data.forEach((d) => {
+        if(d.id == "limparBoxRef") {
+          const element = document.getElementById(d.id);
+          const parentWidh = element.parentElement.getBoundingClientRect().width;
+          const parentHeight = element.parentElement.getBoundingClientRect().height;
+          element.style.position = "absolute";
+          element.style.flex = "none";
+          element.style.transform = d.transform;
+          element.style.width = d.width + "px";
+          element.style.height = d.height + "px";
+          element.parentElement.style.width = parentWidh + "px";
+          element.parentElement.style.height = parentHeight + "px";
+        }
+      });
+    }
+  }
+
+  private saveLayout() {
+    const data = [];
+    data.push({
+      id: this.limparElementRef.nativeElement.parentElement.id,
+      transform: this.limparElementRef.nativeElement.parentElement.style.transform,
+      width: this.limparElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+      height: this.limparElementRef.nativeElement.parentElement.getBoundingClientRect().height
+    });
+    data.push({
+      id: this.limparTudoElementRef.nativeElement.parentElement.id,
+      transform: this.limparTudoElementRef.nativeElement.parentElement.style.transform,
+      width: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+      height: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().height
+    });
+    data.push({
+      id: this.espacoElementRef.nativeElement.parentElement.id,
+      transform: this.espacoElementRef.nativeElement.parentElement.style.transform,
+      width: this.espacoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+      height: this.espacoElementRef.nativeElement.parentElement.getBoundingClientRect().height
+    });
+    data.push({
+      id: this.falarElementRef.nativeElement.parentElement.id,
+      transform: this.falarElementRef.nativeElement.parentElement.style.transform,
+      width: this.falarElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+      height: this.falarElementRef.nativeElement.getBoundingClientRect().height
+    });
+    this.wordsOrLettersElements.forEach((w) => {
+      data.push({
+        id: w.wordOrLetterElementRef.nativeElement.id,
+        transform: w.wordOrLetterElementRef.nativeElement.style.transform,
+        width: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().width,
+        height: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().height
+      });
+    });
+    this.configurationService.setDynamicLayout(data);
+  }
+
+  public onResize(evt: AngularResizeElementEvent, element: string): void {
+    const div = this[element].nativeElement.parentElement as HTMLDivElement;
+    const parentWidh = div.parentElement.getBoundingClientRect().width;
+    const parentHeight = div.parentElement.getBoundingClientRect().height;
+    div.style.position = "absolute";
+    div.style.flex = "none";
+    div.style.width = evt.currentWidthValue + "px";
+    div.style.height = evt.currentHeightValue + "px";
+    div.parentElement.style.width = parentWidh + "px";
+    div.parentElement.style.height = parentHeight + "px";
+  }
+  //#endregion
+
   //#region Suporte Controles HID
   private initHidControl() {
     if (this.configurationService.isAnyControlConfigured()) {

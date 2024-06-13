@@ -6,11 +6,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { DasherOnScreenComponent } from './dasher-on-screen.component';
 import { DasherOnScreenRoutingModule } from './dasher-on-screen-routing.module';
 import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
 import { DasherOnScreenFeedbackModalComponent } from './dasher-on-screen-feedback-modal/dasher-on-screen-feedback-modal.component';
+import { AngularResizeElementModule } from 'angular-resize-element';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { DasherOnScreenFeedbackModalComponent } from './dasher-on-screen-feedbac
     MatFormFieldModule,
     FormsModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    DragDropModule,
+    AngularResizeElementModule
   ]
 })
 export class DasherOnScreenModule { }
