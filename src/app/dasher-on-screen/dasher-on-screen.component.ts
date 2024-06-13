@@ -406,7 +406,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.wordsOrLettersElements.forEach((w) => {
       data.push({
         id: w.wordOrLetterElementRef.nativeElement.id,
-        transform: w.wordOrLetterElementRef.nativeElement.style.transform,
+        transform: w.wordOrLetterElementRef.nativeElement.parentElement.style.transform,
         width: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().width,
         height: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().height
       });
