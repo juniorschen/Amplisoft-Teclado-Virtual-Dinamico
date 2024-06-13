@@ -363,18 +363,16 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     if (this.configurationService.layoutType == LayoutType.Customized) {
       const data = this.configurationService.getDynamicLayout();
       data.forEach((d) => {
-        if(d.id == "limparBoxRef") {
-          const element = document.getElementById(d.id);
-          const parentWidh = element.parentElement.getBoundingClientRect().width;
-          const parentHeight = element.parentElement.getBoundingClientRect().height;
-          element.style.position = "absolute";
-          element.style.flex = "none";
-          element.style.transform = d.transform;
-          element.style.width = d.width + "px";
-          element.style.height = d.height + "px";
-          element.parentElement.style.width = parentWidh + "px";
-          element.parentElement.style.height = parentHeight + "px";
-        }
+        const element = document.getElementById(d.id);
+        const parentWidh = element.parentElement.getBoundingClientRect().width;
+        const parentHeight = element.parentElement.getBoundingClientRect().height;
+        element.style.position = "absolute";
+        element.style.flex = "none";
+        element.style.transform = d.transform;
+        element.style.width = d.width + "px";
+        element.style.height = d.height + "px";
+        element.parentElement.style.width = parentWidh + "px";
+        element.parentElement.style.height = parentHeight + "px";
       });
     }
   }
