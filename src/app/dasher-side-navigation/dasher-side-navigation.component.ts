@@ -12,6 +12,8 @@ export class DasherSideNavigationComponent implements OnInit {
 
   @ViewChild('drawer') drawer: MatDrawer;
   public isEditing = false;
+  public showEdit = true;
+  public routes = ['dasher-side-navigation/dasher-on-screen', 'dasher-side-navigation/dasher-configurations', 'dasher-side-navigation/dasher-feedback'];
 
   constructor(private router: Router, private configurationsService: ConfigurationsService) {
   }
@@ -21,6 +23,7 @@ export class DasherSideNavigationComponent implements OnInit {
   }
 
   onNavigate(route: string) {
+    this.showEdit = route == this.routes[0];
     this.isEditing = false;
     this.router.navigate([route]);
     this.drawer.close();

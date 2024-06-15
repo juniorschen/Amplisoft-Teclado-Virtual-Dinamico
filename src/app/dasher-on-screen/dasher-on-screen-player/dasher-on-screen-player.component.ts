@@ -18,14 +18,14 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
   private intervalSensorialDetection;
   private intervalCheckColision;
 
+  @Input('elId')
+  public elId: string;
   @Input('wordOrLetter')
   public wordOrLetter: string;
   @Input('mouseMovedEvent')
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   @Input('onResetDasherEvent')
   public onResetDasherEvent: Subject<void> = new Subject();
-  @Input('sugestao')
-  public sugestao: boolean;
   @Input('enableLayoutEdition')
   public enableLayoutEdition: boolean;
 
@@ -71,8 +71,10 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
       return;
 
     let detect = () => {
-      this.clearSensorialBufers();
-      this.wordOrLetterSelectedEvent.next(this.wordOrLetter);
+      if (!this.enableLayoutEdition) {
+        this.clearSensorialBufers();
+        this.wordOrLetterSelectedEvent.next(this.wordOrLetter);
+      }
     };
 
     if (this.doDetect()) {
@@ -125,6 +127,10 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
   }
 
   private doDetect() {
+    if (this.enableLayoutEdition) {
+      return false;
+    }
+
     if (this.configurationService.isDelayedDetectionAction()) {
       if (!this.animateDivSelection) {
         this.hostEl.nativeElement.style.setProperty('--animation-duration', `${this.configurationService.sensorialSelectionDelayMs / 1000}s`);

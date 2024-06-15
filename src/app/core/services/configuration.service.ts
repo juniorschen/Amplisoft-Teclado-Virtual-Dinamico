@@ -21,10 +21,35 @@ export class ConfigurationsService {
     public sensorialSelectionDelayMs = localStorage.getItem('SensorialSelectionDelayMs') ? Number(localStorage.getItem('SensorialSelectionDelayMs')) : 1000 * 4;
     public dpiSpeed = localStorage.getItem('DpiSpeed') ? Number(localStorage.getItem('DpiSpeed')) : 1200;
     public layoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LayoutType') ? Number(localStorage.getItem('LayoutType')) : LayoutType.TypeTwoLines;
+    public lastLayoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LastLayoutType') ? Number(localStorage.getItem('LastLayoutType')) : LayoutType.TypeTwoLines;
     public detectionType: DectionType = localStorage.getItem('DectionType') ? Number(localStorage.getItem('DectionType')) : DectionType.Contato;
     public enablePageEdition = new Subject<boolean>();
 
     constructor() { }
+
+    public setDetectionType(detectionType) {
+        this.detectionType = detectionType;
+        localStorage.setItem('DectionType', this.detectionType.toString());
+    }
+
+    public setSensorialDelay(sensorialSelectionDelayMs) {
+        this.sensorialSelectionDelayMs = sensorialSelectionDelayMs;
+        localStorage.setItem('SensorialSelectionDelayMs', this.sensorialSelectionDelayMs.toString());
+    }
+
+    public setDpi(dpiSpeed) {
+        this.dpiSpeed = dpiSpeed;
+        localStorage.setItem('DpiSpeed', this.dpiSpeed.toString());
+    }
+
+    public setLayoutType(layoutType) {
+        this.layoutType = layoutType;
+        localStorage.setItem('LayoutType', layoutType.toString());
+
+        if (this.layoutType != LayoutType.Customized) {
+            localStorage.setItem('LastLayoutType', layoutType.toString());
+        }
+    }
 
     public setDynamicLayout(data) {
         localStorage.setItem("DynamicLayout", JSON.stringify(data));

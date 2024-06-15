@@ -1,4 +1,5 @@
-<div [id]="wordOrLetter + 'div'" #wordOrLetterElementRef [class.fill-animation]="animateDivSelection" class="full-div">
+<div [id]="elId" #wordOrLetterElementRef [class.fill-animation]="animateDivSelection" class="full-div" cdkDrag
+    [cdkDragDisabled]="!enableLayoutEdition">
     <div class="resize resize__right" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
         [direction]="AngularResizeElementDirection.RIGHT"></div>
 
@@ -13,6 +14,5 @@
 
     <p [id]="wordOrLetter" class="label-default-font-size action-border action-sized" #pElementRef
         (mouseover)="mouseOverWordOrLetterEvent()" (mouseout)="mouseOutWordOrLetterEvent()"
-        fxLayoutAlign="center center">{{ sugestao && enableLayoutEdition ? 'Caixa Sugestão' : enableLayoutEdition ?
-        'Letra' : wordOrLetter }}</p>
+        fxLayoutAlign="center center">{{ wordOrLetter }}</p>
 </div>

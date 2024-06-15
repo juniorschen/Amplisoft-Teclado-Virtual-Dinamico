@@ -1,5 +1,9 @@
 export const initialTopLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h"];
 export const initialBottomLetters = ["a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
+
+export const sugestionTopLetters = ["Sugestão 1", "Letra 1", "Letra 2", "Letra 3", "Letra 4", "Sugestão 2", "Sugestão 3", "Letra 5", "Letra 6", "Letra 7", "Letra 8", "Letra 9", "Letra 10"];
+export const sugestionBottomLetters = ["Sugestão 1", "Letra 1", "Letra 2", "Letra 3", "Letra 4", "Sugestão 2", "Sugestão 3", "Letra 5", "Letra 6", "Letra 7", "Letra 8", "Letra 9", "Letra 10"];
+
 export const allLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h", "a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
 
 

@@ -4,10 +4,10 @@
             <mat-icon class="icon-display">toc</mat-icon>
         </button>
         <span class="title-center">Amplisoft Teclado Virtual Dasher Web</span>
-        <button *ngIf="!isEditing" (click)="edit()" mat-icon-button>
+        <button *ngIf="!isEditing && showEdit" (click)="edit()" mat-icon-button>
             <mat-icon class="icon-display">edit</mat-icon>
         </button>
-        <button *ngIf="isEditing" (click)="save()" mat-icon-button>
+        <button *ngIf="isEditing && showEdit" (click)="save()" mat-icon-button>
             <mat-icon class="icon-display">save</mat-icon>
         </button>
     </mat-toolbar>
@@ -15,11 +15,11 @@
     <mat-drawer-container class="display-flex-100">
         <mat-drawer #drawer mode="side" class="default-padding">
             <div class="display-flex-100-column">
-                <p class="label-default-font-size" (click)="onNavigate('dasher-side-navigation/dasher-on-screen')">
+                <p class="label-default-font-size" (click)="onNavigate(routes[0])">
                     Dasher</p>
-                <p class="label-default-font-size" (click)="onNavigate('dasher-side-navigation/dasher-configurations')">
+                <p class="label-default-font-size" (click)="onNavigate(routes[1])">
                     Configuracões</p>
-                <p class="label-default-font-size" (click)="onNavigate('dasher-side-navigation/dasher-feedback')">
+                <p class="label-default-font-size" (click)="onNavigate(routes[2])">
                     Feedback</p>
             </div>
         </mat-drawer>

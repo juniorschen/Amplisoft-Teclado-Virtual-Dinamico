@@ -7,7 +7,7 @@ import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-
 import { calcularDiferencaEmMilissegundos } from '../common/date';
 import { PerfomanceIndicatorService } from '../core/performance-indicators/performance-indicators.service';
 import { endCalibrateCamera } from '../core/support/camera/camera-support';
-import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions } from '../common/words-letters';
+import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions, sugestionBottomLetters, sugestionTopLetters } from '../common/words-letters';
 import { LokiJsPredictionsService } from '../core/predictions/lokijs-predictions.service';
 import { LayoutType } from '../common/layout-type.enum';
 import { AngularResizeElementDirection, AngularResizeElementEvent } from 'angular-resize-element';
@@ -60,11 +60,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   public isAfk = false;
   public input = '';
   public wordsOrLetterOnScreenTop: Array<string> = initialTopLetters;
-  public splitIndexHeader = Math.ceil(initialTopLetters.length / 2);
+  public splitIndexHeader = Math.ceil(this.wordsOrLetterOnScreenTop.length / 2);
   public wordsOrLetterOnScreenBottom: Array<string> = initialBottomLetters;
-  public splitIndexBottom = Math.ceil(initialBottomLetters.length / 2);
+  public splitIndexBottom = Math.ceil(this.wordsOrLetterOnScreenBottom.length / 2);
   public layoutTypes = LayoutType;
   public layoutType = this.configurationService.layoutType;
+  public lastLayoutType = this.configurationService.lastLayoutType;
   public animateDivSelectionSpace = false;
   public animateDivSelectionClear = false;
   public animateDivSelectionClearAll = false;
@@ -138,7 +139,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseOverBlankSpace() {
-    if (!this.configurationService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured() && !this.enableLayoutEdition) {
 
       let detect = () => {
         this.doResetSensorialDetection();
@@ -179,7 +180,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseOverReset(fullReset = false) {
-    if (!this.configurationService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured() && !this.enableLayoutEdition) {
 
       let detect = () => {
         this.doResetSensorialDetection();
@@ -214,7 +215,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   mouseOverSpeak() {
-    if (!this.configurationService.isAnyControlConfigured()) {
+    if (!this.configurationService.isAnyControlConfigured() && !this.enableLayoutEdition) {
 
       let detect = () => {
         this.doResetSensorialDetection();
@@ -243,7 +244,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   wordOrLetterSelectedEvent(wordOrLetter: string) {
-    if (!this.canSelectWordLetter) {
+    if (!this.canSelectWordLetter && !this.enableLayoutEdition) {
       return;
     }
 
@@ -261,7 +262,6 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     } else {
       this.input = this.input + wordOrLetter;
     }
-
     this.redefinedWords();
     this.doResetSensorialDetection();
     this.onResetDasherEvent.next();
@@ -273,6 +273,10 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       inputEl.setSelectionRange(this.input.length, this.input.length);
       this.canSelectWordLetter = true;
     }, 100);
+
+    setTimeout(() => {
+      this.doSetDynamicLayout();
+    }, 1000);
   }
 
   private synthesizeSpeechFromText(text: string): void {
@@ -283,6 +287,8 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   private redefinedWords(fullReset = false) {
     if (fullReset) {
+      this.splitIndexHeader = Math.ceil(initialTopLetters.length / 2);
+      this.splitIndexBottom = Math.ceil(initialBottomLetters.length / 2);
       this.wordsOrLetterOnScreenTop = initialTopLetters;
       this.wordsOrLetterOnScreenBottom = initialBottomLetters;
     } else {
@@ -291,9 +297,13 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       var result = this.predicionsService.getWord(lastWord);
       if (result.length > 0) {
         const wordsByPredictions = getTopAndBottomWordsLettersByPredictions(result);
+        this.splitIndexHeader = Math.ceil(wordsByPredictions.topWords.length / 2);
+        this.splitIndexBottom = Math.ceil(wordsByPredictions.bottomWords.length / 2);
         this.wordsOrLetterOnScreenTop = wordsByPredictions.topWords;
         this.wordsOrLetterOnScreenBottom = wordsByPredictions.bottomWords;
       } else {
+        this.splitIndexHeader = Math.ceil(initialTopLetters.length / 2);
+        this.splitIndexBottom = Math.ceil(initialBottomLetters.length / 2);
         this.wordsOrLetterOnScreenTop = initialTopLetters;
         this.wordsOrLetterOnScreenBottom = initialBottomLetters;
       }
@@ -301,6 +311,10 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   }
 
   private doDetect(div: string) {
+    if (this.enableLayoutEdition) {
+      return false;
+    }
+
     if (this.configurationService.isDelayedDetectionAction()) {
       if (!this[div]) {
         this.hostEl.nativeElement.style.setProperty('--animation-duration', `${this.configurationService.sensorialSelectionDelayMs / 1000}s`);
@@ -352,10 +366,22 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   //#region Dynamic Layout
   private listenEditLayout() {
     this.configurationService.enablePageEdition.subscribe((v) => {
-      this.enableLayoutEdition = v;
-      if (!v) {
+      if (v) {
+        this.splitIndexHeader = Math.ceil(sugestionTopLetters.length / 2);
+        this.splitIndexBottom = Math.ceil(sugestionBottomLetters.length / 2);
+        this.wordsOrLetterOnScreenTop = sugestionTopLetters;
+        this.wordsOrLetterOnScreenBottom = sugestionBottomLetters;
+      } else {
+        this.splitIndexHeader = Math.ceil(initialTopLetters.length / 2);
+        this.splitIndexBottom = Math.ceil(initialBottomLetters.length / 2);
+        this.wordsOrLetterOnScreenTop = initialTopLetters;
+        this.wordsOrLetterOnScreenBottom = initialBottomLetters;
         this.saveLayout();
       }
+      this.enableLayoutEdition = v;
+      setTimeout(() => {
+        this.doSetDynamicLayout();
+      }, 1000);
     });
   }
 
@@ -406,7 +432,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.wordsOrLettersElements.forEach((w) => {
       data.push({
         id: w.wordOrLetterElementRef.nativeElement.id,
-        transform: w.wordOrLetterElementRef.nativeElement.parentElement.style.transform,
+        transform: w.wordOrLetterElementRef.nativeElement.style.transform,
         width: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().width,
         height: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().height
       });

@@ -24,7 +24,6 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     { value: LayoutType.TypeTwoLines, viewValue: 'Layout Duas Linhas' },
     { value: LayoutType.TypeFourLines, viewValue: 'Layout Quatro Linhas' },
   ];
-
   public actionDetections = [
     { value: DectionType.Contato, viewValue: 'Ao contato' },
     { value: DectionType.Delay, viewValue: 'Contagem Tempo' },
@@ -41,28 +40,24 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.formInputs.get("DelayDeteccaoSensorial").value > 0 && this.formInputs.get("DelayDeteccaoSensorial").valid) {
-      this.configurationService.sensorialSelectionDelayMs = this.formInputs.get("DelayDeteccaoSensorial").value;
-      localStorage.setItem('SensorialSelectionDelayMs', this.configurationService.sensorialSelectionDelayMs.toString());
+      this.configurationService.setSensorialDelay(this.formInputs.get("DelayDeteccaoSensorial").value);
     }
 
     if (this.formInputs.get("Dpi").valid) {
-      this.configurationService.dpiSpeed = this.formInputs.get("Dpi").value.value;
-      localStorage.setItem('DpiSpeed', this.configurationService.dpiSpeed.toString());
+      this.configurationService.setDpi(this.formInputs.get("Dpi").value.value);
     }
 
     if (this.formInputs.get("LayoutType").valid) {
-      this.configurationService.layoutType = this.formInputs.get("LayoutType").value.value;
-      localStorage.setItem('LayoutType', this.configurationService.layoutType.toString());
+      this.configurationService.setLayoutType(this.formInputs.get("LayoutType").value.value);
     }
 
     if (this.formInputs.get("ActionDetection").valid) {
-      this.configurationService.detectionType = this.formInputs.get("ActionDetection").value.value;
-      localStorage.setItem('DectionType', this.configurationService.detectionType.toString());
+      this.configurationService.setDetectionType(this.formInputs.get("ActionDetection").value.value);
     }
   }
 
   private setConditionalLayoutTypes() {
-    if(this.configurationService.hasDynamicLayout()) {
+    if (this.configurationService.hasDynamicLayout()) {
       this.layouts.push({
         value: LayoutType.Customized,
         viewValue: "Layout Customizado"
