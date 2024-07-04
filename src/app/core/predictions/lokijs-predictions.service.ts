@@ -24,11 +24,13 @@ export class LokiJsPredictionsService {
 
         const regex = new RegExp('^' + current, 'i');
         const collection = this.dbLoki.getCollection(current.charAt(0));
-        return collection.chain()
+        let result = collection.chain()
             .find({ 'word': { '$regex': regex } })
             .simplesort('rank', { desc: true })
             .limit(20)
             .data();
+
+        return result.filter(r => r.word !== current);
     }
 
     async doAddWordOnDb(word: string) {
