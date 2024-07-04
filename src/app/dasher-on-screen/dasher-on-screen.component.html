@@ -135,13 +135,14 @@
 
                 <div class="grid-header1" fxFill>
                     <div fxLayout="row" fxFill>
-                        <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenTop" let-i="index">
+                        <ng-template ngFor [ngForOf]="initialTopLetters" let-i="index">
                             <app-dasher-on-screen-player [elId]="'ptop' + i.toString()" *ngIf="i >= splitIndexHeader"
                                 (click)="onClickElementCalibration(i, 'top')"
                                 [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                                [wordOrLetter]="wordsOrLetterOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" [enableLayoutEdition]="enableLayoutEdition"
-                                fxFlex fxFill (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
+                                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
+                                [onContentChangedEvent]="onContentChangedEvent"
+                                (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
                             </app-dasher-on-screen-player>
                         </ng-template>
                     </div>
@@ -151,14 +152,14 @@
 
                 <div class="grid-header2" fxFill>
                     <div fxLayout="row" fxFill>
-                        <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenTop" let-i="index">
+                        <ng-template ngFor [ngForOf]="initialTopLetters" let-i="index">
                             <div *ngIf="i == 3" style="width: 100px;"></div>
                             <app-dasher-on-screen-player [elId]="'ptop' + i.toString()" *ngIf="i < splitIndexHeader"
                                 (click)="onClickElementCalibration(i, 'top')"
                                 [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                                [wordOrLetter]="wordsOrLetterOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" [enableLayoutEdition]="enableLayoutEdition"
-                                fxFlex fxFill
+                                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
+                                [onContentChangedEvent]="onContentChangedEvent"
                                 (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)"></app-dasher-on-screen-player>
                         </ng-template>
                     </div>
@@ -168,14 +169,15 @@
 
                 <div class="grid-bottom1" fxFill>
                     <div fxLayout="row" fxFill>
-                        <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenBottom" let-i="index">
+                        <ng-template ngFor [ngForOf]="initialBottomLetters" let-i="index">
                             <div *ngIf="i == 3" style="width: 100px;"></div>
                             <app-dasher-on-screen-player [elId]="'pbottom' + i.toString()" *ngIf="i < splitIndexBottom"
                                 (click)="onClickElementCalibration(i, 'bottom')"
                                 [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                                [wordOrLetter]="wordsOrLetterOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" [enableLayoutEdition]="enableLayoutEdition"
-                                fxFlex fxFill (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
+                                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
+                                [onContentChangedEvent]="onContentChangedEvent"
+                                (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
                             </app-dasher-on-screen-player>
                         </ng-template>
                     </div>
@@ -185,13 +187,14 @@
 
                 <div class="grid-bottom2" fxFill>
                     <div fxLayout="row" fxFill>
-                        <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenBottom" let-i="index">
+                        <ng-template ngFor [ngForOf]="initialBottomLetters" let-i="index">
                             <app-dasher-on-screen-player [elId]="'pbottom' + i.toString()" *ngIf="i >= splitIndexBottom"
                                 (click)="onClickElementCalibration(i, 'bottom')"
                                 [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                                [wordOrLetter]="wordsOrLetterOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" [enableLayoutEdition]="enableLayoutEdition"
-                                fxFlex fxFill (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
+                                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
+                                [onContentChangedEvent]="onContentChangedEvent"
+                                (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
                             </app-dasher-on-screen-player>
                         </ng-template>
                     </div>
@@ -204,13 +207,13 @@
             <div class="grid-container-vertical" fxFill>
                 <div class="grid-header1" fxFill>
                     <div fxLayout="row" fxFill>
-                        <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenTop" let-i="index">
+                        <ng-template ngFor [ngForOf]="initialTopLetters" let-i="index">
                             <app-dasher-on-screen-player [elId]="'ptop' + i.toString()"
                                 (click)="onClickElementCalibration(i, 'top')"
                                 [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                                [wordOrLetter]="wordsOrLetterOnScreenTop[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" [enableLayoutEdition]="enableLayoutEdition"
-                                fxFlex fxFill
+                                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
+                                [onContentChangedEvent]="onContentChangedEvent"
                                 (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)"></app-dasher-on-screen-player>
                         </ng-template>
                     </div>
@@ -220,13 +223,14 @@
 
                 <div class="grid-bottom1" fxFill>
                     <div fxLayout="row" fxFill>
-                        <ng-template ngFor let-item [ngForOf]="wordsOrLetterOnScreenBottom" let-i="index">
+                        <ng-template ngFor [ngForOf]="initialBottomLetters" let-i="index">
                             <app-dasher-on-screen-player [elId]="'pbottom' + i.toString()"
                                 (click)="onClickElementCalibration(i, 'bottom')"
                                 [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
-                                [wordOrLetter]="wordsOrLetterOnScreenBottom[i]" [mouseMovedEvent]="mouseMovedEvent"
-                                [onResetDasherEvent]="onResetDasherEvent" [enableLayoutEdition]="enableLayoutEdition"
-                                fxFlex fxFill (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
+                                [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
+                                [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
+                                [onContentChangedEvent]="onContentChangedEvent"
+                                (wordOrLetterSelectedEvent)="wordOrLetterSelectedEvent($event)">
                             </app-dasher-on-screen-player>
                         </ng-template>
                     </div>

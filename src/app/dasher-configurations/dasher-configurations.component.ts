@@ -54,6 +54,10 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
     if (this.formInputs.get("ActionDetection").valid) {
       this.configurationService.setDetectionType(this.formInputs.get("ActionDetection").value.value);
     }
+
+    if (this.formInputs.get("KeepOrderLetters")) {
+      this.configurationService.setKeepOrderLetters(this.formInputs.get("KeepOrderLetters").value);
+    }
   }
 
   private setConditionalLayoutTypes() {
@@ -78,7 +82,8 @@ export class DasherConfigurationsComponent implements OnInit, OnDestroy {
       DelayDeteccaoSensorial: [this.configurationService.sensorialSelectionDelayMs, [Validators.required, Validators.min(1)]],
       Dpi: [this.dpis[this.dpis.findIndex(l => l.value == this.configurationService.dpiSpeed)]],
       LayoutType: [this.layouts[this.layouts.findIndex(l => l.value == this.configurationService.layoutType)]],
-      ActionDetection: [this.actionDetections[this.actionDetections.findIndex(l => l.value == this.configurationService.detectionType)]]
+      ActionDetection: [this.actionDetections[this.actionDetections.findIndex(l => l.value == this.configurationService.detectionType)]],
+      KeepOrderLetters: [this.configurationService.keepOrderLetters]
     });
   }
 

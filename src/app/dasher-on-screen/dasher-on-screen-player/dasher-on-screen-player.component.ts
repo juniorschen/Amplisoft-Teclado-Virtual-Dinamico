@@ -17,27 +17,28 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
   private lastSensorialDetectionTime: Date;
   private intervalSensorialDetection;
   private intervalCheckColision;
-
+  
   @Input('elId')
   public elId: string;
-  @Input('wordOrLetter')
-  public wordOrLetter: string;
   @Input('mouseMovedEvent')
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   @Input('onResetDasherEvent')
   public onResetDasherEvent: Subject<void> = new Subject();
   @Input('enableLayoutEdition')
   public enableLayoutEdition: boolean;
-
+  @Input('onContentChangedEvent')
+  public onContentChangedEvent: Subject<{id: string, value: string}> = new Subject();
+  
   @Output('wordOrLetterSelectedEvent')
   public wordOrLetterSelectedEvent: EventEmitter<string> = new EventEmitter<string>();
-
+  
   @ViewChild('wordOrLetterElementRef')
   public wordOrLetterElementRef: ElementRef<HTMLDivElement>;
-
+  
   @ViewChild('pElementRef')
   public pElementRef: ElementRef<HTMLParagraphElement>;
-
+  
+  public wordOrLetter: string;
   public animateDivSelection = false;
   public wordOrLetterSelected = false;
   public readonly AngularResizeElementDirection = AngularResizeElementDirection;
@@ -49,6 +50,12 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
 
     this.onResetDasherEvent.subscribe(() => {
       this.wordOrLetterSelected = false;
+    });
+
+    this.onContentChangedEvent.subscribe((ev) => {
+      if(ev.id == this.elId) {
+        this.wordOrLetter = ev.value;
+      } 
     });
 
     if (this.configurationService.isAnyControlConfigured()) {

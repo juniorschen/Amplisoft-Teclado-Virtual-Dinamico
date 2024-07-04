@@ -23,9 +23,15 @@ export class ConfigurationsService {
     public layoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LayoutType') ? Number(localStorage.getItem('LayoutType')) : LayoutType.TypeTwoLines;
     public lastLayoutType: LayoutType = isTestEnv ? window["Cypress"]["TipoLayout"] : localStorage.getItem('LastLayoutType') ? Number(localStorage.getItem('LastLayoutType')) : LayoutType.TypeTwoLines;
     public detectionType: DectionType = localStorage.getItem('DectionType') ? Number(localStorage.getItem('DectionType')) : DectionType.Contato;
+    public keepOrderLetters: boolean = localStorage.getItem('KeepOrderLetters') ? localStorage.getItem('KeepOrderLetters') == "true" : false;
     public enablePageEdition = new Subject<boolean>();
 
     constructor() { }
+
+    public setKeepOrderLetters(keepOrderLetters) {
+        this.keepOrderLetters = keepOrderLetters;
+        localStorage.setItem('KeepOrderLetters', this.keepOrderLetters.toString());
+    }
 
     public setDetectionType(detectionType) {
         this.detectionType = detectionType;

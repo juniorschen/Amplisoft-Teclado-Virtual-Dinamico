@@ -12,7 +12,7 @@
     <div class="resize resize__left" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
         [direction]="AngularResizeElementDirection.LEFT"></div>
 
-    <p [id]="wordOrLetter" class="label-default-font-size action-border action-sized" #pElementRef
+    <p class="label-default-font-size action-border action-sized" #pElementRef
         (mouseover)="mouseOverWordOrLetterEvent()" (mouseout)="mouseOutWordOrLetterEvent()"
         fxLayoutAlign="center center">{{ wordOrLetter }}</p>
 </div>

@@ -57,12 +57,13 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   // Controle Geral Html
   public mouseMovedEvent: Subject<MouseEvent> = new Subject();
   public onResetDasherEvent: Subject<void> = new Subject();
+  public onContentChangedEvent: Subject<{ id: string, value: string }> = new Subject();
   public isAfk = false;
   public input = '';
-  public wordsOrLetterOnScreenTop: Array<string> = initialTopLetters;
-  public splitIndexHeader = Math.ceil(this.wordsOrLetterOnScreenTop.length / 2);
-  public wordsOrLetterOnScreenBottom: Array<string> = initialBottomLetters;
-  public splitIndexBottom = Math.ceil(this.wordsOrLetterOnScreenBottom.length / 2);
+  public initialTopLetters: Array<string> = initialTopLetters;
+  public splitIndexHeader = Math.ceil(this.initialTopLetters.length / 2);
+  public initialBottomLetters: Array<string> = initialBottomLetters;
+  public splitIndexBottom = Math.ceil(this.initialBottomLetters.length / 2);
   public layoutTypes = LayoutType;
   public layoutType = this.configurationService.layoutType;
   public lastLayoutType = this.configurationService.lastLayoutType;
@@ -90,6 +91,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.perfomanceIndicatorService.start();
     this.afkInterval = setInterval(() => this.checkDasherAfk(), 1000);
     this.doSetDynamicLayout();
+    this.redefinedWords(true);
   }
 
   async ngOnDestroy(): Promise<void> {
@@ -99,7 +101,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   onClickElementCalibration(elementId, prefix) {
     if (this.configurationService.isOcularDeviceConfigured() && localStorage.getItem('CalibratedEyeControl') != "true") {
-      const defaultActionElementsCount = 4 + this.wordsOrLetterOnScreenTop.length + this.wordsOrLetterOnScreenBottom.length;
+      const defaultActionElementsCount = 4 + this.initialBottomLetters.length + this.initialTopLetters.length;
 
       const clickElementCount = this.clickElementsCount.get(prefix + "_" + elementId);
       if (clickElementCount && clickElementCount < this.defaultCalibrationCount) {
@@ -273,10 +275,6 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       inputEl.setSelectionRange(this.input.length, this.input.length);
       this.canSelectWordLetter = true;
     }, 100);
-
-    setTimeout(() => {
-      this.doSetDynamicLayout();
-    }, 1000);
   }
 
   private synthesizeSpeechFromText(text: string): void {
@@ -287,25 +285,31 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   private redefinedWords(fullReset = false) {
     if (fullReset) {
-      this.splitIndexHeader = Math.ceil(initialTopLetters.length / 2);
-      this.splitIndexBottom = Math.ceil(initialBottomLetters.length / 2);
-      this.wordsOrLetterOnScreenTop = initialTopLetters;
-      this.wordsOrLetterOnScreenBottom = initialBottomLetters;
+      initialTopLetters.forEach((l, i) => {
+        this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+      });
+      initialBottomLetters.forEach((l, i) => {
+        this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+      });
     } else {
       const wordsList = this.input.split(" ");
       const lastWord = wordsList[wordsList.length - 1];
       var result = this.predicionsService.getWord(lastWord);
       if (result.length > 0) {
-        const wordsByPredictions = getTopAndBottomWordsLettersByPredictions(result);
-        this.splitIndexHeader = Math.ceil(wordsByPredictions.topWords.length / 2);
-        this.splitIndexBottom = Math.ceil(wordsByPredictions.bottomWords.length / 2);
-        this.wordsOrLetterOnScreenTop = wordsByPredictions.topWords;
-        this.wordsOrLetterOnScreenBottom = wordsByPredictions.bottomWords;
+        const wordsByPredictions = getTopAndBottomWordsLettersByPredictions(result, this.configurationService.keepOrderLetters);
+        wordsByPredictions.topWords.forEach((l, i) => {
+          this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+        });
+        wordsByPredictions.bottomWords.forEach((l, i) => {
+          this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+        });
       } else {
-        this.splitIndexHeader = Math.ceil(initialTopLetters.length / 2);
-        this.splitIndexBottom = Math.ceil(initialBottomLetters.length / 2);
-        this.wordsOrLetterOnScreenTop = initialTopLetters;
-        this.wordsOrLetterOnScreenBottom = initialBottomLetters;
+        initialTopLetters.forEach((l, i) => {
+          this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+        });
+        initialBottomLetters.forEach((l, i) => {
+          this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+        });
       }
     }
   }
@@ -367,21 +371,22 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private listenEditLayout() {
     this.configurationService.enablePageEdition.subscribe((v) => {
       if (v) {
-        this.splitIndexHeader = Math.ceil(sugestionTopLetters.length / 2);
-        this.splitIndexBottom = Math.ceil(sugestionBottomLetters.length / 2);
-        this.wordsOrLetterOnScreenTop = sugestionTopLetters;
-        this.wordsOrLetterOnScreenBottom = sugestionBottomLetters;
+        sugestionTopLetters.forEach((l, i) => {
+          this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+        });
+        sugestionBottomLetters.forEach((l, i) => {
+          this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+        });
       } else {
-        this.splitIndexHeader = Math.ceil(initialTopLetters.length / 2);
-        this.splitIndexBottom = Math.ceil(initialBottomLetters.length / 2);
-        this.wordsOrLetterOnScreenTop = initialTopLetters;
-        this.wordsOrLetterOnScreenBottom = initialBottomLetters;
+        initialTopLetters.forEach((l, i) => {
+          this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+        });
+        initialBottomLetters.forEach((l, i) => {
+          this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+        });
         this.saveLayout();
       }
       this.enableLayoutEdition = v;
-      setTimeout(() => {
-        this.doSetDynamicLayout();
-      }, 1000);
     });
   }
 
