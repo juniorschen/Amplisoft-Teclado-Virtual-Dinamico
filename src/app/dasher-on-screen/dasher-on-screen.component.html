@@ -42,6 +42,32 @@
                     (mouseout)="mouseOutReset()" fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
 
+            <div id="simbolosBoxRef" class="mid-start" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+                (click)="onClickElementCalibration(0, 'simboloElementRef')"
+                [class.fill-animation]="animateDivSelectionSimbols"
+                [ngClass]="clickElementsCount.get('simboloElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
+                fxLayoutAlign="center none" #simbolosBoxRef>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__right"
+                    (resize)="onResize($event, 'simboloElementRef')" [targetElement]="simbolosBoxRef"
+                    [direction]="AngularResizeElementDirection.RIGHT"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__bottom"
+                    (resize)="onResize($event, 'simboloElementRef')" [targetElement]="simbolosBoxRef"
+                    [direction]="AngularResizeElementDirection.BOTTOM"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__top"
+                    (resize)="onResize($event, 'simboloElementRef')" [targetElement]="simbolosBoxRef"
+                    [direction]="AngularResizeElementDirection.TOP"></div>
+
+                <div *ngIf="enableLayoutEdition" class="resize resize__left"
+                    (resize)="onResize($event, 'simboloElementRef')" [targetElement]="simbolosBoxRef"
+                    [direction]="AngularResizeElementDirection.LEFT"></div>
+
+                <p class="label-default-font-size" #simboloElementRef (mouseover)="mouseOverSimbols()"
+                    (mouseout)="mouseOutSimbols()" fxLayoutAlign="center center">Simbolos</p>
+            </div>
+
             <div id="falarBoxRef" class="mid-start-bottom" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
                 (click)="onClickElementCalibration(0, 'falarElementRef')"
                 [class.fill-animation]="animateDivSelectionSpeak"

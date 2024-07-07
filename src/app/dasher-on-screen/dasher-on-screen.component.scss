@@ -138,16 +138,17 @@
     grid-area: mid-start-bottom2;
 }
 
+.mid-start {
+    grid-area: mid-start;
+}
+
 .grid-start-actions {
     display: grid;
     grid-template-areas:
         'mid-start-header mid-start-header2'
-        'mid-start-header mid-start-header2'
-        'mid-start-header 666'
-        'mid-start-bottom 666'
-        'mid-start-bottom mid-start-bottom2'
+        'mid-start 666'
         'mid-start-bottom mid-start-bottom2';
-    grid-template-rows: repeat(6, 1fr);
+    grid-template-rows: 1fr, 10px, 1fr;//repeat(6, 1fr);
     position: relative;
 }
 

@@ -1,10 +1,20 @@
 export const initialTopLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h",       "a", "e", "i", "o"];
 export const initialBottomLetters = ["a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z",    "b", "c", "d", "l"];
 
+export const simbolsNumericTop = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "=", '+', "-", "*", "|", "'", '"'];
+export const simbolsBottom = [".", ',', ":", "^", "~", "[", "]", "`", "´", "!", "?", "/", ";", "(", ")", "{", "}"];
+
 export const sugestionTopLetters = ["Sugestão 1", "Letra 1", "Letra 2", "Letra 3", "Letra 4", "Sugestão 2", "Sugestão 3", "Letra 5", "Letra 6", "Letra 7", "Letra 8", "Letra 9", "Letra 10", "Letra 11", "Letra 12", "Letra 13", "Letra 14"];
 export const sugestionBottomLetters = ["Sugestão 1", "Letra 1", "Letra 2", "Letra 3", "Letra 4", "Sugestão 2", "Sugestão 3", "Letra 5", "Letra 6", "Letra 7", "Letra 8", "Letra 9", "Letra 10", "Letra 11", "Letra 12", "Letra 13", "Letra 14"];
 
 export const allLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h", "a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
+
+export const symbolCombCharacterDic = {
+    '~': '\u0303',
+    '^': '\u0302',
+    '`': '\u0300',
+    '´': '\u0301'
+};
 
 
 function mostFrequentLetters(stringArray: string[]) {

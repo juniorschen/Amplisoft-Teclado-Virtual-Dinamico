@@ -7,7 +7,7 @@ import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-
 import { calcularDiferencaEmMilissegundos } from '../common/date';
 import { PerfomanceIndicatorService } from '../core/performance-indicators/performance-indicators.service';
 import { endCalibrateCamera } from '../core/support/camera/camera-support';
-import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions, sugestionBottomLetters, sugestionTopLetters } from '../common/words-letters';
+import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions, sugestionBottomLetters, sugestionTopLetters, simbolsNumericTop, simbolsBottom, symbolCombCharacterDic } from '../common/words-letters';
 import { LokiJsPredictionsService } from '../core/predictions/lokijs-predictions.service';
 import { LayoutType } from '../common/layout-type.enum';
 import { AngularResizeElementDirection, AngularResizeElementEvent } from 'angular-resize-element';
@@ -25,6 +25,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private afkInterval;
   private suportDiv: HTMLDivElement;
   private joystickSide: "left" | "right";
+  private showingSimbols = false;
 
   // Detecção sensorial
   private intervalSensorialDetection;
@@ -49,6 +50,9 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   @ViewChild('centerDivElementRef')
   public centerDivElementRef: ElementRef<HTMLDivElement>;
 
+  @ViewChild('simboloElementRef')
+  public simboloElementRef: ElementRef<HTMLDivElement>;
+
   @ViewChild('playerDivElementRef')
   public playerDivElementRef: ElementRef<HTMLDivElement>;
 
@@ -71,6 +75,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   public animateDivSelectionClear = false;
   public animateDivSelectionClearAll = false;
   public animateDivSelectionSpeak = false;
+  public animateDivSelectionSimbols = false;
   public readonly AngularResizeElementDirection = AngularResizeElementDirection;
   public enableLayoutEdition = false;
 
@@ -101,7 +106,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   onClickElementCalibration(elementId, prefix) {
     if (this.configurationService.isOcularDeviceConfigured() && localStorage.getItem('CalibratedEyeControl') != "true") {
-      const defaultActionElementsCount = 4 + this.initialBottomLetters.length + this.initialTopLetters.length;
+      const defaultActionElementsCount = 5 + this.initialBottomLetters.length + this.initialTopLetters.length;
 
       const clickElementCount = this.clickElementsCount.get(prefix + "_" + elementId);
       if (clickElementCount && clickElementCount < this.defaultCalibrationCount) {
@@ -245,6 +250,45 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.lastActionExecuted = new Date();
   }
 
+  mouseOverSimbols() {
+    if (!this.configurationService.isAnyControlConfigured() && !this.enableLayoutEdition) {
+
+      let detect = () => {
+        this.changeToSimbols();
+        this.doResetSensorialDetection();
+      };
+
+      if (this.doDetect("animateDivSelectionSimbols")) {
+        detect();
+      } else if (!this.intervalSensorialDetection) {
+        this.intervalSensorialDetection = setInterval(() => { detect(); }, this.configurationService.sensorialSelectionDelayMs - this.bufferDoDetectSensorial);
+      }
+
+    }
+  }
+
+  mouseOutSimbols() {
+    if (this.configurationService.isAnyControlConfigured())
+      return;
+
+    this.doResetSensorialDetection();
+  }
+
+  private changeToSimbols() {
+    if (!this.showingSimbols) {
+      simbolsNumericTop.forEach((l, i) => {
+        this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+      });
+      simbolsBottom.forEach((l, i) => {
+        this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+      });
+      this.showingSimbols = true;
+    } else {
+      this.redefinedWords();
+      this.showingSimbols = false;
+    }
+  }
+
   wordOrLetterSelectedEvent(wordOrLetter: string) {
     if (!this.canSelectWordLetter && !this.enableLayoutEdition) {
       return;
@@ -253,17 +297,27 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.canSelectWordLetter = false;
 
     this.resetAuxDisplay();
-    this.perfomanceIndicatorService.wordSelected(wordOrLetter);
 
-    if (wordOrLetter.length > 1) {
-      const wordsList = this.input.split(" ");
-      const lastWord = wordsList[wordsList.length - 1];
-      this.input = this.input.substring(0, this.input.length - lastWord.length);
-      this.input = this.input + wordOrLetter;
-      this.insertBlankSpace(false);
+    if (this.showingSimbols) {
+      if (symbolCombCharacterDic[wordOrLetter]) {
+        this.input += symbolCombCharacterDic[wordOrLetter];
+      } else {
+        this.input = this.input + wordOrLetter;
+      }
     } else {
-      this.input = this.input + wordOrLetter;
+      this.perfomanceIndicatorService.wordSelected(wordOrLetter);
+
+      if (wordOrLetter.length > 1) {
+        const wordsList = this.input.split(" ");
+        const lastWord = wordsList[wordsList.length - 1];
+        this.input = this.input.substring(0, this.input.length - lastWord.length);
+        this.input = this.input + wordOrLetter;
+        this.insertBlankSpace(false);
+      } else {
+        this.input = this.input + wordOrLetter;
+      }
     }
+
     this.redefinedWords();
     this.doResetSensorialDetection();
     this.onResetDasherEvent.next();
@@ -347,6 +401,9 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
       this.insertBlankSpace();
       this.resetAuxDisplay();
+    } else if (elementOverAnother(this.suportDiv, this.simboloElementRef.nativeElement)) {
+      this.changeToSimbols();
+      this.resetAuxDisplay();
     }
 
     this.doResetSensorialDetection();
@@ -360,6 +417,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     this.animateDivSelectionClearAll = false;
     this.animateDivSelectionClear = false;
     this.animateDivSelectionSpeak = false;
+    this.animateDivSelectionSimbols = false;
     this.lastSensorialDetectionTime = undefined;
     if (this.intervalSensorialDetection) {
       clearInterval(this.intervalSensorialDetection);
@@ -421,6 +479,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       transform: this.limparTudoElementRef.nativeElement.parentElement.style.transform,
       width: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
       height: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().height
+    });
+    data.push({
+      id: this.simboloElementRef.nativeElement.parentElement.id,
+      transform: this.simboloElementRef.nativeElement.parentElement.style.transform,
+      width: this.simboloElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+      height: this.simboloElementRef.nativeElement.parentElement.getBoundingClientRect().height
     });
     data.push({
       id: this.espacoElementRef.nativeElement.parentElement.id,
@@ -564,7 +628,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       || (this.actionSensorialDetectionBuffer.top != goToTop) || (this.actionSensorialDetectionBuffer.bottom != goToBottom);
 
     if (positionVariated) {
-      const elements = [this.limparElementRef.nativeElement, this.falarElementRef.nativeElement, this.limparTudoElementRef.nativeElement, this.espacoElementRef.nativeElement, ...this.wordsOrLettersElements.map(l => l.wordOrLetterElementRef.nativeElement)];
+      const elements = [this.limparElementRef.nativeElement, this.falarElementRef.nativeElement, this.limparTudoElementRef.nativeElement, this.simboloElementRef.nativeElement, this.espacoElementRef.nativeElement, ...this.wordsOrLettersElements.map(l => l.wordOrLetterElementRef.nativeElement)];
       const around = findElementsAround(this.suportDiv, elements);
 
       let closestElement;
@@ -607,7 +671,11 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     }
 
     // TODO \/ ESSE CODIGO AQUI FICARIA MELHOR EM OUTRO CANTO, TENDO UMA CHECAGEM AUTOMATICA DE X EM X TEMPO, MAS É CONVENIENTE DEIXAR ELE AQUI POIS SEM CRIAR NOVAS THREADS EU RECEBE EVENTOS DOS CONTROLES ALTERNATIVOS
-    const overAnyActionElement = elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement) || elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement);
+    const overAnyActionElement = elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement) ||
+      elementOverAnother(this.suportDiv, this.falarElementRef.nativeElement) ||
+      elementOverAnother(this.suportDiv, this.limparTudoElementRef.nativeElement) ||
+      elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement) ||
+      elementOverAnother(this.suportDiv, this.simboloElementRef.nativeElement);
     if (overAnyActionElement) {
       let divName = "";
       if (elementOverAnother(this.suportDiv, this.limparElementRef.nativeElement)) {
@@ -618,6 +686,8 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         divName = "animateDivSelectionClearAll";
       } else if (elementOverAnother(this.suportDiv, this.espacoElementRef.nativeElement)) {
         divName = "animateDivSelectionSpace";
+      } else if (elementOverAnother(this.suportDiv, this.simboloElementRef.nativeElement)) {
+        divName = "animateDivSelectionSimbols";
       }
 
       if (this.doDetect(divName)) {
