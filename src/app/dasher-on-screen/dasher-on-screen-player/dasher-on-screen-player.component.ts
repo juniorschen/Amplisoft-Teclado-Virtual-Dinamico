@@ -108,6 +108,12 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
     div.style.height = evt.currentHeightValue + "px";
     div.parentElement.style.width = parentWidh + "px";
     div.parentElement.style.height = parentHeight + "px";
+    div.classList.add('el_changed');
+  }
+
+  public cdkDragStarted() {
+    const div = this.wordOrLetterElementRef.nativeElement;
+    div.classList.add('el_changed');
   }
 
   private constantCheckElementOverAnother() {

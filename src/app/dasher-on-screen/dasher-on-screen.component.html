@@ -16,7 +16,8 @@
         </div>
 
         <div class="grid-start-actions">
-            <div id="limparTudoBoxRef" class="mid-start-header" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+            <div id="limparTudoBoxRef" class="mid-start-header" cdkDrag
+                (cdkDragStarted)="cdkDragStarted('limparTudoElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
                 (click)="onClickElementCalibration(0, 'limparTudoElementRef')"
                 [class.fill-animation]="animateDivSelectionClearAll"
                 [ngClass]="clickElementsCount.get('limparTudoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
@@ -41,9 +42,14 @@
                 <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
                     (mouseout)="mouseOutReset()" fxLayoutAlign="center center">Limpar Toda Digitação</p>
             </div>
+            <div *ngIf="limparTudoBoxRef.style.position === 'absolute'" class="mid-start-header ghost-container" fxLayoutAlign="center none">
+                <p class="label-default-font-size" fxLayoutAlign="center center">
+                    Limpar Toda Digitação
+                </p>
+            </div>
 
-            <div id="simbolosBoxRef" class="mid-start" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
-                (click)="onClickElementCalibration(0, 'simboloElementRef')"
+            <div id="simbolosBoxRef" class="mid-start" cdkDrag (cdkDragStarted)="cdkDragStarted('simboloElementRef')"
+                [cdkDragDisabled]="!enableLayoutEdition" (click)="onClickElementCalibration(0, 'simboloElementRef')"
                 [class.fill-animation]="animateDivSelectionSimbols"
                 [ngClass]="clickElementsCount.get('simboloElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" #simbolosBoxRef>
@@ -67,9 +73,14 @@
                 <p class="label-default-font-size" #simboloElementRef (mouseover)="mouseOverSimbols()"
                     (mouseout)="mouseOutSimbols()" fxLayoutAlign="center center">Simbolos</p>
             </div>
+            <div *ngIf="simbolosBoxRef.style.position === 'absolute'" class="mid-start ghost-container" fxLayoutAlign="center none">
+                <p class="label-default-font-size" fxLayoutAlign="center center">
+                    Simbolos
+                </p>
+            </div>
 
-            <div id="falarBoxRef" class="mid-start-bottom" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
-                (click)="onClickElementCalibration(0, 'falarElementRef')"
+            <div id="falarBoxRef" class="mid-start-bottom" cdkDrag (cdkDragStarted)="cdkDragStarted('falarElementRef')"
+                [cdkDragDisabled]="!enableLayoutEdition" (click)="onClickElementCalibration(0, 'falarElementRef')"
                 [class.fill-animation]="animateDivSelectionSpeak"
                 [ngClass]="clickElementsCount.get('falarElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
                 fxLayoutAlign="center none" #falarBoxRef>
@@ -93,8 +104,14 @@
                 <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()"
                     (mouseout)="mouseOutSpeak()" fxLayoutAlign="center center">Falar Texto Completo</p>
             </div>
+            <div *ngIf="falarBoxRef.style.position === 'absolute'" class="mid-start-bottom ghost-container" fxLayoutAlign="center none">
+                <p class="label-default-font-size" fxLayoutAlign="center center">
+                    Falar Texto Completo
+                </p>
+            </div>
 
-            <div id="espacoBoxRef" class="mid-start-header2" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+            <div id="espacoBoxRef" class="mid-start-header2" cdkDrag
+                (cdkDragStarted)="cdkDragStarted('espacoElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
                 (click)="onClickElementCalibration(0, 'espacoElementRef')"
                 [class.fill-animation]="animateDivSelectionSpace"
                 [ngClass]="clickElementsCount.get('espacoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
@@ -120,10 +137,16 @@
                     (mouseover)="mouseOverBlankSpace()" (mouseout)="mouseOutBlankSpace()">
                     Inserir Espaço</p>
             </div>
+            <div *ngIf="espacoBoxRef.style.position === 'absolute'" class="mid-start-header2 ghost-container" fxLayoutAlign="center center">
+                <p class="label-default-font-size" fxLayoutAlign="center center">
+                    Inserir Espaço
+                </p>
+            </div>
 
             <div id="centerDivElementRef" #centerDivElementRef></div>
 
-            <div id="limparBoxRef" class="mid-start-bottom2" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+            <div id="limparBoxRef" class="mid-start-bottom2" cdkDrag
+                (cdkDragStarted)="cdkDragStarted('limparElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
                 (click)="onClickElementCalibration(0, 'limparElementRef')"
                 [class.fill-animation]="animateDivSelectionClear"
                 [ngClass]="clickElementsCount.get('limparElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
@@ -147,6 +170,11 @@
 
                 <p id="limparElementRef" class="label-default-font-size" #limparElementRef
                     (mouseover)="mouseOverReset(false)" (mouseout)="mouseOutReset()" fxLayoutAlign="center center">
+                    Limpar Último
+                </p>
+            </div>
+            <div *ngIf="limparBoxRef.style.position === 'absolute'" class="mid-start-bottom2 ghost-container" fxLayoutAlign="center none">
+                <p class="label-default-font-size" fxLayoutAlign="center center">
                     Limpar Último
                 </p>
             </div>

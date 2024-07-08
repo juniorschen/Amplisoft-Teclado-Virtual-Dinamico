@@ -460,44 +460,56 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         element.style.transform = d.transform;
         element.style.width = d.width + "px";
         element.style.height = d.height + "px";
-        element.parentElement.style.width = parentWidh + "px";
-        element.parentElement.style.height = parentHeight + "px";
+        // element.parentElement.style.width = parentWidh + "px";
+        // element.parentElement.style.height = parentHeight + "px";
+
+        element.classList.add('el_changed');
       });
     }
   }
 
   private saveLayout() {
     const data = [];
-    data.push({
-      id: this.limparElementRef.nativeElement.parentElement.id,
-      transform: this.limparElementRef.nativeElement.parentElement.style.transform,
-      width: this.limparElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-      height: this.limparElementRef.nativeElement.parentElement.getBoundingClientRect().height
-    });
-    data.push({
-      id: this.limparTudoElementRef.nativeElement.parentElement.id,
-      transform: this.limparTudoElementRef.nativeElement.parentElement.style.transform,
-      width: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-      height: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().height
-    });
-    data.push({
-      id: this.simboloElementRef.nativeElement.parentElement.id,
-      transform: this.simboloElementRef.nativeElement.parentElement.style.transform,
-      width: this.simboloElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-      height: this.simboloElementRef.nativeElement.parentElement.getBoundingClientRect().height
-    });
-    data.push({
-      id: this.espacoElementRef.nativeElement.parentElement.id,
-      transform: this.espacoElementRef.nativeElement.parentElement.style.transform,
-      width: this.espacoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-      height: this.espacoElementRef.nativeElement.parentElement.getBoundingClientRect().height
-    });
-    data.push({
-      id: this.falarElementRef.nativeElement.parentElement.id,
-      transform: this.falarElementRef.nativeElement.parentElement.style.transform,
-      width: this.falarElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-      height: this.falarElementRef.nativeElement.getBoundingClientRect().height
-    });
+    if (this.limparElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+      data.push({
+        id: this.limparElementRef.nativeElement.parentElement.id,
+        transform: this.limparElementRef.nativeElement.parentElement.style.transform,
+        width: this.limparElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+        height: this.limparElementRef.nativeElement.parentElement.getBoundingClientRect().height
+      });
+
+    if (this.limparTudoElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+      data.push({
+        id: this.limparTudoElementRef.nativeElement.parentElement.id,
+        transform: this.limparTudoElementRef.nativeElement.parentElement.style.transform,
+        width: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+        height: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().height
+      });
+
+    if (this.simboloElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+      data.push({
+        id: this.simboloElementRef.nativeElement.parentElement.id,
+        transform: this.simboloElementRef.nativeElement.parentElement.style.transform,
+        width: this.simboloElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+        height: this.simboloElementRef.nativeElement.parentElement.getBoundingClientRect().height
+      });
+
+    if (this.espacoElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+      data.push({
+        id: this.espacoElementRef.nativeElement.parentElement.id,
+        transform: this.espacoElementRef.nativeElement.parentElement.style.transform,
+        width: this.espacoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+        height: this.espacoElementRef.nativeElement.parentElement.getBoundingClientRect().height
+      });
+
+    if (this.falarElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+      data.push({
+        id: this.falarElementRef.nativeElement.parentElement.id,
+        transform: this.falarElementRef.nativeElement.parentElement.style.transform,
+        width: this.falarElementRef.nativeElement.parentElement.getBoundingClientRect().width,
+        height: this.falarElementRef.nativeElement.getBoundingClientRect().height
+      });
+
     this.wordsOrLettersElements.forEach((w) => {
       data.push({
         id: w.wordOrLetterElementRef.nativeElement.id,
@@ -519,6 +531,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     div.style.height = evt.currentHeightValue + "px";
     div.parentElement.style.width = parentWidh + "px";
     div.parentElement.style.height = parentHeight + "px";
+    div.classList.add('el_changed');
+  }
+
+  public cdkDragStarted(element: string) {
+    const div = this[element].nativeElement.parentElement as HTMLDivElement;
+    div.classList.add('el_changed');
   }
   //#endregion
 

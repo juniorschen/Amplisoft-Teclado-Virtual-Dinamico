@@ -142,13 +142,19 @@
     grid-area: mid-start;
 }
 
+.ghost-container {
+    opacity: 0;
+}
+
 .grid-start-actions {
     display: grid;
     grid-template-areas:
         'mid-start-header mid-start-header2'
-        'mid-start 666'
+        'mid-start-header mid-666'
+        'mid-start mid-666'
+        'mid-start-bottom mid-666'
         'mid-start-bottom mid-start-bottom2';
-    grid-template-rows: 1fr, 10px, 1fr;//repeat(6, 1fr);
+    grid-template-rows: 2fr 1fr 100px 1fr 2fr;//repeat(6, 1fr);
     position: relative;
 }
 
