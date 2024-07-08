@@ -1,11 +1,13 @@
-export const initialTopLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h",       "a", "e", "i", "o"];
-export const initialBottomLetters = ["a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z",    "b", "c", "d", "l"];
+export const extraTopLetters = ["a", "e", "q", "r"];
+export const extraBottomLetters = ["b", "c", "j", "l"];
+export const initialTopLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h"].concat(extraTopLetters);
+export const initialBottomLetters = ["a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"].concat(extraBottomLetters);
 
 export const simbolsNumericTop = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "=", '+', "-", "*", "|", "'", '"'];
 export const simbolsBottom = [".", ',', ":", "^", "~", "[", "]", "`", "´", "!", "?", "/", ";", "(", ")", "{", "}"];
 
-export const sugestionTopLetters = ["Sugestão 1", "Letra 1", "Letra 2", "Letra 3", "Letra 4", "Sugestão 2", "Sugestão 3", "Letra 5", "Letra 6", "Letra 7", "Letra 8", "Letra 9", "Letra 10", "Letra 11", "Letra 12", "Letra 13", "Letra 14"];
-export const sugestionBottomLetters = ["Sugestão 1", "Letra 1", "Letra 2", "Letra 3", "Letra 4", "Sugestão 2", "Sugestão 3", "Letra 5", "Letra 6", "Letra 7", "Letra 8", "Letra 9", "Letra 10", "Letra 11", "Letra 12", "Letra 13", "Letra 14"];
+export const sugestionTopLetters = ["Sugestão 1", "Letra 1 (c)", "Letra 2 (d)", "Letra 3 (f)", "Letra 4 (g)", "Sugestão 2", "Sugestão 3", "Letra 5 (m)", "Letra 6 (n)", "Letra 7 (p)", "Letra 8 (s)", "Letra 9 (t)", "Letra 10 (h)", "Letra 11 (a)", "Letra 12 (e)", "Letra 13 (q)", "Letra 14 (r)"];
+export const sugestionBottomLetters = ["Sugestão 1", "Letra 1 (e)", "Letra 2 (i)", "Letra 3 (o)", "Letra 4 (u)", "Sugestão 2", "Sugestão 3", "Letra 5 (v)", "Letra 6 (w)", "Letra 7 (x)", "Letra 8 (y)", "Letra 9 (k)", "Letra 10 (z)", "Letra 11 (b)", "Letra 12 (c)", "Letra 13 (j)", "Letra 14 (l)"];
 
 export const allLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h", "a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
 
@@ -55,24 +57,40 @@ export function getTopAndBottomWordsLettersByPredictions(predictions: Array<{ wo
 
     if (keepOrderLetters) {
         initialTopLetters.forEach((t, i) => {
-            if (i == 5 && predictionsToSugest.length >= 3) {
-                topWords.push(predictionsToSugest[2].word);
-            } else if (i == 6 && predictionsToSugest.length >= 4) {
-                topWords.push(predictionsToSugest[3].word);
-            } else {
-                topWords.push(t);
+            if (i == 5 && i < 7) {
+                if (predictionsToSugest.length >= 3) {
+                    topWords.push(predictionsToSugest[2].word);
+                }
+                if (predictionsToSugest.length >= 4) {
+                    topWords.push(predictionsToSugest[3].word);
+                }
             }
+            topWords.push(t);
         });
 
+        let excedentTopLetters = initialTopLetters.length - topWords.length;
+        while (excedentTopLetters > 0) {
+            topWords.pop();
+            excedentTopLetters -= 1;
+        }
+
         initialBottomLetters.forEach((t, i) => {
-            if (i == 5 && predictionsToSugest.length >= 5) {
-                bottomWords.push(predictionsToSugest[4].word);
-            } else if (i == 6 && predictionsToSugest.length >= 6) {
-                bottomWords.push(predictionsToSugest[5].word);
-            } else {
-                bottomWords.push(t);
+            if (i == 5 && i < 7) {
+                if (predictionsToSugest.length >= 5) {
+                    bottomWords.push(predictionsToSugest[4].word);
+                }
+                if (predictionsToSugest.length >= 6) {
+                    bottomWords.push(predictionsToSugest[5].word);
+                }
             }
+            bottomWords.push(t);
         });
+
+        let excedentBottomLetters = initialBottomLetters.length - bottomWords.length;
+        while (excedentBottomLetters > 0) {
+            bottomWords.pop();
+            excedentBottomLetters -= 1;
+        }
     } else {
         const mostFrenquently = mostFrequentLetters(predictions.map(obj => obj.word));
         mostFrenquently.forEach((f, i) => {
