@@ -78,6 +78,12 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   public animateDivSelectionSimbols = false;
   public readonly AngularResizeElementDirection = AngularResizeElementDirection;
   public enableLayoutEdition = false;
+  getIdPrefix = () => {
+    if (this.showingSimbols) {
+      return "simb_"
+    }
+    return "default_";
+  };
 
   // Calibracao
   public clickElementsCount = new Map<string, number>();
@@ -277,15 +283,23 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private changeToSimbols() {
     if (!this.showingSimbols) {
       simbolsNumericTop.forEach((l, i) => {
-        this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+        this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'ptop' + i.toString(), value: l });
       });
       simbolsBottom.forEach((l, i) => {
-        this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+        this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'pbottom' + i.toString(), value: l });
       });
       this.showingSimbols = true;
+
+      setTimeout(() => {
+        this.doSetDynamicLayout();
+      }, 1);
     } else {
       this.redefinedWords();
       this.showingSimbols = false;
+
+      setTimeout(() => {
+        this.doSetDynamicLayout();
+      }, 1);
     }
   }
 
@@ -340,10 +354,10 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private redefinedWords(fullReset = false) {
     if (fullReset) {
       initialTopLetters.forEach((l, i) => {
-        this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+        this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'ptop' + i.toString(), value: l });
       });
       initialBottomLetters.forEach((l, i) => {
-        this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+        this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'pbottom' + i.toString(), value: l });
       });
     } else {
       const wordsList = this.input.split(" ");
@@ -352,17 +366,17 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       if (result.length > 0) {
         const wordsByPredictions = getTopAndBottomWordsLettersByPredictions(result, this.configurationService.keepOrderLetters);
         wordsByPredictions.topWords.forEach((l, i) => {
-          this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+          this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'ptop' + i.toString(), value: l });
         });
         wordsByPredictions.bottomWords.forEach((l, i) => {
-          this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+          this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'pbottom' + i.toString(), value: l });
         });
       } else {
         initialTopLetters.forEach((l, i) => {
-          this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
+          this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'ptop' + i.toString(), value: l });
         });
         initialBottomLetters.forEach((l, i) => {
-          this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
+          this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'pbottom' + i.toString(), value: l });
         });
       }
     }
@@ -429,19 +443,37 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   private listenEditLayout() {
     this.configurationService.enablePageEdition.subscribe((v) => {
       if (v) {
-        sugestionTopLetters.forEach((l, i) => {
-          this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
-        });
-        sugestionBottomLetters.forEach((l, i) => {
-          this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
-        });
+        if (this.showingSimbols) {
+          simbolsNumericTop.forEach((l, i) => {
+            this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'ptop' + i.toString(), value: l });
+          });
+          simbolsBottom.forEach((l, i) => {
+            this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'pbottom' + i.toString(), value: l });
+          });
+        } else {
+          sugestionTopLetters.forEach((l, i) => {
+            this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'ptop' + i.toString(), value: l });
+          });
+          sugestionBottomLetters.forEach((l, i) => {
+            this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'pbottom' + i.toString(), value: l });
+          });
+        }
       } else {
-        initialTopLetters.forEach((l, i) => {
-          this.onContentChangedEvent.next({ id: 'ptop' + i.toString(), value: l });
-        });
-        initialBottomLetters.forEach((l, i) => {
-          this.onContentChangedEvent.next({ id: 'pbottom' + i.toString(), value: l });
-        });
+        if (this.showingSimbols) {
+          simbolsNumericTop.forEach((l, i) => {
+            this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'ptop' + i.toString(), value: l });
+          });
+          simbolsBottom.forEach((l, i) => {
+            this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'pbottom' + i.toString(), value: l });
+          });
+        } else {
+          initialTopLetters.forEach((l, i) => {
+            this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'ptop' + i.toString(), value: l });
+          });
+          initialBottomLetters.forEach((l, i) => {
+            this.onContentChangedEvent.next({ id: this.getIdPrefix() + 'pbottom' + i.toString(), value: l });
+          });
+        }
         this.saveLayout();
       }
       this.enableLayoutEdition = v;
@@ -450,21 +482,20 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   private doSetDynamicLayout() {
     if (this.configurationService.layoutType == LayoutType.Customized) {
-      const data = this.configurationService.getDynamicLayout();
-      data.forEach((d) => {
-        const element = document.getElementById(d.id);
-        const parentWidh = element.parentElement.getBoundingClientRect().width;
-        const parentHeight = element.parentElement.getBoundingClientRect().height;
-        element.style.position = "absolute";
-        element.style.flex = "none";
-        element.style.transform = d.transform;
-        element.style.width = d.width + "px";
-        element.style.height = d.height + "px";
-        // element.parentElement.style.width = parentWidh + "px";
-        // element.parentElement.style.height = parentHeight + "px";
-
-        element.classList.add('el_changed');
-      });
+      const data = this.configurationService.getDynamicLayout(this.showingSimbols);
+      if (data) {
+        data.forEach((d) => {
+          const element = document.getElementById(d.id);
+          if (element) {
+            element.style.position = "absolute";
+            element.style.flex = "none";
+            element.style.transform = d.transform;
+            element.style.width = d.width + "px";
+            element.style.height = d.height + "px";
+            element.classList.add('el_changed');
+          }
+        });
+      }
     }
   }
 
@@ -518,7 +549,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         height: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().height
       });
     });
-    this.configurationService.setDynamicLayout(data);
+    this.configurationService.setDynamicLayout(data, this.showingSimbols);
   }
 
   public onResize(evt: AngularResizeElementEvent, element: string): void {

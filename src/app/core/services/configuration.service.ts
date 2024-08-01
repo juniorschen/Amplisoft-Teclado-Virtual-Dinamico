@@ -57,18 +57,19 @@ export class ConfigurationsService {
         }
     }
 
-    public setDynamicLayout(data) {
-        localStorage.setItem("DynamicLayout", JSON.stringify(data));
+    public setDynamicLayout(data, simbols = false) {
+        localStorage.setItem("DynamicLayout" + (simbols ? "_Simbols" : "_Default"), JSON.stringify(data));
         localStorage.setItem('LayoutType', LayoutType.Customized.toString());
         this.layoutType = LayoutType.Customized;
     }
 
-    public getDynamicLayout() {
-        return JSON.parse(localStorage.getItem("DynamicLayout"));
+    public getDynamicLayout(simbols = false) {
+        return JSON.parse(localStorage.getItem("DynamicLayout" + (simbols ? "_Simbols" : "_Default")));
     }
 
     public hasDynamicLayout() {
-        return localStorage.getItem("DynamicLayout") != null && localStorage.getItem("DynamicLayout") != undefined && localStorage.getItem("DynamicLayout") != "";
+        return (localStorage.getItem("DynamicLayout_Simbols") != null && localStorage.getItem("DynamicLayout_Simbols") != undefined && localStorage.getItem("DynamicLayout_Simbols") != "") ||
+            (localStorage.getItem("DynamicLayout_Default") != null && localStorage.getItem("DynamicLayout_Default") != undefined && localStorage.getItem("DynamicLayout_Default") != "");
     }
 
     public getActiveControl() {
