@@ -8,7 +8,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { isTestEnv } from './common/document-helper';
-import { environment } from 'src/environments/environment';
+import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
