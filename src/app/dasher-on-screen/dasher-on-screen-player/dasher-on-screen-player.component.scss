@@ -25,6 +25,16 @@
     background-color: white;
 }
 
+.full-div-selection {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to right, rgb(230, 255, 230) 50%, transparent 0);
+    background-size: 200% 100%;
+    background-position: right;
+    background-color: lightgoldenrodyellow;
+}
+
 @keyframes makeItfadeIn {
     100% {
         background-position: left;

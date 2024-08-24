@@ -6,7 +6,7 @@ import { ConfigurationsService } from '../core/services/configuration.service';
 import { DasherOnScreenPlayerComponent } from './dasher-on-screen-player/dasher-on-screen-player.component';
 import { calcularDiferencaEmMilissegundos } from '../common/date';
 import { PerfomanceIndicatorService } from '../core/performance-indicators/performance-indicators.service';
-import { endCalibrateCamera } from '../core/support/camera/camera-support';
+import { endCalibrateCamera, removeVideo } from '../core/support/camera/camera-support';
 import { initialTopLetters, initialBottomLetters, getTopAndBottomWordsLettersByPredictions, sugestionBottomLetters, sugestionTopLetters, simbolsNumericTop, simbolsBottom, symbolCombCharacterDic } from '../common/words-letters';
 import { LokiJsPredictionsService } from '../core/predictions/lokijs-predictions.service';
 import { LayoutType } from '../common/layout-type.enum';
@@ -124,6 +124,10 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       let totalElementsClicksCount = 0;
       for (let value of this.clickElementsCount.values()) {
         totalElementsClicksCount += value;
+      }
+
+      if(totalElementsClicksCount > 1) {
+        removeVideo();
       }
 
       if (totalElementsClicksCount == (defaultActionElementsCount * this.defaultCalibrationCount)) {

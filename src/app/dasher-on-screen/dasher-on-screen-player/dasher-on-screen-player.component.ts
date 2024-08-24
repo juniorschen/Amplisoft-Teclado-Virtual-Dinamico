@@ -28,6 +28,8 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
   public enableLayoutEdition: boolean;
   @Input('onContentChangedEvent')
   public onContentChangedEvent: Subject<{id: string, value: string}> = new Subject();
+  @Input('showBackGroundSelection')
+  public showBackGroundSelection: boolean;
   
   @Output('wordOrLetterSelectedEvent')
   public wordOrLetterSelectedEvent: EventEmitter<string> = new EventEmitter<string>();

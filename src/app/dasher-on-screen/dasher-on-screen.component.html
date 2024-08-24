@@ -192,7 +192,7 @@
                         <ng-template ngFor [ngForOf]="initialTopLetters" let-i="index">
                             <app-dasher-on-screen-player [elId]="getIdPrefix() + 'ptop' + i.toString()" *ngIf="i >= splitIndexHeader"
                                 (click)="onClickElementCalibration(i, 'top')"
-                                [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                                [showBackGroundSelection]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 [onContentChangedEvent]="onContentChangedEvent"
@@ -210,7 +210,7 @@
                             <div *ngIf="i == 3" style="width: 100px;"></div>
                             <app-dasher-on-screen-player [elId]="getIdPrefix() + 'ptop' + i.toString()" *ngIf="i < splitIndexHeader"
                                 (click)="onClickElementCalibration(i, 'top')"
-                                [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                                [showBackGroundSelection]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 [onContentChangedEvent]="onContentChangedEvent"
@@ -227,7 +227,7 @@
                             <div *ngIf="i == 3" style="width: 100px;"></div>
                             <app-dasher-on-screen-player [elId]="getIdPrefix() + 'pbottom' + i.toString()" *ngIf="i < splitIndexBottom"
                                 (click)="onClickElementCalibration(i, 'bottom')"
-                                [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                                [showBackGroundSelection]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 [onContentChangedEvent]="onContentChangedEvent"
@@ -244,7 +244,7 @@
                         <ng-template ngFor [ngForOf]="initialBottomLetters" let-i="index">
                             <app-dasher-on-screen-player [elId]="getIdPrefix() + 'pbottom' + i.toString()" *ngIf="i >= splitIndexBottom"
                                 (click)="onClickElementCalibration(i, 'bottom')"
-                                [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                                [showBackGroundSelection]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 [onContentChangedEvent]="onContentChangedEvent"
@@ -264,7 +264,7 @@
                         <ng-template ngFor [ngForOf]="initialTopLetters" let-i="index">
                             <app-dasher-on-screen-player [elId]="getIdPrefix() + 'ptop' + i.toString()"
                                 (click)="onClickElementCalibration(i, 'top')"
-                                [ngClass]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                                [showBackGroundSelection]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 [onContentChangedEvent]="onContentChangedEvent"
@@ -280,7 +280,7 @@
                         <ng-template ngFor [ngForOf]="initialBottomLetters" let-i="index">
                             <app-dasher-on-screen-player [elId]="getIdPrefix() + 'pbottom' + i.toString()"
                                 (click)="onClickElementCalibration(i, 'bottom')"
-                                [ngClass]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount ? 'selection-background-color' : ''"
+                                [showBackGroundSelection]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
                                 [onContentChangedEvent]="onContentChangedEvent"

@@ -34,11 +34,10 @@
     border-width: 2px;
     border-style: groove;
     border-color: lightgoldenrodyellow;
+    background: linear-gradient(to right, rgb(230, 255, 230) 50%, transparent 0);
+    background-size: 200% 100%;
+    background-position: right;
     position: relative;
-    background-color: white;
-}
-
-.selection-background-color {
     background-color: lightgoldenrodyellow;
 }
 

@@ -71,6 +71,10 @@ export function calibrateCamera() {
     webgazer.showPredictionPoints(true);
 }
 
+export function removeVideo() {
+    webgazer.showVideo(false);
+}
+
 export function endCalibrateCamera() {
     localStorage.setItem('CalibratedEyeControl', "true");
     alert(`Calibração finalizada o software irá iniciar agora, caso precise calibrar novamente entre nos configuradores de controle desmarque a opção ocular e marque novamente.`);

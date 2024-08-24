@@ -1,5 +1,5 @@
 <div [id]="elId" #wordOrLetterElementRef [class.fill-animation]="animateDivSelection" class="full-div" cdkDrag
-    [cdkDragDisabled]="!enableLayoutEdition" (cdkDragStarted)="cdkDragStarted()">
+    [cdkDragDisabled]="!enableLayoutEdition" (cdkDragStarted)="cdkDragStarted()"  [ngClass]="showBackGroundSelection ? 'full-div-selection' : 'full-div'">
     <div class="resize resize__right" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
         [direction]="AngularResizeElementDirection.RIGHT"></div>
 

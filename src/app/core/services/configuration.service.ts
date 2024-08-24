@@ -89,7 +89,7 @@ export class ConfigurationsService {
             this.activeControl = this.getActiveControl();
         }
         // Sensorial emite valores o tempo todo e não a cada ação do usuário então é necessario ter um debounce time para cada evento
-        return this.activeControl.includes('Sensorial') ? 15 : 0;
+        return this.isSensorialDeviceConfigured() ? 15 : 0;
     }
 
     public isAnyControlConfigured() {
