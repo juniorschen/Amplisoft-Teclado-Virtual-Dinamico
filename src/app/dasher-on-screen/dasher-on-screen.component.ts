@@ -445,7 +445,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   //#region Dynamic Layout
   private listenEditLayout() {
-    this.configurationService.enablePageEdition.subscribe((v) => {
+    this.configurationService.enablePageEdition.pipe(debounceTime(500)).subscribe((v) => {
       if (v) {
         if (this.showingSimbols) {
           simbolsNumericTop.forEach((l, i) => {
