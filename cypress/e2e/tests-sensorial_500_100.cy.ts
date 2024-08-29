@@ -58,7 +58,7 @@ describe('Validar Desempenho do Software', () => {
                     await promisify(cy.wait(getDelaySensorial(delayMsEscolha, delayIteracoes, "direita")));
                 }
 
-                await promisify(cy.get(`p[id="${letra}"]`).trigger('mouseover'));
+                await promisify(cy.get(`p[id="${letra}"]`).first().trigger('mouseover'));
             }
 
             // insere espaço se não for a ultima palavra
@@ -116,7 +116,7 @@ describe('Validar Desempenho do Software', () => {
                     await promisify(cy.wait(getDelaySensorial(delayMsEscolha, delayIteracoes, "direita")));
                 }
 
-                await promisify(cy.get(`p[id="${letra}"]`).trigger('mouseover'));
+                await promisify(cy.get(`p[id="${letra}"]`).first().trigger('mouseover'));
             }
 
             // insere espaço se não for a ultima palavra
@@ -174,7 +174,7 @@ describe('Validar Desempenho do Software', () => {
                     await promisify(cy.wait(getDelaySensorial(delayMsEscolha, delayIteracoes, "direita")));
                 }
 
-                await promisify(cy.get(`p[id="${letra}"]`).trigger('mouseover'));
+                await promisify(cy.get(`p[id="${letra}"]`).first().trigger('mouseover'));
             }
 
             // insere espaço se não for a ultima palavra
@@ -232,7 +232,7 @@ describe('Validar Desempenho do Software', () => {
                     await promisify(cy.wait(getDelaySensorial(delayMsEscolha, delayIteracoes, "direita")));
                 }
 
-                await promisify(cy.get(`p[id="${letra}"]`).trigger('mouseover'));
+                await promisify(cy.get(`p[id="${letra}"]`).first().trigger('mouseover'));
             }
 
             // insere espaço se não for a ultima palavra
@@ -290,7 +290,7 @@ describe('Validar Desempenho do Software', () => {
                     await promisify(cy.wait(getDelaySensorial(delayMsEscolha, delayIteracoes, "direita")));
                 }
 
-                await promisify(cy.get(`p[id="${letra}"]`).trigger('mouseover'));
+                await promisify(cy.get(`p[id="${letra}"]`).first().trigger('mouseover'));
             }
 
             // insere espaço se não for a ultima palavra
