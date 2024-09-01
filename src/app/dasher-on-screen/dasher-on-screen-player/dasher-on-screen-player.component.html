@@ -19,8 +19,9 @@
             style="width: 100%;">format_color_fill</mat-icon>
         <mat-icon *ngIf="enableLayoutEdition" class="icon-display" style="width: 100%;"
             (click)="incFontSize()">add</mat-icon>
-        <p [id]="elId + '_caracter'" [style.font-size]="fontSize" [style.color]="colorCaracter" fxLayoutAlign="center center" style="width: 100%;"
-            #pElementRef>{{ wordOrLetter }}</p>
+        <!-- Para testes trocar id por wordOrLetter -->
+        <p [id]="elId + '_caracter'" [style.font-size]="fontSize" [style.color]="colorCaracter"
+            fxLayoutAlign="center center" style="width: 100%;" #pElementRef>{{ wordOrLetter }}</p>
         <mat-icon *ngIf="enableLayoutEdition" class="icon-display" style="width: 100%;"
             (click)="decFontSize()">remove</mat-icon>
         <mat-icon *ngIf="enableLayoutEdition" class="icon-display" [(colorPicker)]="colorCaracter"
