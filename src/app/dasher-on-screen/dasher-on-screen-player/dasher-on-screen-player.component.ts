@@ -40,6 +40,9 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
   @ViewChild('pElementRef')
   public pElementRef: ElementRef<HTMLParagraphElement>;
   
+  public colorBackground: string;
+  public colorCaracter: string;
+  public fontSize = "18px";
   public wordOrLetter: string;
   public animateDivSelection = false;
   public wordOrLetterSelected = false;
@@ -98,6 +101,14 @@ export class DasherOnScreenPlayerComponent implements OnInit, OnDestroy {
       return;
 
     this.clearSensorialBufers();
+  }
+
+  incFontSize() {
+    this.fontSize = (Number(this.fontSize.split("px")[0]) + 1).toString() + "px";
+  }
+
+  decFontSize()  {
+    this.fontSize = (Number(this.fontSize.split("px")[0]) - 1).toString() + "px";
   }
 
   public onResize(evt: AngularResizeElementEvent): void {

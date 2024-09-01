@@ -37,21 +37,36 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
   // Referencias do html
   @ViewChild('limparElementRef')
   public limparElementRef: ElementRef<HTMLParagraphElement>;
+  public limparBackGround;
+  public limparCaracterColor;
+  public limparFontSize = "18px";
 
   @ViewChild('falarElementRef')
   public falarElementRef: ElementRef<HTMLParagraphElement>;
+  public falarBackGround;
+  public falarCaracterColor;
+  public falarFontSize = "18px";
 
   @ViewChild('limparTudoElementRef')
   public limparTudoElementRef: ElementRef<HTMLParagraphElement>;
+  public limparTudoBackGround;
+  public limparTudoCaracterColor;
+  public limparTudoFontSize = "18px";
 
   @ViewChild('espacoElementRef')
   public espacoElementRef: ElementRef<HTMLParagraphElement>;
-
-  @ViewChild('centerDivElementRef')
-  public centerDivElementRef: ElementRef<HTMLDivElement>;
+  public espacoBackGround;
+  public espacoCaracterColor;
+  public espacoFontSize = "18px";
 
   @ViewChild('simboloElementRef')
   public simboloElementRef: ElementRef<HTMLDivElement>;
+  public simboloBackGround;
+  public simboloCaracterColor;
+  public simboloFontSize = "18px";
+
+  @ViewChild('centerDivElementRef')
+  public centerDivElementRef: ElementRef<HTMLDivElement>;
 
   @ViewChild('playerDivElementRef')
   public playerDivElementRef: ElementRef<HTMLDivElement>;
@@ -87,7 +102,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   // Calibracao
   public clickElementsCount = new Map<string, number>();
-  public defaultCalibrationCount = 5;
+  public defaultCalibrationCount = 1;
 
   constructor(private configurationService: ConfigurationsService, private perfomanceIndicatorService: PerfomanceIndicatorService,
     private predicionsService: LokiJsPredictionsService, private hostEl: ElementRef) {
@@ -126,7 +141,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         totalElementsClicksCount += value;
       }
 
-      if(totalElementsClicksCount > 1) {
+      if (totalElementsClicksCount > 1) {
         removeVideo();
       }
 
@@ -185,7 +200,7 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
       this.input = this.input + " ";
       this.perfomanceIndicatorService.blankSpace();
 
-      if (wordsList[wordsList.length - 1].trim().length > 0) {
+      if (wordsList[wordsList.length - 1].trim().length > 3) {
         this.predicionsService.doAddWordOnDb(wordsList[wordsList.length - 1]);
       }
 
@@ -496,7 +511,14 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
             element.style.transform = d.transform;
             element.style.width = d.width + "px";
             element.style.height = d.height + "px";
+            element.style.backgroundColor = d.backGroundColor;
             element.classList.add('el_changed');
+
+            const elementCaracter = document.getElementById(d.caracterId);
+            if (elementCaracter) {
+              elementCaracter.style.color = d.fontColor;
+              elementCaracter.style.fontSize = d.fontSize;
+            }
           }
         });
       }
@@ -505,44 +527,65 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
 
   private saveLayout() {
     const data = [];
-    if (this.limparElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+
+    if (this.limparElementRef.nativeElement.parentElement.parentElement.classList.contains('el_changed'))
       data.push({
-        id: this.limparElementRef.nativeElement.parentElement.id,
-        transform: this.limparElementRef.nativeElement.parentElement.style.transform,
-        width: this.limparElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-        height: this.limparElementRef.nativeElement.parentElement.getBoundingClientRect().height
+        id: this.limparElementRef.nativeElement.parentElement.parentElement.id,
+        transform: this.limparElementRef.nativeElement.parentElement.parentElement.style.transform,
+        width: this.limparElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().width,
+        height: this.limparElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().height,
+        backGroundColor: this.limparElementRef.nativeElement.parentElement.parentElement.style.backgroundColor,
+        caracterId: this.limparElementRef.nativeElement.id,
+        fontColor: this.limparElementRef.nativeElement.style.color,
+        fontSize: this.limparElementRef.nativeElement.style.fontSize
       });
 
-    if (this.limparTudoElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+    if (this.limparTudoElementRef.nativeElement.parentElement.parentElement.classList.contains('el_changed'))
       data.push({
-        id: this.limparTudoElementRef.nativeElement.parentElement.id,
-        transform: this.limparTudoElementRef.nativeElement.parentElement.style.transform,
-        width: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-        height: this.limparTudoElementRef.nativeElement.parentElement.getBoundingClientRect().height
+        id: this.limparTudoElementRef.nativeElement.parentElement.parentElement.id,
+        transform: this.limparTudoElementRef.nativeElement.parentElement.parentElement.style.transform,
+        width: this.limparTudoElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().width,
+        height: this.limparTudoElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().height,
+        backGroundColor: this.limparTudoElementRef.nativeElement.parentElement.parentElement.style.backgroundColor,
+        caracterId: this.limparTudoElementRef.nativeElement.id,
+        fontColor: this.limparTudoElementRef.nativeElement.style.color,
+        fontSize: this.limparTudoElementRef.nativeElement.style.fontSize
       });
 
-    if (this.simboloElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+    if (this.simboloElementRef.nativeElement.parentElement.parentElement.classList.contains('el_changed'))
       data.push({
-        id: this.simboloElementRef.nativeElement.parentElement.id,
-        transform: this.simboloElementRef.nativeElement.parentElement.style.transform,
-        width: this.simboloElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-        height: this.simboloElementRef.nativeElement.parentElement.getBoundingClientRect().height
+        id: this.simboloElementRef.nativeElement.parentElement.parentElement.id,
+        transform: this.simboloElementRef.nativeElement.parentElement.parentElement.style.transform,
+        width: this.simboloElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().width,
+        height: this.simboloElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().height,
+        backGroundColor: this.simboloElementRef.nativeElement.parentElement.parentElement.style.backgroundColor,
+        caracterId: this.simboloElementRef.nativeElement.id,
+        fontColor: this.simboloElementRef.nativeElement.style.color,
+        fontSize: this.simboloElementRef.nativeElement.style.fontSize
       });
 
-    if (this.espacoElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+    if (this.espacoElementRef.nativeElement.parentElement.parentElement.classList.contains('el_changed'))
       data.push({
-        id: this.espacoElementRef.nativeElement.parentElement.id,
-        transform: this.espacoElementRef.nativeElement.parentElement.style.transform,
-        width: this.espacoElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-        height: this.espacoElementRef.nativeElement.parentElement.getBoundingClientRect().height
+        id: this.espacoElementRef.nativeElement.parentElement.parentElement.id,
+        transform: this.espacoElementRef.nativeElement.parentElement.parentElement.style.transform,
+        width: this.espacoElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().width,
+        height: this.espacoElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().height,
+        backGroundColor: this.espacoElementRef.nativeElement.parentElement.parentElement.style.backgroundColor,
+        caracterId: this.espacoElementRef.nativeElement.id,
+        fontColor: this.espacoElementRef.nativeElement.style.color,
+        fontSize: this.espacoElementRef.nativeElement.style.fontSize
       });
 
-    if (this.falarElementRef.nativeElement.parentElement.classList.contains('el_changed'))
+    if (this.falarElementRef.nativeElement.parentElement.parentElement.classList.contains('el_changed'))
       data.push({
-        id: this.falarElementRef.nativeElement.parentElement.id,
-        transform: this.falarElementRef.nativeElement.parentElement.style.transform,
-        width: this.falarElementRef.nativeElement.parentElement.getBoundingClientRect().width,
-        height: this.falarElementRef.nativeElement.getBoundingClientRect().height
+        id: this.falarElementRef.nativeElement.parentElement.parentElement.id,
+        transform: this.falarElementRef.nativeElement.parentElement.parentElement.style.transform,
+        width: this.falarElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().width,
+        height: this.falarElementRef.nativeElement.parentElement.parentElement.getBoundingClientRect().height,
+        backGroundColor: this.falarElementRef.nativeElement.parentElement.parentElement.style.backgroundColor,
+        caracterId: this.falarElementRef.nativeElement.id,
+        fontColor: this.falarElementRef.nativeElement.style.color,
+        fontSize: this.falarElementRef.nativeElement.style.fontSize
       });
 
     this.wordsOrLettersElements.forEach((w) => {
@@ -550,14 +593,19 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
         id: w.wordOrLetterElementRef.nativeElement.id,
         transform: w.wordOrLetterElementRef.nativeElement.style.transform,
         width: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().width,
-        height: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().height
+        height: w.wordOrLetterElementRef.nativeElement.getBoundingClientRect().height,
+        backGroundColor: w.wordOrLetterElementRef.nativeElement.style.backgroundColor,
+        caracterId: w.pElementRef.nativeElement.id,
+        fontColor: w.pElementRef.nativeElement.style.color,
+        fontSize: w.pElementRef.nativeElement.style.fontSize
       });
     });
+
     this.configurationService.setDynamicLayout(data, this.showingSimbols);
   }
 
   public onResize(evt: AngularResizeElementEvent, element: string): void {
-    const div = this[element].nativeElement.parentElement as HTMLDivElement;
+    const div = this[element].nativeElement.parentElement.parentElement as HTMLDivElement;
     const parentWidh = div.parentElement.getBoundingClientRect().width;
     const parentHeight = div.parentElement.getBoundingClientRect().height;
     div.style.position = "absolute";
@@ -569,8 +617,18 @@ export class DasherOnScreenComponent implements AfterViewInit, OnDestroy {
     div.classList.add('el_changed');
   }
 
-  public cdkDragStarted(element: string) {
-    const div = this[element].nativeElement.parentElement as HTMLDivElement;
+  public incFontSize(prop, el) {
+    this[prop] = (Number(this[prop].split("px")[0]) + 1).toString() + "px";
+    this.setChanged(el);
+  }
+
+  public decFontSize(prop, el) {
+    this[prop] = (Number(this[prop].split("px")[0]) - 1).toString() + "px";
+    this.setChanged(el);
+  }
+
+  public setChanged(element: string) {
+    const div = this[element].nativeElement.parentElement.parentElement as HTMLDivElement;
     div.classList.add('el_changed');
   }
   //#endregion

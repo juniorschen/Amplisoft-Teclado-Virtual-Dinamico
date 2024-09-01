@@ -6,8 +6,8 @@ export const initialBottomLetters = ["a", "e", "i", "o", "u", "q", "r", "v", "w"
 export const simbolsNumericTop = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "=", '+', "-", "*", "|", "'", '"'];
 export const simbolsBottom = [".", ',', ":", "^", "~", "[", "]", "`", "´", "!", "?", "/", ";", "(", ")", "{", "}"];
 
-export const sugestionTopLetters = ["Sugestão 1", "Letra 1 (c)", "Letra 2 (d)", "Letra 3 (f)", "Letra 4 (g)", "Sugestão 2", "Sugestão 3", "Letra 5 (m)", "Letra 6 (n)", "Letra 7 (p)", "Letra 8 (s)", "Letra 9 (t)", "Letra 10 (h)", "Letra 11 (a)", "Letra 12 (e)", "Letra 13 (q)", "Letra 14 (r)"];
-export const sugestionBottomLetters = ["Sugestão 1", "Letra 1 (e)", "Letra 2 (i)", "Letra 3 (o)", "Letra 4 (u)", "Sugestão 2", "Sugestão 3", "Letra 5 (v)", "Letra 6 (w)", "Letra 7 (x)", "Letra 8 (y)", "Letra 9 (k)", "Letra 10 (z)", "Letra 11 (b)", "Letra 12 (c)", "Letra 13 (j)", "Letra 14 (l)"];
+export const sugestionTopLetters = ["S.1", "c", "d", "f", "g", "S.2", "S.3", "m", "n", "p", "s", "t", "h", "a", "e", "q", "r"];
+export const sugestionBottomLetters = ["S.1", "e", "i", "o", "u", "S.2", "S.3", "v", "w", "x", "y", "k", "z", "b", "c", "j", "l"];
 
 export const allLetters = ["b", "c", "d", "f", "g", "j", "l", "m", "n", "p", "s", "t", "h", "a", "e", "i", "o", "u", "q", "r", "v", "w", "x", "y", "k", "z"];
 

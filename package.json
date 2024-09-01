@@ -28,6 +28,7 @@
     "cypress-real-events": "^1.11.0",
     "fs": "^0.0.1-security",
     "lokijs": "^1.5.12",
+    "ngx-color-picker": "^14.0.0",
     "ngx-device-detector": "^7.0.0",
     "openai": "^4.28.0",
     "rxjs": "~7.5.0",

@@ -1,6 +1,6 @@
-<div [id]="elId" #wordOrLetterElementRef [class.fill-animation]="animateDivSelection" cdkDrag
-    [cdkDragDisabled]="!enableLayoutEdition" (cdkDragStarted)="cdkDragStarted()"
-    [ngClass]="showBackGroundSelection ? 'full-div-selection' : 'full-div'">
+<div [id]="elId" #wordOrLetterElementRef [style.background]="colorBackground"
+    [class.fill-animation]="animateDivSelection" cdkDrag [cdkDragDisabled]="!enableLayoutEdition"
+    (cdkDragStarted)="cdkDragStarted()" [ngClass]="showBackGroundSelection ? 'full-div-selection' : 'full-div'">
     <div class="resize resize__right" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
         [direction]="AngularResizeElementDirection.RIGHT"></div>
 
@@ -13,7 +13,17 @@
     <div class="resize resize__left" (resize)="onResize($event)" [targetElement]="wordOrLetterElementRef"
         [direction]="AngularResizeElementDirection.LEFT"></div>
 
-    <p [id]="wordOrLetter" class="label-default-font-size action-border action-sized" #pElementRef
-        (mouseover)="mouseOverWordOrLetterEvent()" (mouseout)="mouseOutWordOrLetterEvent()"
-        fxLayoutAlign="center center">{{ wordOrLetter }}</p>
+    <div class="action-sized action-border" fxLayoutAlign="center center" (mouseover)="mouseOverWordOrLetterEvent()"
+        (mouseout)="mouseOutWordOrLetterEvent()">
+        <mat-icon *ngIf="enableLayoutEdition" class="icon-display" [(colorPicker)]="colorBackground"
+            style="width: 100%;">format_color_fill</mat-icon>
+        <mat-icon *ngIf="enableLayoutEdition" class="icon-display" style="width: 100%;"
+            (click)="incFontSize()">add</mat-icon>
+        <p [id]="elId + '_caracter'" [style.font-size]="fontSize" [style.color]="colorCaracter" fxLayoutAlign="center center" style="width: 100%;"
+            #pElementRef>{{ wordOrLetter }}</p>
+        <mat-icon *ngIf="enableLayoutEdition" class="icon-display" style="width: 100%;"
+            (click)="decFontSize()">remove</mat-icon>
+        <mat-icon *ngIf="enableLayoutEdition" class="icon-display" [(colorPicker)]="colorCaracter"
+            style="width: 100%;">format_color_text</mat-icon>
+    </div>
 </div>

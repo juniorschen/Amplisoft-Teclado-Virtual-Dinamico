@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 import { DasherOnScreenComponent } from './dasher-on-screen.component';
 import { DasherOnScreenRoutingModule } from './dasher-on-screen-routing.module';
@@ -30,7 +31,8 @@ import { AngularResizeElementModule } from 'angular-resize-element';
     MatIconModule,
     MatProgressSpinnerModule,
     DragDropModule,
-    AngularResizeElementModule
+    AngularResizeElementModule,
+    ColorPickerModule
   ]
 })
 export class DasherOnScreenModule { }

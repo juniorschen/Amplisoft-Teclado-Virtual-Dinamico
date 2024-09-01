@@ -16,12 +16,12 @@
         </div>
 
         <div class="grid-start-actions">
-            <div id="limparTudoBoxRef" class="mid-start-header" cdkDrag
-                (cdkDragStarted)="cdkDragStarted('limparTudoElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
+            <div id="limparTudoBoxRef" #limparTudoBoxRef class="mid-start-header" cdkDrag
+                (cdkDragStarted)="setChanged('limparTudoElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
                 (click)="onClickElementCalibration(0, 'limparTudoElementRef')"
-                [class.fill-animation]="animateDivSelectionClearAll"
+                [class.fill-animation]="animateDivSelectionClearAll" [style.background]="limparTudoBackGround"
                 [ngClass]="clickElementsCount.get('limparTudoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" #limparTudoBoxRef>
+                fxLayoutAlign="center none" style="z-index: 99;">
 
                 <div *ngIf="enableLayoutEdition" class="resize resize__right"
                     (resize)="onResize($event, 'limparTudoElementRef')" [targetElement]="limparTudoBoxRef"
@@ -39,20 +39,40 @@
                     (resize)="onResize($event, 'limparTudoElementRef')" [targetElement]="limparTudoBoxRef"
                     [direction]="AngularResizeElementDirection.LEFT"></div>
 
-                <p class="label-default-font-size" #limparTudoElementRef (mouseover)="mouseOverReset(true)"
-                    (mouseout)="mouseOutReset()" fxLayoutAlign="center center">Limpar Toda Digitação</p>
+                <div fxLayout="column" fxLayoutAlign="center center" (mouseover)="mouseOverReset(true)"
+                    (mouseout)="mouseOutReset()">
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        [(colorPicker)]="limparTudoBackGround" style="width: 100%;"
+                        (click)="setChanged('limparTudoElementRef')">format_color_fill</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        style="width: 100%;"
+                        (click)="incFontSize('limparTudoFontSize', 'limparTudoElementRef')">add</mat-icon>
+                    <p id="limparTudoElementRef" #limparTudoElementRef [style.font-size]="limparTudoFontSize"
+                        [style.color]="limparTudoCaracterColor" fxLayoutAlign="center center" style="width: 100%;">
+                        Limpar Toda Digitação
+                    </p>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        style="width: 100%;"
+                        (click)="decFontSize('limparTudoFontSize', 'limparTudoElementRef')">remove</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        [(colorPicker)]="limparTudoCaracterColor" (click)="setChanged('limparTudoElementRef')"
+                        style="width: 100%;">format_color_text</mat-icon>
+                </div>
+
             </div>
-            <div *ngIf="limparTudoBoxRef.style.position === 'absolute'" class="mid-start-header ghost-container" fxLayoutAlign="center none">
+            <div *ngIf="limparTudoBoxRef.style.position === 'absolute'" class="mid-start-header ghost-container"
+                fxLayoutAlign="center none">
                 <p class="label-default-font-size" fxLayoutAlign="center center">
                     Limpar Toda Digitação
                 </p>
             </div>
 
-            <div id="simbolosBoxRef" class="mid-start" cdkDrag (cdkDragStarted)="cdkDragStarted('simboloElementRef')"
-                [cdkDragDisabled]="!enableLayoutEdition" (click)="onClickElementCalibration(0, 'simboloElementRef')"
-                [class.fill-animation]="animateDivSelectionSimbols"
+            <div id="simbolosBoxRef" #simbolosBoxRef class="mid-start" cdkDrag
+                (cdkDragStarted)="setChanged('simboloElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
+                (click)="onClickElementCalibration(0, 'simboloElementRef')"
+                [class.fill-animation]="animateDivSelectionSimbols" [style.background]="simboloBackGround"
                 [ngClass]="clickElementsCount.get('simboloElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" #simbolosBoxRef>
+                fxLayoutAlign="center none" style="z-index: 99;">
 
                 <div *ngIf="enableLayoutEdition" class="resize resize__right"
                     (resize)="onResize($event, 'simboloElementRef')" [targetElement]="simbolosBoxRef"
@@ -70,20 +90,34 @@
                     (resize)="onResize($event, 'simboloElementRef')" [targetElement]="simbolosBoxRef"
                     [direction]="AngularResizeElementDirection.LEFT"></div>
 
-                <p class="label-default-font-size" #simboloElementRef (mouseover)="mouseOverSimbols()"
-                    (mouseout)="mouseOutSimbols()" fxLayoutAlign="center center">Simbolos</p>
+                <div fxLayoutAlign="center center" (mouseover)="mouseOverSimbols()" (mouseout)="mouseOutSimbols()">
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" [(colorPicker)]="simboloBackGround"
+                        style="width: 100%;" (click)="setChanged('simboloElementRef')">format_color_fill</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" style="width: 100%;"
+                        (click)="incFontSize('simboloFontSize', 'simboloElementRef')">add</mat-icon>
+                    <p id="simboloElementRef" #simboloElementRef [style.font-size]="simboloFontSize"
+                        [style.color]="simboloCaracterColor" fxLayoutAlign="center center" style="width: 100%;">Simbolos
+                    </p>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" style="width: 100%;"
+                        (click)="decFontSize('simboloFontSize', 'simboloElementRef')">remove</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" [(colorPicker)]="simboloCaracterColor"
+                        style="width: 100%;" (click)="setChanged('simboloElementRef')">format_color_text</mat-icon>
+                </div>
+
             </div>
-            <div *ngIf="simbolosBoxRef.style.position === 'absolute'" class="mid-start ghost-container" fxLayoutAlign="center none">
+            <div *ngIf="simbolosBoxRef.style.position === 'absolute'" class="mid-start ghost-container"
+                fxLayoutAlign="center none">
                 <p class="label-default-font-size" fxLayoutAlign="center center">
                     Simbolos
                 </p>
             </div>
 
-            <div id="falarBoxRef" class="mid-start-bottom" cdkDrag (cdkDragStarted)="cdkDragStarted('falarElementRef')"
-                [cdkDragDisabled]="!enableLayoutEdition" (click)="onClickElementCalibration(0, 'falarElementRef')"
-                [class.fill-animation]="animateDivSelectionSpeak"
+            <div id="falarBoxRef" #falarBoxRef class="mid-start-bottom" cdkDrag
+                (cdkDragStarted)="setChanged('falarElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
+                (click)="onClickElementCalibration(0, 'falarElementRef')"
+                [class.fill-animation]="animateDivSelectionSpeak" [style.background]="falarBackGround"
                 [ngClass]="clickElementsCount.get('falarElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                fxLayoutAlign="center none" #falarBoxRef>
+                fxLayoutAlign="center none" style="z-index: 99;">
 
                 <div *ngIf="enableLayoutEdition" class="resize resize__right"
                     (resize)="onResize($event, 'falarElementRef')" [targetElement]="falarBoxRef"
@@ -101,21 +135,38 @@
                     (resize)="onResize($event, 'falarElementRef')" [targetElement]="falarBoxRef"
                     [direction]="AngularResizeElementDirection.LEFT"></div>
 
-                <p class="label-default-font-size" #falarElementRef (mouseover)="mouseOverSpeak()"
-                    (mouseout)="mouseOutSpeak()" fxLayoutAlign="center center">Falar Texto Completo</p>
+                <div fxLayout="column" fxLayoutAlign="center center" (mouseover)="mouseOverSpeak()"
+                    (mouseout)="mouseOutSpeak()">
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        [(colorPicker)]="falarBackGround" style="width: 100%;"
+                        (click)="setChanged('falarElementRef')">format_color_fill</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        style="width: 100%;" (click)="incFontSize('falarFontSize', 'falarElementRef')">add</mat-icon>
+                    <p id="falarElementRef" #falarElementRef [style.font-size]="falarFontSize"
+                        [style.color]="falarCaracterColor" fxLayoutAlign="center center" style="width: 100%;">Falar
+                        Texto Completo
+                    </p>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        style="width: 100%;" (click)="decFontSize('falarFontSize', 'falarElementRef')">remove</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        [(colorPicker)]="falarCaracterColor" style="width: 100%;"
+                        (click)="setChanged('falarElementRef')">format_color_text</mat-icon>
+                </div>
+
             </div>
-            <div *ngIf="falarBoxRef.style.position === 'absolute'" class="mid-start-bottom ghost-container" fxLayoutAlign="center none">
+            <div *ngIf="falarBoxRef.style.position === 'absolute'" class="mid-start-bottom ghost-container"
+                fxLayoutAlign="center none">
                 <p class="label-default-font-size" fxLayoutAlign="center center">
                     Falar Texto Completo
                 </p>
             </div>
 
-            <div id="espacoBoxRef" class="mid-start-header2" cdkDrag
-                (cdkDragStarted)="cdkDragStarted('espacoElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
+            <div id="espacoBoxRef" #espacoBoxRef class="mid-start-header2" cdkDrag
+                (cdkDragStarted)="setChanged('espacoElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
                 (click)="onClickElementCalibration(0, 'espacoElementRef')"
-                [class.fill-animation]="animateDivSelectionSpace"
+                [class.fill-animation]="animateDivSelectionSpace" [style.background]="espacoBackGround"
                 [ngClass]="clickElementsCount.get('espacoElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                #espacoBoxRef fxLayoutAlign="center none">
+                fxLayoutAlign="center none" style="z-index: 99;">
 
                 <div *ngIf="enableLayoutEdition" class="resize resize__right"
                     (resize)="onResize($event, 'espacoElementRef')" [targetElement]="espacoBoxRef"
@@ -133,11 +184,28 @@
                     (resize)="onResize($event, 'espacoElementRef')" [targetElement]="espacoBoxRef"
                     [direction]="AngularResizeElementDirection.LEFT"></div>
 
-                <p id="espacoElementRef" class="label-default-font-size" #espacoElementRef fxLayoutAlign="center center"
-                    (mouseover)="mouseOverBlankSpace()" (mouseout)="mouseOutBlankSpace()">
-                    Inserir Espaço</p>
+                <div fxLayout="column" fxLayoutAlign="center center" (mouseover)="mouseOverBlankSpace()"
+                    (mouseout)="mouseOutBlankSpace()">
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        [(colorPicker)]="espacoBackGround" style="width: 100%;"
+                        (click)="setChanged('espacoElementRef')">format_color_fill</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        style="width: 100%;" (click)="incFontSize('espacoFontSize', 'espacoElementRef')">add</mat-icon>
+                    <p id="espacoElementRef" #espacoElementRef [style.font-size]="espacoFontSize"
+                        [style.color]="espacoCaracterColor" fxLayoutAlign="center center" style="width: 100%;">Inserir
+                        Espaço
+                    </p>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        style="width: 100%;"
+                        (click)="decFontSize('espacoFontSize', 'espacoElementRef')">remove</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        [(colorPicker)]="espacoCaracterColor" style="width: 100%;"
+                        (click)="setChanged('espacoElementRef')">format_color_text</mat-icon>
+                </div>
+
             </div>
-            <div *ngIf="espacoBoxRef.style.position === 'absolute'" class="mid-start-header2 ghost-container" fxLayoutAlign="center center">
+            <div *ngIf="espacoBoxRef.style.position === 'absolute'" class="mid-start-header2 ghost-container"
+                fxLayoutAlign="center center">
                 <p class="label-default-font-size" fxLayoutAlign="center center">
                     Inserir Espaço
                 </p>
@@ -145,12 +213,12 @@
 
             <div id="centerDivElementRef" #centerDivElementRef></div>
 
-            <div id="limparBoxRef" class="mid-start-bottom2" cdkDrag
-                (cdkDragStarted)="cdkDragStarted('limparElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
+            <div id="limparBoxRef" #limparBoxRef class="mid-start-bottom2" cdkDrag
+                (cdkDragStarted)="setChanged('limparElementRef')" [cdkDragDisabled]="!enableLayoutEdition"
                 (click)="onClickElementCalibration(0, 'limparElementRef')"
-                [class.fill-animation]="animateDivSelectionClear"
+                [class.fill-animation]="animateDivSelectionClear" [style.background]="limparBackGround"
                 [ngClass]="clickElementsCount.get('limparElementRef_0') == this.defaultCalibrationCount ? 'action-div-border-color' : 'action-div-border'"
-                #limparBoxRef fxLayoutAlign="center none">
+                fxLayoutAlign="center none" style="z-index: 99;">
 
                 <div *ngIf="enableLayoutEdition" class="resize resize__right"
                     (resize)="onResize($event, 'limparElementRef')" [targetElement]="limparBoxRef"
@@ -168,20 +236,35 @@
                     (resize)="onResize($event, 'limparElementRef')" [targetElement]="limparBoxRef"
                     [direction]="AngularResizeElementDirection.LEFT"></div>
 
-                <p id="limparElementRef" class="label-default-font-size" #limparElementRef
-                    (mouseover)="mouseOverReset(false)" (mouseout)="mouseOutReset()" fxLayoutAlign="center center">
-                    Limpar Último
-                </p>
+                <div fxLayout="column" fxLayoutAlign="center center" (mouseover)="mouseOverReset(false)"
+                    (mouseout)="mouseOutReset()">
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        [(colorPicker)]="limparBackGround" style="width: 100%;"
+                        (click)="setChanged('limparElementRef')">format_color_fill</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        style="width: 100%;" (click)="incFontSize('limparFontSize', 'limparElementRef')">add</mat-icon>
+                    <p id="limparElementRef" #limparElementRef [style.font-size]="limparFontSize"
+                        [style.color]="limparCaracterColor" fxLayoutAlign="center center" style="width: 100%;">Limpar
+                        Último
+                    </p>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        style="width: 100%;"
+                        (click)="decFontSize('limparFontSize', 'limparElementRef')">remove</mat-icon>
+                    <mat-icon *ngIf="enableLayoutEdition" class="icon-display" fxLayoutAlign="center center"
+                        [(colorPicker)]="limparCaracterColor" style="width: 100%;"
+                        (click)="setChanged('limparElementRef')">format_color_text</mat-icon>
+                </div>
+
             </div>
-            <div *ngIf="limparBoxRef.style.position === 'absolute'" class="mid-start-bottom2 ghost-container" fxLayoutAlign="center none">
+            <div *ngIf="limparBoxRef.style.position === 'absolute'" class="mid-start-bottom2 ghost-container"
+                fxLayoutAlign="center none">
                 <p class="label-default-font-size" fxLayoutAlign="center center">
                     Limpar Último
                 </p>
             </div>
         </div>
 
-        <div style="width: 100px;">
-        </div>
+        <div style="width: 100px;"></div>
 
         <div *ngIf="layoutType == layoutTypes.TypeFourLines || (layoutType == layoutTypes.Customized && lastLayoutType == layoutTypes.TypeFourLines)"
             fxFlex fxLayout="column" fxFill>
@@ -190,8 +273,8 @@
                 <div class="grid-header1" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor [ngForOf]="initialTopLetters" let-i="index">
-                            <app-dasher-on-screen-player [elId]="getIdPrefix() + 'ptop' + i.toString()" *ngIf="i >= splitIndexHeader"
-                                (click)="onClickElementCalibration(i, 'top')"
+                            <app-dasher-on-screen-player [elId]="getIdPrefix() + 'ptop' + i.toString()"
+                                *ngIf="i >= splitIndexHeader" (click)="onClickElementCalibration(i, 'top')"
                                 [showBackGroundSelection]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
@@ -208,8 +291,8 @@
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor [ngForOf]="initialTopLetters" let-i="index">
                             <div *ngIf="i == 3" style="width: 100px;"></div>
-                            <app-dasher-on-screen-player [elId]="getIdPrefix() + 'ptop' + i.toString()" *ngIf="i < splitIndexHeader"
-                                (click)="onClickElementCalibration(i, 'top')"
+                            <app-dasher-on-screen-player [elId]="getIdPrefix() + 'ptop' + i.toString()"
+                                *ngIf="i < splitIndexHeader" (click)="onClickElementCalibration(i, 'top')"
                                 [showBackGroundSelection]="clickElementsCount.get('top_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
@@ -225,8 +308,8 @@
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor [ngForOf]="initialBottomLetters" let-i="index">
                             <div *ngIf="i == 3" style="width: 100px;"></div>
-                            <app-dasher-on-screen-player [elId]="getIdPrefix() + 'pbottom' + i.toString()" *ngIf="i < splitIndexBottom"
-                                (click)="onClickElementCalibration(i, 'bottom')"
+                            <app-dasher-on-screen-player [elId]="getIdPrefix() + 'pbottom' + i.toString()"
+                                *ngIf="i < splitIndexBottom" (click)="onClickElementCalibration(i, 'bottom')"
                                 [showBackGroundSelection]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
@@ -242,8 +325,8 @@
                 <div class="grid-bottom2" fxFill>
                     <div fxLayout="row" fxFill>
                         <ng-template ngFor [ngForOf]="initialBottomLetters" let-i="index">
-                            <app-dasher-on-screen-player [elId]="getIdPrefix() + 'pbottom' + i.toString()" *ngIf="i >= splitIndexBottom"
-                                (click)="onClickElementCalibration(i, 'bottom')"
+                            <app-dasher-on-screen-player [elId]="getIdPrefix() + 'pbottom' + i.toString()"
+                                *ngIf="i >= splitIndexBottom" (click)="onClickElementCalibration(i, 'bottom')"
                                 [showBackGroundSelection]="clickElementsCount.get('bottom_' + i) == this.defaultCalibrationCount"
                                 [mouseMovedEvent]="mouseMovedEvent" [onResetDasherEvent]="onResetDasherEvent"
                                 [enableLayoutEdition]="enableLayoutEdition" fxFlex fxFill
